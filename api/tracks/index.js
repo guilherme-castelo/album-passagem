@@ -6,7 +6,9 @@ module.exports = async function handler(req, res) {
     if (applyCors(req, res)) return;
 
     // req.query.path is an array /api/tracks/:id/:action -> ['id', 'action']
-    const path = req.query.path || req.vercelPath || [];
+    let path = req.query.path || req.vercelPath || [];
+    if (typeof path === 'string') path = path.split('/').filter(Boolean);
+
     const id = path[0];
     const action = path[1];
 

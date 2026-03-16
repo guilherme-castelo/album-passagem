@@ -5,7 +5,8 @@ const { verifyTokenHandler } = require('../../backend/lib/auth');
 module.exports = async function handler(req, res) {
     if (applyCors(req, res)) return;
 
-    const path = req.query.path || req.vercelPath || [];
+    let path = req.query.path || req.vercelPath || [];
+    if (typeof path === 'string') path = path.split('/').filter(Boolean);
 
     try {
         if (req.method === 'GET') {

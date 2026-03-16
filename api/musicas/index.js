@@ -7,7 +7,9 @@ const trackService = require('../../backend/services/trackService');
 module.exports = async function handler(req, res) {
     if (applyCors(req, res)) return;
 
-    const path = req.query.path || req.vercelPath || []; // /api/musicas/:id/like -> ['123', 'like']
+    let path = req.query.path || req.vercelPath || []; // /api/musicas/:id/like -> ['123', 'like']
+    if (typeof path === 'string') path = path.split('/').filter(Boolean);
+
     const id = path[0];
     const action = path[1];
 
@@ -21,7 +23,7 @@ module.exports = async function handler(req, res) {
         if (req.method === 'GET') {
             const albumData = trackService.getAlbumInfo();
             const tracks = await trackRepository.findAll();
-            
+
             return sendSuccess(res, {
                 album: albumData,
                 tracks: tracks
