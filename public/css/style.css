@@ -78,3 +78,84 @@ body {
 ::-webkit-scrollbar-thumb:hover {
     background: #94A3B8; 
 }
+
+/* Interações Sociais */
+.btn-like {
+    transition: all 0.2s ease;
+}
+.btn-like.liked {
+    color: #ef4444; /* red-500 */
+    transform: scale(1.1);
+}
+.btn-like:active {
+    transform: scale(0.9);
+}
+
+.star-btn {
+    transition: color 0.15s ease, transform 0.1s ease;
+    color: #e2e8f0; /* slate-200 */
+}
+.star-btn.active {
+    color: #f59e0b; /* amber-500 */
+}
+.star-btn:active {
+    transform: scale(0.85);
+}
+
+/* Timeline & Gamification */
+.timeline-item {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: 0.5rem;
+    top: 2rem;
+    bottom: -1rem;
+    width: 2px;
+    background-image: linear-gradient(to bottom, #cbd5e1 50%, transparent 50%);
+    background-size: 2px 8px; /* Tracejado vertical */
+    z-index: 1;
+}
+
+.timeline-item:last-child::before {
+    display: none;
+}
+
+/* Bolinha da timeline */
+.timeline-dot {
+    position: absolute;
+    left: calc(0.5rem - 4px);
+    top: 1.25rem;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #0F2C59; /* brand blue */
+    z-index: 2;
+    transition: all 0.3s ease;
+}
+
+.timeline-dot.visited {
+    background-color: #10b981; /* green-500 */
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+}
+
+/* Carimbo estilo passaporte (rotated) */
+.stamp-visited {
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.55rem;
+    font-weight: bold;
+    color: #ef4444; /* red-500 */
+    border: 2px solid #ef4444;
+    padding: 2px 4px;
+    border-radius: 4px;
+    transform: rotate(-15deg);
+    opacity: 0.8;
+    pointer-events: none;
+    z-index: 5;
+}
