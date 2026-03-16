@@ -1,44 +1,35 @@
-const connectToDatabase = require('../../_db');
+const applyCors = require("../../lib/cors");
+const {
+  sendError,
+  sendMethodNotAllowed,
+  sendNotFound,
+  sendSuccess,
+} = require("../../lib/response");
+const trackRepository = require("../../repositories/trackRepository");
+const trackService = require("../../services/trackService");
 
 module.exports = async (req, res) => {
-    // CORS
-    res.setHeader('Access-Control-Allow-Credentials', true)
-    res.setHeader('Access-Control-Origin', '*')
-    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT')
-    res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version')
-    if (req.method === 'OPTIONS') return res.status(200).end()
+  if (applyCors(req, res)) return;
 
-    if (req.method === 'POST') {
-        const trackId = parseInt(req.query.id, 10);
-        const { action } = req.body;
-        
-        try {
-            const db = await connectToDatabase();
-            const collection = db.collection('tracks');
-            
-            const track = await collection.findOne({ id: trackId });
-            if(!track) return res.status(404).json({ error: "Voo não encontrado" });
-            
-            let currentLikes = track.interactions?.likes || 0;
-            
-            if (action === 'unlike') {
-                currentLikes = Math.max(0, currentLikes - 1);
-            } else {
-                currentLikes += 1;
-            }
-            
-            await collection.updateOne(
-                { id: trackId },
-                { $set: { "interactions.likes": currentLikes } }
-            );
-            
-            return res.status(200).json({ success: true, likes: currentLikes });
-            
-        } catch(err) {
-            console.error(err);
-            return res.status(500).json({ error: "Falha na comunicação." });
-        }
+  if (req.method === "POST") {
+    const rawId = req.query.id || req.vercelParams?.id;
+    const trackId = parseInt(rawId, 10);
+    if (isNaN(trackId)) return sendError(res, 400, "ID inválido.");
+    const { action } = req.body;
+
+    try {
+      const track = await trackRepository.findById(trackId);
+      if (!track) return sendNotFound(res, "Voo não encontrado");
+
+      const currentLikes = trackService.toggleLike(track, action);
+      await trackRepository.updateLikes(trackId, currentLikes);
+
+      return sendSuccess(res, { success: true, likes: currentLikes });
+    } catch (err) {
+      console.error(err);
+      return sendError(res, 500, "Falha na comunicação.");
     }
-    
-    return res.status(405).json({error: "Method Not Allowed"});
+  }
+
+  return sendMethodNotAllowed(res);
 };

@@ -17,9 +17,14 @@ async function connectToDatabase() {
       }
     });
 
-    await client.connect();
-    cachedDb = client.db("album-passagem");
-    return cachedDb;
+    try {
+        await client.connect();
+        cachedDb = client.db("album-passagem");
+        return cachedDb;
+    } catch (err) {
+        console.error("Erro fatal na conexão com MongoDB", err);
+        throw err;
+    }
 }
 
 module.exports = connectToDatabase;
