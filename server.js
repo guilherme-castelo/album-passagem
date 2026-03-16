@@ -3,16 +3,12 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
-// ─── Módulos da API ────────────────────────────────────────────────────────────
-const authRoutes = require('./api/modules/auth/authRoutes');
-const albumRoutes = require('./api/modules/album/albumRoutes');
-const trackRoutes = require('./api/modules/tracks/trackRoutes');
-const userRoutes = require('./api/modules/users/userRoutes');
-
-// ─── Rotas Legadas para compatibilidade Vercel Serverless ────────────────────
-const routeMusicas = require('./api/musicas/index');
-const routeLike = require('./api/musicas/[id]/like');
-const routeRate = require('./api/musicas/[id]/rate');
+// ─── Handlers da API (Vercel Serverless) ───────────────────────────────────────
+const authHandler = require('./api/auth/[[...path]]');
+const albumHandler = require('./api/album/[[...path]]');
+const trackHandler = require('./api/tracks/[[...path]]');
+const userHandler = require('./api/users/[[...path]]');
+const musicasHandler = require('./api/musicas/[[...path]]');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -21,25 +17,32 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// ─── Vercel Adapter (compatibilidade local para rotas [id]) ─────────────────
-// Na Vercel, parâmetros [id] chegam em req.query. Usamos req.vercelParams.
-function vercelAdapter(handler) {
+// ─── Vercel Adapter (Emulação Local de Catch-All Routes) ────────────────────
+function vercelCatchAll(handler, prefix) {
     return async (req, res) => {
-        req.vercelParams = req.params || {};
+        const urlStr = req.originalUrl.split('?')[0]; 
+        const subPath = urlStr.startsWith(prefix) ? urlStr.substring(prefix.length) : '';
+        
+        const pathArray = subPath && subPath !== '/' ? subPath.split('/').filter(Boolean) : [];
+        
+        // Atribui diretamente ao req um namespace customizado para evitar limitações do Express
+        req.vercelPath = pathArray;
+        
+        // Tenta também injetar no query para compatibilidade máxima com Next.js
+        if (!req.query) req.query = {};
+        try { req.query.path = pathArray; } catch (e) {}
+
+        console.log(`[VercelAdapter] ${req.method} ${req.originalUrl} -> path:`, req.vercelPath);
         return handler(req, res);
     };
 }
 
-// ─── Rotas dos Módulos (Clean Architecture) ──────────────────────────────────
-app.use('/api/auth', authRoutes);
-app.use('/api/album', albumRoutes);
-app.use('/api/tracks', trackRoutes);
-app.use('/api/users', userRoutes);
-
-// ─── Rotas Legadas do Site Público (compatibilidade) ─────────────────────────
-app.all('/api/musicas', vercelAdapter(routeMusicas));
-app.all('/api/musicas/:id/like', vercelAdapter(routeLike));
-app.all('/api/musicas/:id/rate', vercelAdapter(routeRate));
+// ─── Roteamento para as 5 Funções Serverless ─────────────────────────────────
+app.use('/api/auth', vercelCatchAll(authHandler, '/api/auth'));
+app.use('/api/album', vercelCatchAll(albumHandler, '/api/album'));
+app.use('/api/tracks', vercelCatchAll(trackHandler, '/api/tracks'));
+app.use('/api/users', vercelCatchAll(userHandler, '/api/users'));
+app.use('/api/musicas', vercelCatchAll(musicasHandler, '/api/musicas'));
 
 // ─── Servir Frontend Estático ────────────────────────────────────────────────
 app.use(express.static(path.join(__dirname, 'public')));
