@@ -1,0 +1,80 @@
+/* 
+  Estilos Customizados - Passagem
+  Classes utilitárias complementares ao Tailwind CSS.
+*/
+
+/* Tratar scroll suave para UX Mobile */
+html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    /* Prevenir overflow horizontal no mobile e pull-to-refresh em lugares errados */
+    overscroll-behavior-y: none;
+}
+
+/* Animação do Ícone de Voo no Header */
+.flight-icon {
+    animation: flightBob 3s infinite ease-in-out;
+}
+
+@keyframes flightBob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+}
+
+/* 
+  Lógica de Classes para Sistema das Views (SPA emulado)
+  As views têm position 'absolute' pra permitirem o translateX suave simulando navegação nativa IOS/Android
+*/
+.view-panel {
+    /* Esconde elementos ocultos do screen reader e touch events quando não estão ativos */
+    visibility: hidden;
+    opacity: 0;
+}
+
+.view-panel.active {
+    /* Volta pra display block mas a opacidade é tratada no JS ou aqui a seguir */
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(0);
+    position: relative;
+    z-index: 10;
+}
+
+/* Entrada vindo da Esquerda ou Direita dependendo da navegação */
+.view-panel.slide-out-left {
+    transform: translateX(-100%);
+    opacity: 0;
+}
+
+.view-panel.slide-out-right {
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+/* Ticket List Item (Efeito no clique) */
+.track-item {
+    transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+}
+
+.track-item:active {
+    transform: scale(0.97);
+    background-color: #f1f5f9; /* gray-100 equivalente ao tailwind */
+}
+
+/* Estilo customizado para barra de rolagem nas letras (Desktop/Opcional) */
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: #CBD5E1; 
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #94A3B8; 
+}
