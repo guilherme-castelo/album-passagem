@@ -424,8 +424,7 @@ async function handleLike() {
     
     // Envia API
     try {
-        const DEV_URL = window.location.hostname === 'localhost' ? 'http://localhost:3001' : '';
-        await fetch(`${DEV_URL}/api/musicas/${trackId}/like`, { 
+        await fetch(`/api/musicas/${trackId}/like`, { 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ action })
@@ -451,8 +450,7 @@ async function handleRating(ratingValue) {
     localStorage.setItem('ratedTracks', JSON.stringify(AppState.ratedTracks));
     
     try {
-        const DEV_URL = window.location.hostname === 'localhost' ? 'http://localhost:3001' : '';
-        const res = await fetch(`${DEV_URL}/api/musicas/${trackId}/rate`, { 
+        const res = await fetch(`/api/musicas/${trackId}/rate`, { 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ rating: ratingValue, oldRating: oldRating })
