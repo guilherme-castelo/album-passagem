@@ -5,6 +5,8 @@ const { verifyTokenHandler } = require('../../backend/lib/auth');
 module.exports = async function handler(req, res) {
     if (applyCors(req, res)) return;
 
+    const path = req.query.path || req.vercelPath || [];
+
     try {
         if (req.method === 'GET') {
             return await albumController.get(req, res);

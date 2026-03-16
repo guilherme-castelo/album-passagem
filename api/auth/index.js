@@ -4,7 +4,7 @@ const applyCors = require('../../backend/lib/cors');
 module.exports = async function handler(req, res) {
     if (applyCors(req, res)) return;
 
-    const path = req.query.path || []; // /api/auth/[login, register, etc.]
+    const path = req.query.path || req.vercelPath || []; // /api/auth/[login, register, etc.]
     const action = path[0];
 
     try {

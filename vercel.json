@@ -6,9 +6,28 @@
       "destination": "/public/index.html"
     },
     {
+      "source": "/api/auth/:path*",
+      "destination": "/api/auth/index.js"
+    },
+    {
+      "source": "/api/musicas/:path*",
+      "destination": "/api/musicas/index.js"
+    },
+    {
+      "source": "/api/tracks/:path*",
+      "destination": "/api/tracks/index.js"
+    },
+    {
+      "source": "/api/users/:path*",
+      "destination": "/api/users/index.js"
+    },
+    {
+      "source": "/api/album/:path*",
+      "destination": "/api/album/index.js"
+    },
+    {
       "source": "/:path((?!api/).*)",
       "destination": "/public/:path"
     }
   ]
 }
-

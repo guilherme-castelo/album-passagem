@@ -4,11 +4,11 @@ const cors = require('cors');
 const path = require('path');
 
 // ─── Handlers da API (Vercel Serverless) ───────────────────────────────────────
-const authHandler = require('./api/auth/[[...path]]');
-const albumHandler = require('./api/album/[[...path]]');
-const trackHandler = require('./api/tracks/[[...path]]');
-const userHandler = require('./api/users/[[...path]]');
-const musicasHandler = require('./api/musicas/[[...path]]');
+const authHandler = require('./api/auth/index');
+const albumHandler = require('./api/album/index');
+const trackHandler = require('./api/tracks/index');
+const userHandler = require('./api/users/index');
+const musicasHandler = require('./api/musicas/index');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -20,17 +20,17 @@ app.use(express.json());
 // ─── Vercel Adapter (Emulação Local de Catch-All Routes) ────────────────────
 function vercelCatchAll(handler, prefix) {
     return async (req, res) => {
-        const urlStr = req.originalUrl.split('?')[0]; 
+        const urlStr = req.originalUrl.split('?')[0];
         const subPath = urlStr.startsWith(prefix) ? urlStr.substring(prefix.length) : '';
-        
+
         const pathArray = subPath && subPath !== '/' ? subPath.split('/').filter(Boolean) : [];
-        
+
         // Atribui diretamente ao req um namespace customizado para evitar limitações do Express
         req.vercelPath = pathArray;
-        
+
         // Tenta também injetar no query para compatibilidade máxima com Next.js
         if (!req.query) req.query = {};
-        try { req.query.path = pathArray; } catch (e) {}
+        try { req.query.path = pathArray; } catch (e) { }
 
         console.log(`[VercelAdapter] ${req.method} ${req.originalUrl} -> path:`, req.vercelPath);
         return handler(req, res);

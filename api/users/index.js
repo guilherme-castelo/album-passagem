@@ -7,7 +7,7 @@ module.exports = async function handler(req, res) {
 
     if (!verifyTokenHandler(req, res)) return;
 
-    const path = req.query.path || [];
+    const path = req.query.path || req.vercelPath || [];
     const id = path[0];
 
     req.params = req.params || {};
@@ -17,15 +17,15 @@ module.exports = async function handler(req, res) {
         if (req.method === 'GET') {
             return await userController.list(req, res);
         }
-        
+
         if (req.method === 'POST') {
             return await userController.create(req, res);
         }
-        
+
         if (req.method === 'PUT' && id) {
             return await userController.update(req, res);
         }
-        
+
         if (req.method === 'DELETE' && id) {
             return await userController.delete(req, res);
         }
