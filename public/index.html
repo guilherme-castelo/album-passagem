@@ -45,6 +45,7 @@
     <!-- Estilos Customizados adicionais (Animações e detalhes não cobertos pelo Tailwind default) -->
     <link rel="stylesheet" href="/css/style.css" />
   </head>
+
   <body
     class="bg-gray-200 text-brand-dark font-sans antialiased min-h-screen flex justify-center selection:bg-brand-orange selection:text-white pb-10 pt-4 md:py-10"
   >
@@ -281,14 +282,6 @@
             </h2>
           </div>
 
-          <!-- Conteúdo da Letra -->
-          <div
-            id="lyrics-content"
-            class="text-lg leading-relaxed text-gray-800 whitespace-pre-wrap pb-8 font-medium"
-          >
-            <!-- Letra Injetada via JS -->
-          </div>
-
           <!-- In-flight Entertainment (Midia) -->
           <div id="media-container" class="mt-8 mb-8 hidden">
             <div
@@ -322,6 +315,14 @@
             </div>
           </div>
 
+          <!-- Conteúdo da Letra -->
+          <div
+            id="lyrics-content"
+            class="text-lg leading-relaxed text-gray-800 whitespace-pre-wrap pb-8 font-medium"
+          >
+            <!-- Letra Injetada via JS -->
+          </div>
+
           <!-- Feedback do Voo (Social) -->
           <div
             class="mt-4 mb-8 bg-white border border-gray-100 rounded-xl p-4 shadow-sm flex flex-col justify-center items-center"
@@ -329,7 +330,7 @@
             <h3
               class="font-mono text-xs text-gray-400 uppercase tracking-widest mb-3"
             >
-              Avalie esta parada
+              Avaliações
             </h3>
 
             <div class="flex items-center justify-between w-full px-4">
@@ -488,6 +489,9 @@
             </svg>
             <p class="font-mono text-xs text-brand-orange uppercase">
               Obrigado por voar conosco
+            </p>
+            <p class="font-mono text-xs text-brand-orange uppercase">
+              ÁLBUM PASSAGEM - BRUNO BRATILIERI
             </p>
           </div>
         </div>
