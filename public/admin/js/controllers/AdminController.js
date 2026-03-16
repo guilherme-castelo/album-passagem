@@ -94,14 +94,19 @@ export class AdminController {
     };
 
     // Users
-    users.onSave = async (data) => {
+    users.onSave = async (data, id) => {
       try {
-        await adminService.createUser(data);
-        toast.success('Usuário criado!');
-        users.resetForm();
+        if (id) {
+          await adminService.updateUser(id, data);
+          toast.success('Usuário atualizado!');
+        } else {
+          await adminService.createUser(data);
+          toast.success('Usuário criado!');
+        }
+        users.closeModal();
         await this._loadUsers();
       } catch (e) {
-        users.showFormError(e.message || 'Erro ao criar usuário.');
+        users.showFormError(e.message || 'Erro ao salvar usuário.');
       }
     };
 

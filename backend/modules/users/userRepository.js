@@ -8,7 +8,8 @@ class UserRepository {
 
     async findAll() {
         const collection = await this.getCollection();
-        return collection.find({}, { projection: { password: 0, _id: 0 } }).toArray();
+        const users = await collection.find({}, { projection: { password: 0 } }).toArray();
+        return users.map(u => ({ ...u, id: u._id.toString() }));
     }
 
     async findById(id) {
