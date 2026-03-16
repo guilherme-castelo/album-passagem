@@ -46,7 +46,7 @@ export class UsersView {
       <form id="user-form" class="space-y-4">
         <div>
           <label class="label">Nome de Usuário</label>
-          <input type="text" id="user-username" placeholder="admin" class="glass-input" required />
+          <input type="text" id="user-username" placeholder="username" class="glass-input" required />
         </div>
         <div>
           <label class="label">Senha</label>
