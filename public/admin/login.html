@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin — Login | Passagem</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: { blue: "#0F2C59", orange: "#F9B572" },
+            },
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+              mono: ["Roboto Mono", "monospace"],
+            },
+          },
+        },
+      };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/admin/css/admin.css" />
+  </head>
+  <body class="admin-body min-h-screen flex items-center justify-center font-sans">
+
+    <div class="w-full max-w-md px-4">
+      <!-- Logo / Header -->
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-brand-orange rounded-2xl mb-4 shadow-lg">
+          <svg class="w-8 h-8 text-brand-blue" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+        <h1 class="text-2xl font-bold text-white tracking-wide">Painel Administrativo</h1>
+        <p class="text-blue-300 text-sm font-mono mt-1">Álbum Passagem — Área Restrita</p>
+      </div>
+
+      <!-- Card de Login -->
+      <div class="glass rounded-2xl p-8 shadow-2xl">
+        <form id="login-form" class="space-y-5">
+          <!-- Username -->
+          <div>
+            <label class="block text-blue-200 text-sm font-medium mb-2 uppercase tracking-wider">Usuário</label>
+            <input
+              type="text"
+              id="username"
+              placeholder="admin"
+              autocomplete="username"
+              class="w-full bg-white/10 border border-white/20 text-white placeholder-blue-300 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange transition-all"
+              required
+            />
+          </div>
+
+          <!-- Password -->
+          <div>
+            <label class="block text-blue-200 text-sm font-medium mb-2 uppercase tracking-wider">Senha</label>
+            <input
+              type="password"
+              id="password"
+              placeholder="••••••••"
+              autocomplete="current-password"
+              class="w-full bg-white/10 border border-white/20 text-white placeholder-blue-300 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange transition-all"
+              required
+            />
+          </div>
+
+          <!-- Error msg -->
+          <div id="error-msg" class="hidden bg-red-500/20 border border-red-400/40 text-red-200 text-sm rounded-lg px-4 py-3"></div>
+
+          <!-- Submit -->
+          <button
+            type="submit"
+            id="btn-login"
+            class="w-full bg-brand-orange hover:bg-orange-400 text-brand-blue font-bold py-3 px-4 rounded-lg transition-all active:scale-95 uppercase tracking-widest text-sm shadow-md"
+          >
+            Entrar no Painel
+          </button>
+        </form>
+
+        <div class="mt-6 text-center">
+          <a href="/" class="text-blue-300 hover:text-brand-orange text-xs font-mono transition-colors">
+            ← Voltar ao site público
+          </a>
+        </div>
+      </div>
+
+      <p class="text-center text-blue-400/50 text-xs font-mono mt-6">
+        Album Passagem Admin v1.0
+      </p>
+    </div>
+
+    <script>
+      // Redireciona se já logado
+      if (localStorage.getItem('admin_token')) {
+        window.location.href = '/admin/';
+      }
+
+      document.getElementById('login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('btn-login');
+        const errEl = document.getElementById('error-msg');
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
+
+        btn.disabled = true;
+        btn.textContent = 'Autenticando...';
+        errEl.classList.add('hidden');
+
+        try {
+          const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+          });
+
+          const data = await res.json();
+
+          if (!res.ok) {
+            errEl.textContent = data.error || 'Credenciais inválidas.';
+            errEl.classList.remove('hidden');
+            return;
+          }
+
+          localStorage.setItem('admin_token', data.token);
+          localStorage.setItem('admin_username', data.username);
+          window.location.href = '/admin/';
+        } catch (err) {
+          errEl.textContent = 'Erro de conexão. Verifique se o servidor está ativo.';
+          errEl.classList.remove('hidden');
+        } finally {
+          btn.disabled = false;
+          btn.textContent = 'Entrar no Painel';
+        }
+      });
+    </script>
+  </body>
+</html>
