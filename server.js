@@ -57,8 +57,8 @@ app.get(/.*/, (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`✈️ Aeroporto ativo no portão http://localhost:${PORT}`);
-    console.log(`☁️ Modo Local-to-Serverless com Vercel Adapter ativado!`);
-    console.log(`🔐 Painel Admin: http://localhost:${PORT}/admin/login.html`);
+    console.log(`🚀 Server running at http://localhost:${PORT}`);
+    console.log(`⚡ Local-to-Serverless (Vercel Adapter) active`);
+    console.log(`🔐 Admin Panel: http://localhost:${PORT}/admin/login.html`);
 });
 

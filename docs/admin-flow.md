@@ -54,7 +54,7 @@ O painel admin é uma SPA (Single Page Application) com 3 seções principais: *
 O Hub é onde toda a gestão de faixas acontece:
 
 1. **Header do álbum** com botão "Voltar" e "Adicionar Música"
-2. **Tabela de tracks** com colunas: Drag Handle, Voo, Título, Status, Likes, Ações
+2. **Tabela de tracks** com colunas: Drag Handle, Code, Título, Status, Likes, Ações
 
 **Ações disponíveis:**
 - **Drag-and-Drop:** Arrastar linhas para reordenar → `POST /api/album/:id/reorder`

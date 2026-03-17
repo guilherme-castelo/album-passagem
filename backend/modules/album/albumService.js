@@ -1,11 +1,11 @@
 const albumRepository = require('./albumRepository');
 
-// Dados padrão caso o álbum ainda não exista no MongoDB
+// Dados padrão caso nenhum álbum exista no MongoDB
 const DEFAULT_ALBUM = {
-    title: 'Passagem',
-    artist: 'Bruno',
-    event: 'Pré-lançamento Teatro Belas Artes',
-    date: '2026-03-18T20:00:00-04:00'
+    title: 'Example Album',
+    artist: 'Artist Example',
+    event: 'Launch Event',
+    date: new Date().toISOString()
 };
 
 const ALLOWED_FIELDS = ['title', 'artist', 'event', 'date'];

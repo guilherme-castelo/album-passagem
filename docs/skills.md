@@ -196,7 +196,7 @@ if (req.method === 'GET') {
 
 ### Fase 3: Multi-tenant
 - Adicionar `tenantId` em todas as entidades.
-- Implementar subdomínios por artista (`artista.albumpassagem.com`).
+- Implementar subdomínios por artista (`artist.albumplatform.com`).
 - Isolar dados por tenant em todas as queries.
 
 ### Fase 4: Monetização

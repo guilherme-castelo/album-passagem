@@ -1,220 +1,159 @@
-# ✈️ Álbum Passagem — Plataforma Musical & Painel Administrativo
+# ✨ Album Platform — SaaS Musical & Admin Panel
 
-Plataforma fullstack para gestão e apresentação de álbuns musicais. Combina um **site público interativo** com temática de voo e um **painel administrativo** moderno para gestão completa de conteúdo.
-
-**Deploy:** [album-passagem.vercel.app](https://album-passagem.vercel.app)
+Plataforma SaaS fullstack para gestão e apresentação de álbuns musicais. Combina um **site público interativo** personalizável por álbum e um **painel administrativo** moderno para gestão completa de conteúdo, artistas e integrações.
 
 ---
 
 ## 🌍 Visão Geral
 
-O **Álbum Passagem** é uma aplicação web que transforma a experiência de ouvir um álbum musical em uma jornada de viagem aérea. O sistema foi construído com uma arquitetura pensada para escalar — suportando múltiplos álbuns, artistas e, futuramente, um modelo SaaS de portfólio musical.
+O **Album Platform** é uma plataforma SaaS onde artistas independentes podem criar, gerenciar e publicar álbuns musicais com páginas interativas personalizáveis. O sistema suporta múltiplos álbuns, artistas e, futuramente, multi-tenant com portfólios individuais.
 
 ### Objetivo
-Oferecer uma plataforma onde artistas possam apresentar seus álbuns com interatividade (likes, ratings, letras, mídia) e gerenciar todo o conteúdo via um painel administrativo intuitivo.
-
-### Contexto
-Originalmente criado para o álbum **"Passagem"** do artista Bruno, o sistema evoluiu para suportar múltiplos álbuns com relacionamento hierárquico entre entidades.
+Oferecer uma plataforma onde artistas possam apresentar seus álbuns com interatividade (likes, ratings, letras, mídia) e gerenciar todo o conteúdo via um painel administrativo intuitivo — com layouts e temas configuráveis por álbum.
 
 ---
 
 ## ✨ Funcionalidades
 
-### 🌐 Site Público (Experiência do Passageiro)
-Uma experiência imersiva simulando uma viagem de avião para apresentar as faixas do álbum.
-- **Check-in Interativo:** O usuário insere seu nome para gerar o "cartão de embarque".
-- **Painel de Voos (Tracklist):** Lista de faixas exibidas como voos num painel de aeroporto, com status em tempo real (ON TIME, BOARDING, etc).
-- **Player & Letras:** Visualização detalhada de cada faixa com suporte a players incorporados (YouTube/Spotify).
-- **Interações (Likes & Ratings):** Sistema em tempo real para curtir faixas e dar notas de 1 a 5 estrelas.
-- **Carimbo de Embarque:** Faixas visitadas recebem o selo visual **"BOARDED"**.
-- **Armazenamento Local:** Nome do passageiro e interações são salvos no localStorage.
+### 🌐 Site Público
+- **Tracklist Interativa:** Lista de faixas com status customizáveis.
+- **Player & Letras:** Visualização detalhada de cada faixa com players incorporados (YouTube/Spotify).
+- **Interações (Likes & Ratings):** Curtir faixas e dar notas de 1 a 5 estrelas.
+- **Layout Configurável:** Cada álbum pode ter seu próprio template, cores e tipografia via `uiConfig`.
+- **Armazenamento Local:** Interações são salvas no localStorage.
 
-### 🔐 Painel Administrativo (Área Restrita)
+### 🔐 Painel Administrativo
 Interface protegida com design **Glassmorphism** em tema escuro.
-- **Dashboard Analítico:** Total de faixas, likes, média de avaliações e ranking das músicas mais populares.
-- **Gestão de Álbuns (Multi-Album):** Listagem, criação, edição e exclusão de álbuns.
-- **Hub do Álbum:** Visão centralizada onde se edita os dados do disco e gerencia todas as músicas no mesmo contexto.
-- **Gestão de Faixas (CRUD):**
-  - Criação e edição via modal com editor Rich Text (Quill.js) para letras.
-  - Campos dinâmicos para múltiplas URLs de players de mídia (YouTube/Spotify).
-  - **Reordenação Drag-and-Drop:** Arraste e solte para definir a ordem das faixas.
-  - **Códigos de Voo Automáticos:** O campo `flightCode` (PSG01, PSG02...) é recalculado automaticamente.
-- **Controle de Acesso:** Login protegido por JWT e bcrypt. Gestão de múltiplos administradores.
-- **Componentização Avançada:** Tabelas de dados reutilizáveis com esqueletos de carregamento, paginação e *Toast notifications*.
+- **Dashboard Analítico:** Total de faixas, likes, média de avaliações.
+- **Gestão de Álbuns (Multi-Album):** CRUD completo com Hub centralizado.
+- **Gestão de Faixas:** CRUD via modal com Rich Text editor, drag-and-drop e códigos automáticos.
+- **Configuração de Template (`uiConfig`):** Cores, tipografia, layout e labels por álbum.
+- **Controle de Acesso:** JWT + bcrypt, gestão de admins.
+- **Componentização Avançada:** DataTable, Modal, Toast, ConfirmDialog reutilizáveis.
+
+> 📄 Detalhes do fluxo admin: [`docs/admin-flow.md`](docs/admin-flow.md)
 
 ---
 
-## 🗂️ Arquitetura do Projeto
+## 🗂️ Arquitetura
 
-O projeto adota a **Clean Architecture** no Backend e um padrão rigoroso de **ES6 Modules (Vanilla JS)** no Frontend para garantir máxima escalabilidade e manutenibilidade sem o uso de frameworks pesados no client-side.
+O projeto segue **Clean Architecture** no backend e **ES6 Modules (Vanilla JS)** no frontend.
 
-> 📄 Para detalhes completos, veja [`docs/architecture.md`](docs/architecture.md)
+> 📄 Detalhes completos: [`docs/architecture.md`](docs/architecture.md)
 
 ```
-album-passagem/
+album-platform/
 ├── api/                         ← Handlers Serverless (Vercel Functions)
 │   ├── album/                   ← Album CRUD + Tracks hierárquicos + Reorder
-│   ├── auth/                    ← Login e geração de JWT
-│   ├── musicas/                 ← Endpoint legado (site público)
+│   ├── auth/                    ← Login e JWT
+│   ├── musicas/                 ← Endpoint legado (retrocompatibilidade)
 │   ├── tracks/                  ← Tracks CRUD + Like/Rate
 │   └── users/                   ← Gestão de admins
 │
 ├── backend/                     ← Lógica de Negócio (Clean Architecture)
-│   ├── lib/                     ← Utilitários (DB, CORS, Auth, Response)
-│   └── modules/                 ← Domínios Isolados
-│       ├── album/               ← Controller → Service → Repository
-│       ├── auth/                ← Login e JWT
-│       ├── tracks/              ← Faixas, Interações e Reordenação
-│       └── users/               ← Administradores
+│   ├── lib/                     ← DB, CORS, Auth, Response helpers
+│   └── modules/                 ← Controller → Service → Repository
+│       ├── album/               ├── auth/
+│       ├── tracks/              └── users/
 │
 ├── public/                      ← Frontend Estático
-│   ├── admin/                   ← App do Painel Administrativo
-│   │   ├── css/                 ← Design Tokens e Glassmorphism UI
-│   │   └── js/                  ← Módulos ES6 (State, API, Components, Views, Utils)
-│   │
-│   ├── css/                     ← Estilos do Site Público
-│   ├── js/                      ← Módulos do Site Público (App, Router, State)
-│   │
-│   ├── index.html               ← Shell do Site Público
-│   └── admin/login.html         ← Shells do Admin
-│       └── index.html
+│   ├── admin/                   ← Painel Administrativo
+│   ├── js/                      ← Site Público (ES6 Modules)
+│   └── index.html
 │
-├── server.js                    ← Dev server local (Express + Vercel Adapter)
-├── seed-admin.js                ← Script para criar primeiro admin
-├── vercel.json                  ← Configuração de deploy e rewrites
-└── package.json
+├── docs/                        ← Documentação interna
+├── roadmap/                     ← Sprint plan
+├── backlog/                     ← Task backlog
+├── reports/                     ← Discovery & analysis reports
+└── ci/                          ← CI/CD proposals
 ```
-
-### Padrão Frontend (Modularização ES6)
-Tanto o site público quanto o admin seguem o Padrão Observer e Componentes de interface:
-*   `State`: Gerencia os dados globais (`AppState.js` / `AdminState.js`) de forma reativa.
-*   `Controllers`: Fazem o roteamento e orquestram a comunicação State ↔ View ↔ API.
-*   `Views/Components`: Elementos burros manipuladores da DOM, reutilizáveis (e.g. `ModalComponent.js`, `DataTable.js`).
 
 ---
 
 ## 📊 Estrutura de Dados
 
-O sistema utiliza MongoDB Atlas com o driver nativo (sem Mongoose). As entidades principais são:
-
-> 📄 Para detalhes completos, veja [`docs/data-model.md`](docs/data-model.md)
+> 📄 Schema completo: [`docs/data-model.md`](docs/data-model.md)
 
 ### `albums`
 | Campo | Tipo | Descrição |
 |-------|------|-----------|
-| `_id` | ObjectId | Identificador nativo do MongoDB |
+| `_id` | ObjectId | ID nativo MongoDB |
 | `title` | String | Título do álbum |
 | `artist` | String | Nome do artista |
 | `event` | String | Evento associado |
-| `date` | String (ISO) | Data de lançamento |
+| `date` | String | Data de lançamento |
+| `uiConfig` | Object | Configuração de template/layout |
 
 ### `tracks`
 | Campo | Tipo | Descrição |
 |-------|------|-----------|
-| `_id` | ObjectId | Identificador nativo do MongoDB |
-| `albumId` | String | Referência ao álbum (por referência) |
+| `_id` | ObjectId | ID nativo MongoDB |
+| `albumId` | String | Referência ao álbum |
 | `title` | String | Título da faixa |
-| `gate` | String | Portão de embarque (ex: A01) |
-| `flightCode` | String | Código do voo (ex: PSG01) |
-| `status` | String | ON TIME, DELAYED, FINAL CALL, BOARDING |
-| `order` | Number | Posição da faixa no álbum |
+| `order` | Number | Posição no álbum |
+| `trackCode` | String | Código identificador |
+| `trackTag` | String | Tag/categorização |
+| `status` | String | Status configurável |
 | `lyrics` | String | Letra da música |
-| `media` | Array | Widgets de mídia `[{type, origin, content}]` |
-| `interactions` | Object | `{ likes: Number, ratings: [Number] }` |
+| `media` | Array | Widgets de mídia |
+| `interactions` | Object | `{ likes, ratings }` |
 
 ---
 
-## 🔧 Tecnologias Utilizadas
+## 🔧 Tecnologias
 
 - **Backend:** Node.js, Express (Dev), Vercel Serverless Functions (Prod)
-- **Banco de Dados:** MongoDB Atlas (Native Driver sem Mongoose)
-- **Segurança:** JSON Web Tokens (JWT), Bcrypt
-- **Frontend CSS:** Tailwind CSS (via CDN) + CSS Customizado (Glassmorphism, Design Tokens)
-- **Frontend JS:** Vanilla JavaScript (ES6 Modules, Fetch API)
-- **Libs Externas Auxiliares:** Quill.js (Rich Text Editor)
+- **Banco de Dados:** MongoDB Atlas (Native Driver)
+- **Segurança:** JWT, Bcrypt
+- **Frontend CSS:** Tailwind CSS + Glassmorphism custom
+- **Frontend JS:** Vanilla JavaScript (ES6 Modules)
+- **Libs:** Quill.js (Rich Text Editor)
 
 ---
 
-## 🚀 Como Executar Localmente
+## 🚀 Setup Local
 
-### 1. Requisitos
-- Node.js (v18+)
-- Uma string de conexão MongoDB Atlas
-
-### 2. Instalação
 ```bash
-git clone <repo-url>
-cd album-passagem
+git clone <repo-url> && cd album-platform
 npm install
 ```
 
-### 3. Configuração de Ambiente
-Crie um arquivo `.env` na raiz do projeto:
+**`.env`:**
 ```env
-DB_USER=seu_usuario
-DB_PASS=sua_senha
+DB_USER=your_user
+DB_PASS=your_password
 PORT=3001
-JWT_SECRET=super_secret_key_12345
+JWT_SECRET=your_secret_key
 ```
 
-### 4. Setup do Banco de Dados
-Gere o usuário administrador base para acessar o painel:
 ```bash
-node seed-admin.js
-```
-*Cria automaticamente o usuário `admin` com a senha `admin`.*
-
-### 5. Iniciar o Servidor
-```bash
-npm run dev
+node seed-admin.js   # Create admin user (admin/admin)
+npm run dev          # Start dev server
 ```
 
-### 6. Acessos
-- **Site Público:** `http://localhost:3001`
-- **Login Admin:** `http://localhost:3001/admin/login.html`
-
-### 7. Deploy (Vercel)
-O projeto está configurado para deploy automático. O arquivo `vercel.json` define os rewrites para as 5 funções serverless.
+- **Public Site:** `http://localhost:3001`
+- **Admin Panel:** `http://localhost:3001/admin/login.html`
 
 ---
 
-## 📡 Endpoints da API
+## 📡 API
 
-> 📄 Para detalhes completos, veja [`docs/api.md`](docs/api.md)
+> 📄 Documentação completa: [`docs/api.md`](docs/api.md)
 
-As rotas administrativas requerem o header: `Authorization: Bearer <token>`
+Admin routes require `Authorization: Bearer <token>`
 
-### Públicos
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| `POST` | `/api/auth/login` | Retorna JWT Token |
-| `GET`  | `/api/musicas`    | Retorna álbum padrão + todas as tracks |
-| `POST` | `/api/musicas/:id/like` | Adiciona/remove Like |
-| `POST` | `/api/musicas/:id/rate` | Registra Rating (1-5) |
-
-### Álbuns (Admin)
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| `GET`  | `/api/album`      | Listar todos os álbuns |
-| `GET`  | `/api/album/:id`  | Detalhes de um álbum |
-| `POST` | `/api/album`      | Criar novo álbum |
-| `PUT`  | `/api/album/:id`  | Editar álbum |
-| `DELETE`| `/api/album/:id` | Remover álbum |
-
-### Tracks (Admin)
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| `GET`  | `/api/album/:id/tracks` | Listar tracks de um álbum |
-| `POST` | `/api/album/:id/tracks` | Criar track no álbum |
-| `POST` | `/api/album/:id/reorder` | Reordenar tracks (bulk) |
-| `GET`  | `/api/tracks/:id`  | Detalhes de uma track |
-| `PUT`  | `/api/tracks/:id`  | Editar track |
-| `DELETE`| `/api/tracks/:id` | Remover track |
-
-### Usuários (Admin)
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| `GET`/`POST`/`PUT`/`DELETE` | `/api/users` | CRUD completo de Admins |
+| Método | Endpoint | Auth | Descrição |
+|--------|----------|:----:|-----------|
+| `POST` | `/api/auth/login` | ✗ | JWT Token |
+| `GET` | `/api/musicas` | ✗ | Default album + tracks (legacy) |
+| `POST` | `/api/musicas/:id/like` | ✗ | Toggle like |
+| `POST` | `/api/musicas/:id/rate` | ✗ | Rate 1-5 |
+| `GET/POST` | `/api/album` | ✓ | List / Create albums |
+| `GET/PUT/DELETE` | `/api/album/:id` | ✓ | Album CRUD |
+| `GET/POST` | `/api/album/:id/tracks` | ✓ | Album tracks |
+| `POST` | `/api/album/:id/reorder` | ✓ | Reorder tracks |
+| `GET/PUT/DELETE` | `/api/tracks/:id` | ✓ | Track CRUD |
+| CRUD | `/api/users` | ✓ | Admin management |
 
 ---
 
@@ -222,25 +161,27 @@ As rotas administrativas requerem o header: `Authorization: Bearer <token>`
 
 | Fase | Objetivo | Status |
 |------|----------|--------|
-| ✅ v1.0 | Álbum único com gestão de faixas | Concluído |
-| ✅ v1.1 | Multi-album, Album Hub e Drag-and-Drop | Concluído |
-| 🔜 v1.2 | Suporte a múltiplos artistas | Planejado |
-| 🔜 v1.3 | Autenticação pública (OAuth/Social) | Planejado |
-| 🔜 v2.0 | Portfólio de artistas e modelo SaaS | Planejado |
+| ✅ v1.0 | Core platform with album management | Done |
+| ✅ v1.1 | Multi-album, Album Hub, Drag-and-Drop | Done |
+| 🔜 v1.2 | Configurable templates (`uiConfig`) | Planned |
+| 🔜 v1.3 | Multi-artist support | Planned |
+| 🔜 v2.0 | SaaS: multi-tenant, auth, integrations | Planned |
 
-> 📄 Para detalhes do roadmap, veja [`docs/saas-roadmap.md`](docs/saas-roadmap.md)
+> 📄 Sprint plan: [`roadmap/sprints.md`](roadmap/sprints.md) · Backlog: [`backlog/backlog.md`](backlog/backlog.md)
 
 ---
 
-## 📚 Documentação Interna
+## 📚 Documentation
 
-| Documento | Descrição |
-|-----------|-----------|
-| [`docs/architecture.md`](docs/architecture.md) | Decisões arquiteturais e estrutura do sistema |
-| [`docs/api.md`](docs/api.md) | Documentação completa da API REST |
-| [`docs/data-model.md`](docs/data-model.md) | Modelo de dados e entidades MongoDB |
-| [`docs/admin-flow.md`](docs/admin-flow.md) | Fluxo do painel administrativo |
-| [`docs/development-rules.md`](docs/development-rules.md) | Regras e convenções de desenvolvimento |
-| [`docs/patterns.md`](docs/patterns.md) | Padrões arquiteturais utilizados |
-| [`docs/skills.md`](docs/skills.md) | Guia para evolução do projeto |
-| [`docs/saas-roadmap.md`](docs/saas-roadmap.md) | Roadmap para modelo SaaS |
+| Document | Description |
+|----------|-------------|
+| [`docs/architecture.md`](docs/architecture.md) | System architecture |
+| [`docs/api.md`](docs/api.md) | Full API reference |
+| [`docs/data-model.md`](docs/data-model.md) | MongoDB schema |
+| [`docs/ui-config.md`](docs/ui-config.md) | Template & uiConfig system |
+| [`docs/admin-flow.md`](docs/admin-flow.md) | Admin panel flow |
+| [`docs/integrations.md`](docs/integrations.md) | Integration architecture |
+| [`docs/development-rules.md`](docs/development-rules.md) | Coding conventions |
+| [`docs/patterns.md`](docs/patterns.md) | Architectural patterns |
+| [`docs/skills.md`](docs/skills.md) | Project evolution guide |
+| [`docs/saas-roadmap.md`](docs/saas-roadmap.md) | SaaS roadmap |

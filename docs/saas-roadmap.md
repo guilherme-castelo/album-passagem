@@ -2,7 +2,7 @@
 
 ## Visão de Futuro
 
-O Álbum Passagem nasceu como plataforma de apresentação para um álbum específico, mas sua arquitetura foi projetada para evoluir para um **SaaS de portfólio musical** onde artistas independentes podem criar suas próprias páginas interativas.
+O Album Platform nasceu como plataforma de apresentação para álbuns musicais, e sua arquitetura foi projetada para evoluir para um **SaaS de portfólio musical** onde artistas independentes podem criar suas próprias páginas interativas.
 
 ---
 
@@ -36,8 +36,8 @@ Permitir que múltiplos artistas tenham seus álbuns na plataforma.
 ```json
 {
   "_id": ObjectId,
-  "name": "Bruno",
-  "slug": "bruno",
+  "name": "Artist Example",
+  "slug": "artist-example",
   "bio": "Artista independente...",
   "avatar": "url",
   "links": {
@@ -81,7 +81,7 @@ Transformar a plataforma em um produto comercial para artistas independentes.
 | Área | Mudança |
 |------|---------|
 | **Multi-tenant** | `tenantId` em todas as entidades |
-| **Subdomínios** | `artista.albumpassagem.com` |
+| **Subdomínios** | `artist.albumplatform.com` |
 | **Billing** | Integração com Stripe |
 | **Analytics** | Dashboard público com métricas |
 | **CDN** | Upload de imagens/áudio para S3 ou Cloudinary |

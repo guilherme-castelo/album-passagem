@@ -1,5 +1,5 @@
 {
-  "name": "album-passagem",
+  "name": "album-platform",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -8,8 +8,8 @@
     "seed": "node seed.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "description": "Site oficial do álbum Passagem de Bruno — letras, likes e avaliações",
-  "author": "Bruno",
+  "description": "SaaS platform for music album management — tracks, lyrics, likes, ratings and media integrations",
+  "author": "",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^3.0.3",

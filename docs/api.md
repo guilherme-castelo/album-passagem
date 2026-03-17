@@ -38,11 +38,11 @@ Retorna o álbum padrão (primeiro cadastrado) e todas as suas tracks ordenadas 
 **Response (200):**
 ```json
 {
-  "album": { "_id": "...", "title": "Passagem", "artist": "Bruno" },
+  "album": { "_id": "...", "title": "Example Album", "artist": "Artist Example" },
   "tracks": [
     {
       "_id": "...", "albumId": "...", "title": "Faixa 1",
-      "gate": "A01", "flightCode": "PSG01", "status": "ON TIME",
+      "gate": "A01", "trackCode": "TRK01", "status": "Published",
       "order": 1, "lyrics": "...",
       "media": [{ "type": "iframe", "origin": "youtube", "content": "url" }],
       "interactions": { "likes": 5, "ratings": [4, 5, 3] }
@@ -104,18 +104,18 @@ Cria uma nova track vinculada ao álbum.
 **Body:**
 ```json
 {
-  "title": "Nova Faixa", "gate": "A01", "flightCode": "PSG01",
-  "status": "ON TIME", "lyrics": "Letra...",
+  "title": "Nova Faixa", "gate": "A01", "trackCode": "TRK01",
+  "status": "Published", "lyrics": "Letra...",
   "media": [{ "type": "iframe", "origin": "youtube", "content": "url" }]
 }
 ```
 
-**Campos obrigatórios:** `title`, `gate`, `flightCode`
+**Campos obrigatórios:** `title`, `gate`, `trackCode`
 
-**Status válidos:** `ON TIME`, `DELAYED`, `FINAL CALL`, `BOARDING`
+**Status válidos:** Configuráveis via `uiConfig.labels.statuses` (padrão: `Published`, `Draft`, `Featured`, `Hidden`)
 
 #### `POST /api/album/:id/reorder`
-Reordena todas as tracks do álbum. Atualiza `order` e recalcula `flightCode` automaticamente.
+Reordena todas as tracks do álbum. Atualiza `order` e recalcula `trackCode` automaticamente.
 
 **Body:**
 ```json

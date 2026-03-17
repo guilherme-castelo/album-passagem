@@ -3,7 +3,7 @@ const connectToDatabase = require('../../lib/db');
 class AlbumRepository {
     async getCollection() {
         const db = await connectToDatabase();
-        return db.collection('album');
+        return db.collection('albums');
     }
 
     async findAll() {

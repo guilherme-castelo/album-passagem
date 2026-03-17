@@ -1,140 +1,229 @@
-# 🗃️ Modelo de Dados
+# 🗃️ Modelo de Dados — Multi-Tenant SaaS
 
 ## Banco de Dados
 
 - **Provedor:** MongoDB Atlas
-- **Database:** `album-passagem`
+- **Database:** `album-platform` (branch develop/feature) · `album-passagem` (branch main/legacy)
 - **Driver:** MongoDB Native Driver (v7+)
 - **Conexão:** Singleton com connection pooling (`cachedDb`)
+- **Env var:** `DB_NAME` seleciona o banco (default: `album-platform`)
 
 ---
 
 ## Collections
 
-### `album`
-
-Representa um álbum musical.
-
-```json
-{
-  "_id": ObjectId("..."),
-  "title": "Passagem",
-  "artist": "Bruno",
-  "event": "Pré-lançamento Teatro Belas Artes",
-  "date": "2026-03-18T20:00:00-04:00",
-  "createdAt": ISODate("..."),
-  "updatedAt": ISODate("...")
-}
-```
-
-| Campo | Tipo | Obrigatório | Descrição |
-|-------|------|:-----------:|-----------|
-| `_id` | ObjectId | Auto | Identificador nativo do MongoDB |
-| `title` | String | Sim | Título do álbum |
-| `artist` | String | Sim | Nome do artista |
-| `event` | String | Não | Evento associado ao lançamento |
-| `date` | String | Não | Data de lançamento (ISO 8601) |
-| `createdAt` | Date | Auto | Data de criação |
-| `updatedAt` | Date | Auto | Data da última atualização |
-
----
-
-### `tracks`
-
-Representa uma faixa musical vinculada a um álbum.
+### `tenants`
+Representa uma organização/label na plataforma multi-tenant.
 
 ```json
 {
   "_id": ObjectId("..."),
-  "albumId": "string_id_do_album",
-  "title": "Nome da Faixa",
-  "gate": "A01",
-  "flightCode": "PSG01",
-  "status": "ON TIME",
-  "order": 1,
-  "lyrics": "Letra da música...",
-  "media": [
-    { "type": "iframe", "origin": "youtube", "content": "https://..." },
-    { "type": "iframe", "origin": "spotify", "content": "https://..." }
-  ],
-  "interactions": {
-    "likes": 42,
-    "ratings": [5, 4, 5, 3, 4]
-  },
-  "createdAt": ISODate("..."),
-  "updatedAt": ISODate("...")
+  "name": "My Label",
+  "slug": "my-label",
+  "plan": "free",
+  "settings": {},
+  "createdAt": ISODate("...")
 }
 ```
 
 | Campo | Tipo | Obrigatório | Descrição |
 |-------|------|:-----------:|-----------|
 | `_id` | ObjectId | Auto | Identificador nativo |
-| `albumId` | String | Sim | Referência ao álbum pai |
-| `title` | String | Sim | Título da faixa |
-| `gate` | String | Sim | Portão de embarque (temática) |
-| `flightCode` | String | Sim | Código do voo (ex: PSG01) |
-| `status` | String | Não | `ON TIME`, `DELAYED`, `FINAL CALL`, `BOARDING` |
-| `order` | Number | Auto | Posição no álbum (usado para ordenação) |
-| `lyrics` | String | Não | Letra da música (texto simples) |
-| `media` | Array | Não | Widgets de mídia incorporáveis |
-| `interactions` | Object | Auto | Dados de engajamento |
+| `name` | String | Sim | Nome da organização |
+| `slug` | String | Sim | Slug único (subdomínio) |
+| `plan` | String | Sim | `free`, `pro`, `label` |
+| `settings` | Object | Não | Configurações do tenant |
 | `createdAt` | Date | Auto | Data de criação |
+
+**Índices:** `slug` (unique)
 
 ---
 
-### `users`
+### `artists`
+Representa um artista vinculado a um tenant.
 
+```json
+{
+  "_id": ObjectId("..."),
+  "tenantId": "string",
+  "name": "Artist Example",
+  "slug": "artist-example",
+  "bio": "Bio do artista...",
+  "avatar": "url",
+  "links": { "website": "", "instagram": "", "spotify": "" },
+  "createdAt": ISODate("...")
+}
+```
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|:-----------:|-----------|
+| `tenantId` | String | Sim | Referência ao tenant |
+| `name` | String | Sim | Nome do artista |
+| `slug` | String | Sim | Slug único dentro do tenant |
+| `bio` | String | Não | Biografia |
+| `avatar` | String | Não | URL da imagem |
+| `links` | Object | Não | Links sociais |
+
+**Índices:** `tenantId+slug` (unique), `tenantId`
+
+---
+
+### `albums`
+Representa um álbum musical (coleção renomeada de `album` → `albums`).
+
+```json
+{
+  "_id": ObjectId("..."),
+  "tenantId": "string",
+  "artistId": "string",
+  "title": "Example Album",
+  "artist": "Artist Example",
+  "event": "Launch Event",
+  "date": "2026-01-01T00:00:00Z",
+  "uiConfig": { "theme": "default", "colors": {}, "typography": {}, "layout": {}, "labels": {}, "branding": {} },
+  "isDefault": true,
+  "createdAt": ISODate("..."),
+  "updatedAt": ISODate("...")
+}
+```
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|:-----------:|-----------|
+| `tenantId` | String | Sim | Referência ao tenant |
+| `artistId` | String | Sim | Referência ao artista |
+| `title` | String | Sim | Título do álbum |
+| `artist` | String | Sim | Nome do artista (denormalizado) |
+| `event` | String | Não | Evento associado |
+| `date` | String | Não | Data de lançamento (ISO 8601) |
+| `uiConfig` | Object | Não | Configuração de template/layout ([docs/ui-config.md](ui-config.md)) |
+| `isDefault` | Boolean | Não | Álbum padrão do site público |
+
+**Índices:** `artistId`, `tenantId`
+
+---
+
+### `tracks`
+Representa uma faixa musical vinculada a um álbum.
+
+```json
+{
+  "_id": ObjectId("..."),
+  "tenantId": "string",
+  "albumId": "string",
+  "title": "Track Title",
+  "trackCode": "TRK01",
+  "trackTag": "Opening",
+  "status": "Published",
+  "order": 1,
+  "lyrics": "Lyrics here...",
+  "media": [
+    { "type": "iframe", "origin": "youtube", "content": "https://..." },
+    { "type": "iframe", "origin": "spotify", "content": "https://..." }
+  ],
+  "interactions": { "likes": 0, "ratings": [] },
+  "createdAt": ISODate("..."),
+  "updatedAt": ISODate("...")
+}
+```
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|:-----------:|-----------|
+| `tenantId` | String | Sim | Referência ao tenant |
+| `albumId` | String | Sim | Referência ao álbum |
+| `title` | String | Sim | Título da faixa |
+| `trackCode` | String | Sim | Código identificador (ex: TRK01) |
+| `trackTag` | String | Não | Tag/categoria |
+| `status` | String | Não | Configurável via `uiConfig.labels.statuses` |
+| `order` | Number | Auto | Posição no álbum |
+| `lyrics` | String | Não | Letra da música |
+| `media` | Array | Não | Widgets de mídia incorporáveis |
+| `interactions` | Object | Auto | `{ likes: Number, ratings: [Number] }` |
+
+**Índices:** `albumId+order`, `tenantId`
+
+---
+
+### `admins`
 Representa um administrador do painel.
 
 ```json
 {
   "_id": ObjectId("..."),
+  "tenantId": null,
   "username": "admin",
   "password": "$2b$10$hashedPassword...",
+  "role": "superadmin",
   "createdAt": ISODate("...")
 }
 ```
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `tenantId` | String/null | `null` = superadmin (acesso global) |
+| `role` | String | `superadmin`, `admin`, `editor` |
+
+**Índices:** `username` (unique), `tenantId`
+
+---
+
+### `fans` (futuro)
+Usuários públicos da plataforma.
+
+**Índices:** `email` (unique sparse)
+
+### `credentials` (futuro)
+Credenciais de integração por artista.
+
+**Índices:** `artistId+provider` (unique)
+
+### `webhooks` (futuro)
+Log de webhooks recebidos.
 
 ---
 
 ## Relacionamentos
 
 ```
-album (1) ←──── (N) tracks
+tenant (1) ←──── (N) artists
                       │
-                      ├── interactions.likes (Number)
-                      └── interactions.ratings (Array<Number>)
+              artist (1) ←──── (N) albums
+                                    │
+                            album (1) ←──── (N) tracks
+                                              │
+                                    interactions (embedded)
+
+tenant (1) ←──── (N) admins
 ```
 
-O relacionamento `album ↔ tracks` é feito por **referência**: `tracks.albumId` armazena o `_id` do álbum como string.
-
-### Por que referência ao invés de embedding?
-- **Flexibilidade:** Tracks podem ser consultadas independentemente.
-- **Performance:** Atualizações em tracks (likes, ratings) não bloqueiam o documento do álbum.
-- **Escalabilidade:** Preparado para cenários com muitas faixas por álbum.
+Todos os relacionamentos são por **referência via string ID** (`tenantId`, `artistId`, `albumId`).
 
 ---
 
-## Índices Recomendados
+## Isolamento Multi-Tenant
+
+**Toda query deve incluir `tenantId`** para garantir isolamento de dados:
 
 ```javascript
-// Para queries de tracks por álbum
-db.tracks.createIndex({ albumId: 1, order: 1 });
+// ✅ Correto
+collection.find({ tenantId, albumId })
 
-// Para busca rápida de tracks
-db.tracks.createIndex({ _id: 1 });
+// ❌ Incorreto (vaza dados entre tenants)
+collection.find({ albumId })
 ```
+
+Exceção: superadmins (`tenantId: null`) podem acessar dados de qualquer tenant.
 
 ---
 
-## Valores Padrão
+## Setup
 
-Quando nenhum álbum existe no banco, o sistema utiliza um álbum fallback:
-```javascript
-const DEFAULT_ALBUM = {
-    title: 'Passagem',
-    artist: 'Bruno',
-    event: 'Pré-lançamento Teatro Belas Artes',
-    date: '2026-03-18T20:00:00-04:00'
-};
+```bash
+# Inicia o banco album-platform com collections, indexes e dados de exemplo
+node scripts/setup-platform.js
+
+# Pula dados de exemplo
+node scripts/setup-platform.js --skip-example
+
+# Usa banco legacy (branch main)
+DB_NAME=album-passagem node scripts/setup-platform.js
 ```

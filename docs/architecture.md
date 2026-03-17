@@ -2,7 +2,7 @@
 
 ## Visão Geral
 
-O Álbum Passagem segue uma arquitetura em camadas com separação clara entre Backend (lógica de negócio), API (handlers serverless) e Frontend (ES6 Modules com Vanilla JS).
+O Album Platform segue uma arquitetura em camadas com separação clara entre Backend (lógica de negócio), API (handlers serverless) e Frontend (ES6 Modules com Vanilla JS).
 
 ```
 ┌──────────────────────────────────────────────┐
@@ -53,7 +53,7 @@ Cada módulo segue o padrão **Controller → Service → Repository**:
 
 ### Módulos
 - **album**: CRUD de álbuns. Campos permitidos via whitelist (`ALLOWED_FIELDS`).
-- **tracks**: CRUD de faixas, interações (like/rate), reordenação com `flightCode` automático.
+- **tracks**: CRUD de faixas, interações (like/rate), reordenação com `trackCode` automático.
 - **auth**: Login com bcrypt + geração de JWT.
 - **users**: CRUD de administradores.
 
@@ -130,3 +130,4 @@ Mesma arquitetura, com componentes reutilizáveis:
 | **Relacionamento por referência** | `tracks.albumId` referencia `album._id` para flexibilidade |
 | **Connection pooling** | `cachedDb` reutiliza conexão entre invocações serverless |
 | **JWT stateless** | Sem sessão no servidor, ideal para serverless |
+| **Configurable templates** | `uiConfig` permite personalização visual por álbum |

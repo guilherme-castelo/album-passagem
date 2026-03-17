@@ -162,9 +162,9 @@ A reordenação usa HTML5 Drag-and-Drop API nativo:
 1. Usuário arrasta linha da tabela
 2. AlbumDetailView._setupDragAndDrop() escuta dragstart/dragover/drop
 3. _handleReorder() extrai nova ordem de IDs
-4. Atualiza flightCodes localmente (Optimistic UI)
+4. Atualiza trackCodes localmente (Optimistic UI)
 5. Chama adminService.reorderTracks(albumId, trackIds)
-6. Backend trackService.updateOrder() recalcula order + flightCode
+6. Backend trackService.updateOrder() recalcula order + trackCode
 ```
 
 ---
@@ -192,7 +192,7 @@ let cachedDb = null;
 async function connectToDatabase() {
     if (cachedDb) return cachedDb; // Reutiliza
     const client = new MongoClient(uri);
-    cachedDb = client.db("album-passagem");
+    cachedDb = client.db("album-platform");
     return cachedDb;
 }
 ```
