@@ -2,8 +2,9 @@
  * AlbumDetailView — The "Hub" for a single album.
  * Displays album info + integrated tracks table.
  */
-import { $ } from '../utils/dom.js';
+import { $, $$ } from '../utils/dom.js';
 import { DataTable } from '../components/DataTable.js';
+import { ThemeEditor } from '../components/ThemeEditor.js';
 
 const STATUS_COLORS = {
   'ON TIME': 'badge-success',
@@ -26,6 +27,10 @@ export class AlbumDetailView {
     this.onEditTrack = null;
     /** @type {Function|null} (trackId, title) => void */
     this.onDeleteTrack = null;
+    /** @type {Function|null} (newConfig) => void */
+    this.onSaveTheme = null;
+    /** @type {Function|null} (trackIds) => void */
+    this.onReorder = null;
 
     this._album = null;
     this._buildLayout();
@@ -56,8 +61,14 @@ export class AlbumDetailView {
           </div>
         </div>
 
-        <!-- Tracks Section -->
-        <div class="space-y-4">
+        <!-- Tabs -->
+        <div class="flex items-center gap-1 border-b border-white/10">
+          <button id="tab-tracks" class="tab-btn active">Músicas</button>
+          <button id="tab-theme" class="tab-btn">Aparência do Álbum</button>
+        </div>
+
+        <!-- Tab Content: Tracks -->
+        <div id="content-tracks" class="tab-content active space-y-4">
           <div class="flex items-center justify-between">
             <h3 class="font-bold text-lg text-white">Faixas do Álbum</h3>
             <button id="btn-add-track-context" class="btn-primary flex items-center gap-2">
@@ -67,11 +78,24 @@ export class AlbumDetailView {
           </div>
           <div id="album-tracks-table"></div>
         </div>
+
+        <!-- Tab Content: Theme -->
+        <div id="content-theme" class="tab-content hidden">
+          <div id="theme-editor-container"></div>
+        </div>
       </div>
     `;
 
     this._setupTable();
+    this._setupThemeEditor();
     this._attachEvents();
+  }
+
+  _setupThemeEditor() {
+    this.themeEditor = new ThemeEditor($('theme-editor-container'));
+    this.themeEditor.onSave = (config) => {
+      if (this.onSaveTheme) this.onSaveTheme(config);
+    };
   }
 
   _setupTable() {
@@ -183,6 +207,25 @@ export class AlbumDetailView {
     $('btn-add-track-context').addEventListener('click', () => {
       if (this.onAddTrack) this.onAddTrack();
     });
+
+    // Tab switching
+    $('tab-tracks').addEventListener('click', () => this._switchTab('tracks'));
+    $('tab-theme').addEventListener('click', () => this._switchTab('theme'));
+  }
+
+  _switchTab(tab) {
+    // Buttons
+    $$('.tab-btn').forEach((b) => b.classList.remove('active'));
+    $(`tab-${tab}`).classList.add('active');
+
+    // Content
+    $$('.tab-content').forEach((c) => {
+      c.classList.add('hidden');
+      c.classList.remove('active');
+    });
+    const selected = $(`content-${tab}`);
+    selected.classList.remove('hidden');
+    selected.classList.add('active');
   }
 
   render(album, tracks) {
@@ -190,6 +233,7 @@ export class AlbumDetailView {
     $('display-album-id').textContent = album.id || album._id;
     this._renderInfo(album);
     this.table.setData(tracks);
+    this.themeEditor.render(album.uiConfig || {});
   }
 
   _renderInfo(data) {

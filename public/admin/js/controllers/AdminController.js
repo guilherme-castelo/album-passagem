@@ -106,6 +106,21 @@ export class AdminController {
       }
     };
 
+    albumDetail.onSaveTheme = async (config) => {
+      const album = AdminState.get('selectedAlbum');
+      if (!album) return;
+      try {
+        const payload = config === 'RESET' ? { uiConfig: null } : { uiConfig: config };
+        await adminService.updateAlbum(album._id, payload);
+        toast.success(
+          config === 'RESET' ? 'Tema resetado para padrões!' : 'Tema salvo com sucesso!'
+        );
+        await this._refreshAlbumHub();
+      } catch (e) {
+        toast.error('Erro ao salvar tema');
+      }
+    };
+
     albumDetail.onReorder = async (trackIds) => {
       const album = AdminState.get('selectedAlbum');
       if (!album) return;
