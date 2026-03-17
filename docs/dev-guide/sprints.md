@@ -1,169 +1,116 @@
-# 🗓️ Sprint Plan — SaaS Evolution
+# 🗓️ Sprint History & Roadmap
 
-## Overview
-
-10-week plan with weekly sprints delivering functional increments.
-
-**DoD (Definition of Done) for all sprints:**
-
-- Code passes lint + existing tests
-- PR with Conventional Commit title + description
-- Documentation updated for changed features
-- Reviewed by at least 1 team member
+Este documento registra a evolução real do projeto e planeja os próximos passos rumo à plataforma SaaS.
 
 ---
 
-## Sprint 1 — Foundation & Cleanup
+# 📜 Sprint History (Concluídas)
 
-**Objective:** Clean up MVP references and establish development infrastructure.
+## Sprint 1 — Fundação & Transição Multi-Álbum
 
-| #   | Task                                             | Est. | Role       |
-| --- | ------------------------------------------------ | ---- | ---------- |
-| 1   | Remove MVP references from all docs              | 0.5d | Full-stack |
-| 2   | Generalize seeds and migration scripts           | 0.5d | Backend    |
-| 3   | Delete legacy `backend/services/trackService.js` | 0.5d | Backend    |
-| 4   | Set up ESLint + Prettier + pre-commit hooks      | 1d   | Infra      |
-| 5   | Create initial GitHub Actions CI pipeline        | 1d   | Infra      |
+**Objetivo:** Migrar o sistema de um único álbum estático para uma estrutura dinâmica de múltiplos álbuns.
 
-**Acceptance:** No Passagem/Bruno references in docs. CI runs on PR.
+- **Entregas:**
+  - Criação da collection `albums` no MongoDB.
+  - Associação de faixas via `albumId`.
+  - Migração de dados legados do "Passagem" para a nova estrutura.
+  - CRUD básico de álbuns no Admin.
+- **Impacto:** Permitiu que a plataforma suportasse mais de um lançamento simultaneamente.
 
----
+## Sprint 2 — Padronização de Dados & API
 
-## Sprint 2 — uiConfig Backend
+**Objetivo:** Estabelecer padrões de identificação e rotas de API robustas.
 
-**Objective:** Implement uiConfig storage and API support.
+- **Entregas:**
+  - Padronização de `_id` como string em todo o backend/frontend.
+  - Implementação de roteamento hierárquico: `/api/album/:id/tracks`.
+  - Refatoração do `trackController` e `trackService` para isolamento de contexto.
+- **Impacto:** API mais limpa e consistente, facilitando a gestão de faixas por álbum.
 
-| #   | Task                                                    | Est. | Role    |
-| --- | ------------------------------------------------------- | ---- | ------- |
-| 6   | Add `uiConfig` to `ALLOWED_FIELDS` in albumService      | 0.5d | Backend |
-| 7   | Create uiConfig validation/sanitization middleware      | 1.5d | Backend |
-| 8   | Add uiConfig defaults merging logic                     | 1d   | Backend |
-| 9   | Update `/api/album` endpoints to accept/return uiConfig | 0.5d | Backend |
-| 10  | Unit tests for uiConfig validation                      | 1d   | Backend |
+## Sprint 3 — Reset Visual & Abstração (The Engine) 🚀
 
-**Acceptance:** Albums can store and return uiConfig via API. Validation rejects malformed configs.
+**Objetivo:** Desacoplar o design fixo do código e criar um motor de renderização genérico.
 
----
+- **Entregas:**
+  - Implementação do `uiConfig` (JSON Schema) para controle total da interface.
+  - Criação do `ThemeManager.js` para injeção dinâmica de estilos.
+  - Setup do `vars.css` (CSS Variables) eliminando cores e fontes hardcoded.
+  - Refatoração total dos componentes frontend (`TrackList`, `LyricsView`, `ViewRouter`) para neutralidade visual.
+  - Arquivamento de assets e estilos legados em `/legacy`.
+- **Impacto:** Transformou o site em um software agnóstico capaz de "vestir" qualquer tema sem alteração de código.
 
-## Sprint 3 — uiConfig Admin UI
+## Sprint 4 — Refinamento UX & Estabilização
 
-**Objective:** Admin panel UI for editing album themes.
+**Objetivo:** Corrigir bugs críticos e melhorar a percepção de performance.
 
-| #   | Task                                                          | Est. | Role     |
-| --- | ------------------------------------------------------------- | ---- | -------- |
-| 11  | Create Theme Editor component (color pickers, font selectors) | 2d   | Frontend |
-| 12  | Add Theme Editor tab to Album Hub                             | 1d   | Frontend |
-| 13  | Implement live preview panel                                  | 1.5d | Frontend |
-| 14  | Import/Export uiConfig as JSON                                | 0.5d | Frontend |
+- **Entregas:**
+  - **Bugfix Admin:** Habilitação da exclusão de álbuns (binding do controller).
+  - **Bugfix Persistência:** Garantia de vínculo `albumId` na criação de novas faixas via Admin.
+  - **Loading Experience:** Substituição do "Carregando..." fixo por injeção de metadados dinâmica e novos spinners.
+  - **Sanitização:** Remoção de termos aeroportuários ("Voo", "Portão") remanescentes nos formulários.
+- **Impacto:** Interface profissional, estável e livre de referências ao tema original.
 
-**Acceptance:** Admin can visually edit uiConfig per album with live preview.
+## Sprint 5 — Governança & Organização Documental
 
----
+**Objetivo:** Consolidar o conhecimento e preparar para o desenvolvimento colaborativo.
 
-## Sprint 4 — Public Site Template Rendering
-
-**Objective:** Public site renders dynamically based on album's uiConfig.
-
-| #   | Task                                                    | Est. | Role     |
-| --- | ------------------------------------------------------- | ---- | -------- |
-| 15  | Create CSS variable injection from uiConfig colors      | 1d   | Frontend |
-| 16  | Dynamic Google Fonts loading based on typography config | 1d   | Frontend |
-| 17  | Section visibility toggles (layout.sections)            | 1d   | Frontend |
-| 18  | Configurable labels (trackCode, trackTag, statuses)     | 1d   | Frontend |
-| 19  | Theme presets (3 built-in themes)                       | 1d   | Frontend |
-
-**Acceptance:** Public site responds to uiConfig. Different albums render differently.
+- **Entregas:**
+  - Reorganização total da pasta `docs/` em categorias (`core`, `frontend`, `backend`, `dev-guide`).
+  - Criação do `README.md` mestre.
+  - Atualização das regras de desenvolvimento focando em **Neutralidade Visual**.
+  - Documentação do Roadmap SaaS e infraestrututa de CI/CD.
+- **Impacto:** Base de conhecimento sólida e estruturada para escala.
 
 ---
 
-## Sprint 5 — Multi-Artist Entity
+# 🚀 Current Sprint
 
-**Objective:** Add artist management to the platform.
+## Sprint 6 — Consolidação & Planejamento SaaS
 
-| #   | Task                                                      | Est. | Role     |
-| --- | --------------------------------------------------------- | ---- | -------- |
-| 20  | Create `artists` module (Repository, Service, Controller) | 2d   | Backend  |
-| 21  | Create `api/artists/index.js` handler                     | 0.5d | Backend  |
-| 22  | Add `artistId` field to album schema                      | 0.5d | Backend  |
-| 23  | Create Artists management view in admin                   | 2d   | Frontend |
+**Status:** In-Progress
 
-**Acceptance:** Artists CRUD works. Albums can be linked to artists.
-
----
-
-## Sprint 6 — Testing & Quality
-
-**Objective:** Establish automated testing baseline.
-
-| #   | Task                                        | Est. | Role    |
-| --- | ------------------------------------------- | ---- | ------- |
-| 24  | Set up Jest for backend unit tests          | 1d   | Backend |
-| 25  | Write tests for album, track, user services | 2d   | Backend |
-| 26  | Set up Playwright for admin E2E smoke tests | 1d   | QA      |
-| 27  | Write 5 core E2E smoke tests                | 1d   | QA      |
-
-**Acceptance:** `npm test` runs unit tests. CI includes E2E smoke.
+- **Objetivo:** Auditar o estado da arte do código e planejar os módulos de Artista e Multi-tenancy.
+- **Tarefas:**
+  - [x] Auditoria e carregamento de toda a doc consolidada.
+  - [x] Sincronização do Histórico de Sprints (este documento).
+  - [ ] Revisão final do modelo de dados para expansão Multi-Artista.
+- **DOD:** Documentação 100% fiel ao código e roadmap aprovado.
 
 ---
 
-## Sprint 7 — Integration Architecture
+# 📅 Next Sprints (Roadmap)
 
-**Objective:** Implement integration extension points.
+## Sprint 7 — Editor Visual & Presets
 
-| #   | Task                                           | Est. | Role     |
-| --- | ---------------------------------------------- | ---- | -------- |
-| 28  | Create IntegrationPort abstract class          | 0.5d | Backend  |
-| 29  | Create IntegrationRegistry factory             | 0.5d | Backend  |
-| 30  | Implement SpotifyAdapter (search + embed only) | 2d   | Backend  |
-| 31  | Create webhook handler skeleton                | 1d   | Backend  |
-| 32  | Admin UI for connecting integrations           | 1d   | Frontend |
+- **Objetivo:** Facilitar a customização sem necessidade de editar JSON manualmente.
+- **Tarefas:**
+  - Implementar aba "Aparência" no Album Hub.
+  - Interface visual para seleção de cores e fontes do `uiConfig`.
+  - Criar sistema de "Presets de Tema" (Um clique para mudar todo o layout).
+  - Live Preview das mudanças antes de salvar.
 
-**Acceptance:** Spotify search works with test credentials. Webhook endpoint responds 200.
+## Sprint 8 — Entidade Artist (Módulo Artistas)
 
----
+- **Objetivo:** Adicionar a camada de gestão de múltiplos artistas (Artistas → Álbuns).
+- **Tarefas:**
+  - Criação da collection `artists`.
+  - CRUD de artistas no Admin.
+  - UI para vincular álbuns a artistas.
+  - Página pública de portfólio do artista (`/artista/:slug`).
 
-## Sprint 8 — Public Auth & Fan Profiles
+## Sprint 9 — Autenticação Pública & Interações 2.0
 
-**Objective:** Allow public users to create accounts.
+- **Objetivo:** Engajamento autenticado de fãs.
+- **Tarefas:**
+  - Login via OAuth (Google/Spotify) para usuários públicos.
+  - Histórico de faixas ouvidas e curtidas por usuário.
+  - Sistema de comentários/mensagens no álbum.
 
-| #   | Task                                                  | Est. | Role     |
-| --- | ----------------------------------------------------- | ---- | -------- |
-| 33  | Create `fans` module (register, login, profile)       | 2d   | Backend  |
-| 34  | Implement OAuth (Google)                              | 1.5d | Backend  |
-| 35  | Migrate likes/ratings from anonymous to authenticated | 1d   | Backend  |
-| 36  | Public profile page with activity feed                | 1d   | Frontend |
+## Sprint 10 — Multi-tenancy & Infra SaaS
 
-**Acceptance:** Users can register, login, and see their liked/rated tracks.
-
----
-
-## Sprint 9 — Staging Pipeline & Security
-
-**Objective:** Production-ready deployment pipeline.
-
-| #   | Task                                         | Est. | Role    |
-| --- | -------------------------------------------- | ---- | ------- |
-| 37  | Configure Vercel preview deployments for PRs | 0.5d | Infra   |
-| 38  | Add Dependabot for vulnerability scanning    | 0.5d | Infra   |
-| 39  | Implement rate limiting on public endpoints  | 1d   | Backend |
-| 40  | Add CORS tightening for production           | 0.5d | Backend |
-| 41  | Security audit: sanitize all user inputs     | 1.5d | Backend |
-| 42  | Deploy staging environment                   | 1d   | Infra   |
-
-**Acceptance:** PRs get preview URLs. Dependabot active. Staging live.
-
----
-
-## Sprint 10 — Multi-tenant Basics & Launch Prep
-
-**Objective:** Prepare for multi-tenant SaaS.
-
-| #   | Task                                         | Est. | Role     |
-| --- | -------------------------------------------- | ---- | -------- |
-| 43  | Design `tenantId` schema across all entities | 1d   | Backend  |
-| 44  | Implement tenant isolation in queries        | 2d   | Backend  |
-| 45  | Subdomain routing (`artist.platform.com`)    | 1d   | Infra    |
-| 46  | Landing page for platform marketing          | 1d   | Frontend |
-| 47  | Documentation review and finalization        | 1d   | All      |
-
-**Acceptance:** Multi-tenant isolation works. Platform ready for beta testers.
+- **Objetivo:** Isolamento total e preparação comercial.
+- **Tarefas:**
+  - Implementação de `tenantId` em todas as queries.
+  - Roteamento por subdomínios (`artista.plataforma.com`).
+  - Painel de Analytics avançado por álbum.
+  - Integração inicial com Stripe para planos Pro/Label.
