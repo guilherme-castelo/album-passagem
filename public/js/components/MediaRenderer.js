@@ -11,7 +11,7 @@ export const MediaRenderer = {
       }
 
       if (videoId) {
-        embedUrl = `https://www.youtube.com/embed/${videoId}?si=passagem_player`;
+        embedUrl = `https://www.youtube.com/embed/${videoId}?si=album_player`;
       }
 
       return `

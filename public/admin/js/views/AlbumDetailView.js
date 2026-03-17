@@ -81,7 +81,24 @@ export class AlbumDetailView {
 
         <!-- Tab Content: Theme -->
         <div id="content-theme" class="tab-content hidden">
-          <div id="theme-editor-container"></div>
+          <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 items-start">
+            <!-- Sidebar: Editor -->
+            <div id="theme-editor-container" class="space-y-6"></div>
+            
+            <!-- Sticky Preview Pane -->
+            <div class="xl:sticky xl:top-8 space-y-4">
+              <div class="flex items-center justify-between">
+                <h4 class="font-bold text-white text-sm uppercase tracking-widest flex items-center gap-2">
+                  <svg class="w-4 h-4 text-accent-pink" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                  Preview em Tempo Real
+                </h4>
+                <button id="btn-refresh-preview" class="btn-ghost text-[10px] p-1">Recarregar Preview</button>
+              </div>
+              <div class="bg-slate-900 rounded-2xl p-4 border border-white/5 shadow-2xl overflow-hidden aspect-[9/16] max-h-[700px] mx-auto xl:mx-0 w-full max-w-[400px]">
+                <iframe id="preview-iframe" src="" class="w-full h-full rounded-lg bg-white" frameborder="0"></iframe>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     `;
@@ -210,7 +227,26 @@ export class AlbumDetailView {
 
     // Tab switching
     $('tab-tracks').addEventListener('click', () => this._switchTab('tracks'));
-    $('tab-theme').addEventListener('click', () => this._switchTab('theme'));
+    $('tab-theme').addEventListener('click', () => {
+      this._switchTab('theme');
+      this._updatePreviewSource();
+    });
+
+    if ($('btn-refresh-preview')) {
+      $('btn-refresh-preview').addEventListener('click', () => this._updatePreviewSource());
+    }
+  }
+
+  _updatePreviewSource() {
+    const iframe = $('preview-iframe');
+    if (iframe && this._album) {
+      // Navigate to the public view of this album
+      // In a real app, this would be /a/[id] or similar
+      const url = `../../index.html?albumId=${this._album._id || this._album.id}&preview=true`;
+      if (iframe.src !== url) {
+        iframe.src = url;
+      }
+    }
   }
 
   _switchTab(tab) {

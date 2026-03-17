@@ -72,6 +72,10 @@ export class AdminController {
       this._loadAlbums();
     };
 
+    albumDetail.onEditAlbum = (album) => {
+      albums.openEditForm(album);
+    };
+
     albumDetail.onAddTrack = () => {
       const album = AdminState.get('selectedAlbum');
       tracks.setAlbums(AdminState.get('albums'), album._id);
@@ -236,7 +240,8 @@ export class AdminController {
       const btnNewAlbum = document.getElementById('btn-new-album');
       if (btnNewAlbum) btnNewAlbum.classList.add('hidden');
     } catch (e) {
-      toast.error('Erro ao abrir álbum');
+      console.error('AdminController: Failed to open Hub:', e);
+      toast.error(`Erro ao abrir álbum: ${e.message || 'Erro desconhecido'}`);
     }
   }
 

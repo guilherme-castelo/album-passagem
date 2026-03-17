@@ -1,3 +1,5 @@
+import { ThemeManager } from '../utils/ThemeManager.js';
+
 export class AppController {
   constructor(dependencies) {
     this.state = dependencies.state;
@@ -60,9 +62,37 @@ export class AppController {
       this.state.set('albumData', data.album);
       this.state.set('tracks', data.tracks);
 
+      // Apply dynamic theme/labels/layout
+      ThemeManager.apply(data.album.uiConfig);
+
+      // Update track count label
+      const trackCountEl = document.getElementById('track-count');
+      if (trackCountEl) trackCountEl.textContent = data.tracks?.length || 0;
+
+      // Update Hero Title/Artist
+      const albumTitleEl = document.getElementById('album-title');
+      if (albumTitleEl) albumTitleEl.textContent = data.album.title;
+      const artistNameEl = document.getElementById('artist-name');
+      if (artistNameEl) artistNameEl.textContent = data.album.artist;
+
+      // Update specific parts that are not just labels (IDs)
+      const flightCode = data.album.id || data.album._id;
+      const shortId = (flightCode || '--').slice(-4).toUpperCase();
+      const trackCode = data.album.uiConfig?.labels?.trackCode || 'Voo';
+
+      const headerFlight = document.getElementById('header-flight-code');
+      if (headerFlight) headerFlight.textContent = `${trackCode}-${shortId}`;
+
+      const checkinId = document.getElementById('checkin-id');
+      if (checkinId) checkinId.textContent = `${trackCode}-${shortId}`;
+
       // Artificial delay pra mostrar a animação "buscando voos"
       setTimeout(() => {
-        this.views.tracklist.render(data.tracks, this.state.get('visitedTracks'));
+        this.views.tracklist.render(
+          data.tracks,
+          this.state.get('visitedTracks'),
+          data.album.uiConfig
+        );
         this.state.set('currentView', 'tracklist');
       }, 600);
     } catch (error) {
@@ -80,17 +110,25 @@ export class AppController {
       visited.push(trackId);
       this.state.set('visitedTracks', visited);
       this.state.persist('visitedTracks');
-      this.views.tracklist.render(this.state.get('tracks'), visited);
+      this.views.tracklist.render(
+        this.state.get('tracks'),
+        visited,
+        this.state.get('albumData')?.uiConfig
+      );
     }
 
     const tracks = this.state.get('tracks');
     const index = tracks.findIndex((t) => (t._id || t.id) === trackId);
     const len = tracks.length;
 
-    this.views.lyrics.render(track, {
-      canGoBack: index > 0,
-      canGoNext: index < len - 1
-    });
+    this.views.lyrics.render(
+      track,
+      {
+        canGoBack: index > 0,
+        canGoNext: index < len - 1
+      },
+      this.state.get('albumData')?.uiConfig
+    );
 
     const isLiked = this.state.get('likedTracks').includes(trackId);
     const userRating = this.state.get('ratedTracks')[trackId] || 0;

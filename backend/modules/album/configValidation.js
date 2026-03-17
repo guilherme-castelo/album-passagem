@@ -4,29 +4,43 @@
  */
 
 const DEFAULT_UI_CONFIG = {
-  theme: 'default',
-  colors: {
-    primary: '#0F2C59',
-    accent: '#F9B572',
-    background: '#0a0f1a',
-    text: '#ffffff',
-    muted: '#94a3b8'
+  theme: 'minimal',
+  palette: {
+    primary: '#000000',
+    accent: '#3b82f6',
+    background: '#ffffff',
+    text: '#0f172a',
+    muted: '#64748b'
   },
-  typography: { heading: 'Inter', body: 'Inter', mono: 'Roboto Mono' },
+  typography: { heading: 'Inter', body: 'Inter', mono: 'ui-monospace' },
   layout: {
-    sections: ['hero', 'tracklist', 'lyrics'],
+    sectionsOrder: ['hero', 'tracklist', 'lyrics', 'media'],
     trackDisplay: 'list',
-    showInteractions: true,
     showLyrics: true,
     showMedia: true
   },
-  labels: {
-    trackCode: 'Track',
-    trackTag: 'Tag',
-    statuses: ['Published', 'Draft', 'Featured', 'Hidden'],
-    cta: 'Listen Now'
+  visualTokens: {
+    borderRadius: '8px',
+    shadowLevel: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
   },
-  branding: { title: '', subtitle: '', logo: '', footer: '' }
+  labels: {
+    passengerLabel: 'Seu Nome',
+    trackCode: '#',
+    trackTag: 'Tag',
+    fromLabel: 'De',
+    toLabel: 'Para',
+    cta: 'Começar',
+    skipCheckin: 'Pular',
+    loadingMsg: 'Carregando...',
+    tracklistTitle: 'Faixas',
+    trackUnit: 'Nº',
+    tracklistUnit: 'Músicas',
+    backBtn: 'Voltar',
+    mediaTitle: 'Mídia',
+    footerThanks: 'Obrigado pela visita',
+    stampText: 'OK'
+  },
+  branding: { title: 'Album Player', subtitle: '', logo: '', footer: '' }
 };
 
 /**
@@ -38,20 +52,23 @@ const DEFAULT_UI_CONFIG = {
 function validateUiConfig(config, baseConfig) {
   if (!config || typeof config !== 'object') return baseConfig || { ...DEFAULT_UI_CONFIG };
 
-  const sanitized = baseConfig ? { ...baseConfig } : { ...DEFAULT_UI_CONFIG };
+  const sanitized = baseConfig
+    ? JSON.parse(JSON.stringify(baseConfig))
+    : JSON.parse(JSON.stringify(DEFAULT_UI_CONFIG));
 
   // Theme
-  if (['default', 'dark', 'light', 'custom'].includes(config.theme)) {
+  if (['ticket', 'minimal', 'glass', 'neo'].includes(config.theme)) {
     sanitized.theme = config.theme;
   }
 
-  // Colors
-  if (config.colors && typeof config.colors === 'object') {
-    sanitized.colors = { ...sanitized.colors };
+  // Palette (Handle both 'palette' and legacy 'colors')
+  const paletteSource = config.palette || config.colors;
+  if (paletteSource && typeof paletteSource === 'object') {
+    sanitized.palette = { ...sanitized.palette };
     const hexRegex = /^#([A-Fa-f0-9]{3}){1,2}$/;
     ['primary', 'accent', 'background', 'text', 'muted'].forEach((key) => {
-      if (config.colors[key] && hexRegex.test(config.colors[key])) {
-        sanitized.colors[key] = config.colors[key];
+      if (paletteSource[key] && hexRegex.test(paletteSource[key])) {
+        sanitized.palette[key] = paletteSource[key];
       }
     });
   }
@@ -66,16 +83,29 @@ function validateUiConfig(config, baseConfig) {
     });
   }
 
+  // Visual Tokens
+  if (config.visualTokens && typeof config.visualTokens === 'object') {
+    sanitized.visualTokens = { ...sanitized.visualTokens };
+    if (typeof config.visualTokens.borderRadius === 'string') {
+      sanitized.visualTokens.borderRadius = config.visualTokens.borderRadius.substring(0, 20);
+    }
+    if (typeof config.visualTokens.shadowLevel === 'string') {
+      sanitized.visualTokens.shadowLevel = config.visualTokens.shadowLevel.substring(0, 100);
+    }
+  }
+
   // Layout
   if (config.layout && typeof config.layout === 'object') {
     sanitized.layout = { ...sanitized.layout };
-    if (Array.isArray(config.layout.sections)) {
-      sanitized.layout.sections = config.layout.sections.filter((s) => typeof s === 'string');
+    if (Array.isArray(config.layout.sectionsOrder)) {
+      sanitized.layout.sectionsOrder = config.layout.sectionsOrder.filter(
+        (s) => typeof s === 'string'
+      );
     }
-    if (['list', 'grid'].includes(config.layout.trackDisplay)) {
+    if (['list', 'grid', 'compact'].includes(config.layout.trackDisplay)) {
       sanitized.layout.trackDisplay = config.layout.trackDisplay;
     }
-    ['showInteractions', 'showLyrics', 'showMedia'].forEach((key) => {
+    ['showLyrics', 'showMedia'].forEach((key) => {
       if (typeof config.layout[key] === 'boolean') {
         sanitized.layout[key] = config.layout[key];
       }
@@ -85,14 +115,11 @@ function validateUiConfig(config, baseConfig) {
   // Labels
   if (config.labels && typeof config.labels === 'object') {
     sanitized.labels = { ...sanitized.labels };
-    ['trackCode', 'trackTag', 'cta'].forEach((key) => {
+    Object.keys(sanitized.labels).forEach((key) => {
       if (typeof config.labels[key] === 'string') {
-        sanitized.labels[key] = config.labels[key].substring(0, 50);
+        sanitized.labels[key] = config.labels[key].substring(0, 100);
       }
     });
-    if (Array.isArray(config.labels.statuses)) {
-      sanitized.labels.statuses = config.labels.statuses.filter((s) => typeof s === 'string');
-    }
   }
 
   // Branding

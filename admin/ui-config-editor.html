@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Admin UI Mockup - Layout Editor</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #0f172a;
+      color: white;
+      padding: 40px;
+    }
+
+    .editor-container {
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      gap: 30px;
+    }
+
+    .panel {
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid #334155;
+    }
+
+    .control-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      color: #94a3b8;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    select,
+    input,
+    textarea {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid #334155;
+      color: white;
+      padding: 8px;
+      border-radius: 6px;
+    }
+
+    .color-pickers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .preview-pane {
+      background: #334155;
+      border-radius: 12px;
+      min-height: 500px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .preview-pane::after {
+      content: "LIVE PREVIEW";
+      font-weight: bold;
+      opacity: 0.1;
+      font-size: 40px;
+    }
+
+    .btn-save {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      width: 100%;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .tab-nav {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 10px;
+    }
+
+    .tab {
+      font-size: 13px;
+      cursor: pointer;
+      opacity: 0.6;
+    }
+
+    .tab.active {
+      opacity: 1;
+      border-bottom: 2px solid #2563eb;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Editor de Experiência (uiConfig)</h1>
+
+  <div class="editor-container">
+    <!-- Controles -->
+    <div class="panel">
+      <div class="tab-nav">
+        <div class="tab active">Geral</div>
+        <div class="tab">Cores</div>
+        <div class="tab">Layout</div>
+        <div class="tab">Labels</div>
+      </div>
+
+      <div class="control-group">
+        <label>Preset de Tema</label>
+        <select>
+          <option>Passagem (Ticket)</option>
+          <option>Minimalist</option>
+          <option>Glassmorphism</option>
+          <option>Neo-Brutalism</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label>Paleta de Cores</label>
+        <div class="color-pickers">
+          <div><label>Primária</label><input type="color" value="#0F2C59"></div>
+          <div><label>Destaque</label><input type="color" value="#F9B572"></div>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label>Branding</label>
+        <input type="text" placeholder="URL do Logo">
+        <input type="text" style="margin-top:8px" placeholder="Título da Página">
+      </div>
+
+      <div class="control-group">
+        <label>Ordenação de Seções (Drag & Drop emulado)</label>
+        <div style="background:#0f172a; padding:10px; border-radius:6px; font-size:13px">
+          ⠿ Hero / Header<br>
+          ⠿ Músicas (Tracklist)<br>
+          ⠿ Letra Detalhada<br>
+          ⠿ Mídias Sociais
+        </div>
+      </div>
+
+      <button class="btn-save">Salvar Configurações</button>
+    </div>
+
+    <!-- Preview -->
+    <div class="preview-pane">
+      <div
+        style="width: 320px; background: white; height: 480px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); overflow:hidden">
+        <div style="height: 150px; background: #0F2C59; color: white; padding: 20px;">
+          <small>PASSENGER</small>
+          <div style="font-weight: bold;">BRUNO BRATILIERI</div>
+        </div>
+        <!-- ... resto do mockup ... -->
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

@@ -20,32 +20,66 @@ export class ThemeEditor {
     this.config = JSON.parse(JSON.stringify(config)); // Deep clone
     this.container.innerHTML = `
       <div class="theme-editor space-y-8">
+        <!-- Theme Selection -->
+        <section class="glass-card p-4 border-l-4 border-accent-blue">
+          <h4 class="font-bold text-white mb-4 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>
+            Tema e Estilo Base
+          </h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+             <div>
+              <label class="label text-[10px] mb-1">Layout Principal</label>
+              <select data-path="theme" class="glass-input text-xs p-2 capitalize">
+                <option value="ticket" ${this._getValueByPath('theme') === 'ticket' ? 'selected' : ''}>Ticket (Voo/Aeroporto)</option>
+                <option value="minimal" ${this._getValueByPath('theme') === 'minimal' ? 'selected' : ''}>Minimal (Limpo/Moderno)</option>
+                <option value="glass" ${this._getValueByPath('theme') === 'glass' ? 'selected' : ''}>Glassmorphism</option>
+                <option value="neo" ${this._getValueByPath('theme') === 'neo' ? 'selected' : ''}>Neobrutalism</option>
+              </select>
+            </div>
+            <div>
+              <label class="label text-[10px] mb-1">Arredondamento (Tokens)</label>
+              <select data-path="visualTokens.borderRadius" class="glass-input text-xs p-2 capitalize">
+                <option value="0px" ${this._getValueByPath('visualTokens.borderRadius') === '0px' ? 'selected' : ''}>Quadrado (0px)</option>
+                <option value="8px" ${this._getValueByPath('visualTokens.borderRadius') === '8px' ? 'selected' : ''}>Médio (8px)</option>
+                <option value="20px" ${this._getValueByPath('visualTokens.borderRadius') === '20px' ? 'selected' : ''}>Arredondado (20px)</option>
+                <option value="999px" ${this._getValueByPath('visualTokens.borderRadius') === '999px' ? 'selected' : ''}>Pílula (Capsule)</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
         <!-- Sections Layout -->
         <section class="glass-card p-4 border-l-4 border-accent-purple">
           <h4 class="font-bold text-white mb-4 flex items-center gap-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/></svg>
-            Layout e Visibilidade
+            Visibilidade de Seções
           </h4>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <label class="flex items-center gap-3 cursor-pointer group">
-              <input type="checkbox" data-path="layout.showInteractions" ${this._getValueByPath('layout.showInteractions') ? 'checked' : ''} class="checkbox-custom" />
-              <span class="text-sm">Mostrar Likes/Ratings</span>
-            </label>
-            <label class="flex items-center gap-3 cursor-pointer group">
-              <input type="checkbox" data-path="layout.showLyrics" ${this._getValueByPath('layout.showLyrics') ? 'checked' : ''} class="checkbox-custom" />
+              <input type="checkbox" data-path="layout.showLyrics" ${this._getValueByPath('layout.showLyrics') !== false ? 'checked' : ''} class="checkbox-custom" />
               <span class="text-sm">Mostrar Letras</span>
             </label>
             <label class="flex items-center gap-3 cursor-pointer group">
-              <input type="checkbox" data-path="layout.showMedia" ${this._getValueByPath('layout.showMedia') ? 'checked' : ''} class="checkbox-custom" />
-              <span class="text-sm">Mostrar Mídia (YouTube/Spotify)</span>
+              <input type="checkbox" data-path="layout.showMedia" ${this._getValueByPath('layout.showMedia') !== false ? 'checked' : ''} class="checkbox-custom" />
+              <span class="text-sm">Mostrar Mídia</span>
             </label>
             <div>
-              <label class="label text-[10px] mb-1">Modo de Exibição das Faixas</label>
+              <label class="label text-[10px] mb-1">Display das Faixas</label>
               <select data-path="layout.trackDisplay" class="glass-input text-xs p-2 capitalize">
                 <option value="list" ${this._getValueByPath('layout.trackDisplay') === 'list' ? 'selected' : ''}>Lista (Padrão)</option>
                 <option value="grid" ${this._getValueByPath('layout.trackDisplay') === 'grid' ? 'selected' : ''}>Grade (Cards)</option>
+                <option value="compact" ${this._getValueByPath('layout.trackDisplay') === 'compact' ? 'selected' : ''}>Compacto</option>
               </select>
             </div>
+          </div>
+
+          <!-- Section Reordering -->
+          <div class="mt-6">
+            <label class="label text-[10px] mb-2 uppercase tracking-widest opacity-70">Ordem das Seções</label>
+            <div id="sections-reorder-list" class="space-y-2">
+              ${this._renderSectionsList()}
+            </div>
+            <p class="text-[9px] text-muted mt-2 italic">* Use as setas para definir a ordem de exibição na página pública.</p>
           </div>
         </section>
 
@@ -56,11 +90,11 @@ export class ThemeEditor {
             Paleta de Cores
           </h4>
           <div class="grid grid-cols-2 sm:grid-cols-5 gap-4">
-            ${this._renderColorInput('Primária', 'colors.primary')}
-            ${this._renderColorInput('Destaque', 'colors.accent')}
-            ${this._renderColorInput('Fundo', 'colors.background')}
-            ${this._renderColorInput('Texto', 'colors.text')}
-            ${this._renderColorInput('Muted', 'colors.muted')}
+            ${this._renderColorInput('Primária', 'palette.primary')}
+            ${this._renderColorInput('Destaque', 'palette.accent')}
+            ${this._renderColorInput('Fundo', 'palette.background')}
+            ${this._renderColorInput('Texto', 'palette.text')}
+            ${this._renderColorInput('Muted', 'palette.muted')}
           </div>
         </section>
 
@@ -72,16 +106,28 @@ export class ThemeEditor {
           </h4>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label class="label text-[10px] mb-1">Rótulo da Faixa (ex: Voo)</label>
+              <label class="label text-[10px] mb-1">Cód. da Faixa (ex: #)</label>
               <input type="text" data-path="labels.trackCode" value="${this._getValueByPath('labels.trackCode')}" class="glass-input text-xs" />
             </div>
             <div>
-              <label class="label text-[10px] mb-1">Rótulo da Tag (ex: Portão)</label>
+              <label class="label text-[10px] mb-1">Tag/Categoria (ex: Extra)</label>
               <input type="text" data-path="labels.trackTag" value="${this._getValueByPath('labels.trackTag')}" class="glass-input text-xs" />
             </div>
             <div>
               <label class="label text-[10px] mb-1">Botão Principal (CTA)</label>
               <input type="text" data-path="labels.cta" value="${this._getValueByPath('labels.cta')}" class="glass-input text-xs" />
+            </div>
+            <div>
+              <label class="label text-[10px] mb-1">Rótulo de Identificação</label>
+              <input type="text" data-path="labels.passengerLabel" value="${this._getValueByPath('labels.passengerLabel')}" class="glass-input text-xs" />
+            </div>
+            <div>
+              <label class="label text-[10px] mb-1">Mensagem Loading</label>
+              <input type="text" data-path="labels.loadingMsg" value="${this._getValueByPath('labels.loadingMsg')}" class="glass-input text-xs" />
+            </div>
+            <div>
+              <label class="label text-[10px] mb-1">Texto OK (ex: CHECK)</label>
+              <input type="text" data-path="labels.stampText" value="${this._getValueByPath('labels.stampText')}" class="glass-input text-xs" />
             </div>
           </div>
         </section>
@@ -119,6 +165,15 @@ export class ThemeEditor {
               Copiar Prompt para IA
             </button>
           </div>
+        </section>
+
+        <!-- Custom CSS -->
+        <section class="glass-card p-4 border-l-4 border-slate-700">
+          <h4 class="font-bold text-white mb-4 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+            CSS Customizado (Avançado)
+          </h4>
+          <textarea data-path="customCss" class="glass-input font-mono text-[10px] h-24" placeholder="/* Adicione seu CSS aqui... */">${this._getValueByPath('customCss')}</textarea>
         </section>
 
         <!-- Import/Export -->
@@ -196,24 +251,63 @@ REGRAS:
     if (area) area.value = prompt;
   }
 
+  _renderSectionsList() {
+    const sections = this._getValueByPath('layout.sectionsOrder') || [
+      'hero',
+      'tracklist',
+      'lyrics',
+      'media'
+    ];
+    const sectionLabels = {
+      hero: 'Banner / Título (Hero)',
+      tracklist: 'Lista de Músicas',
+      lyrics: 'Conteúdo da Letra',
+      media: 'Mídia / Streaming'
+    };
+
+    return sections
+      .map(
+        (s, idx) => `
+        <div class="flex items-center justify-between glass-card !bg-white/5 p-2 px-3 rounded-lg border border-white/5 group" data-section="${s}">
+          <span class="text-xs font-medium text-white/80">${sectionLabels[s] || s}</span>
+          <div class="flex gap-2">
+            <button class="btn-move-section p-1 hover:text-accent-pink disabled:opacity-20" data-dir="up" data-idx="${idx}" ${idx === 0 ? 'disabled' : ''}>
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg>
+            </button>
+            <button class="btn-move-section p-1 hover:text-accent-pink disabled:opacity-20" data-dir="down" data-idx="${idx}" ${idx === sections.length - 1 ? 'disabled' : ''}>
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+          </div>
+        </div>
+      `
+      )
+      .join('');
+  }
+
   _renderColorInput(label, path) {
     const value = this._getValueByPath(path);
     return `
-      <div class="flex flex-col items-center gap-1">
-        <label class="text-[10px] text-muted">${label}</label>
-        <div class="relative group">
-          <input type="color" data-path="${path}" value="${value}" class="w-12 h-12 rounded-lg cursor-pointer bg-transparent border-2 border-white/10 hover:border-accent-pink transition-colors" />
-          <div class="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-white/20 border border-white/10 group-hover:bg-accent-pink transition-colors"></div>
+      <div class="flex flex-col gap-1">
+        <label class="text-[10px] text-muted uppercase tracking-wider">${label}</label>
+        <div class="flex items-center gap-2">
+          <input type="color" data-path="${path}" value="${value}" class="w-8 h-8 rounded bg-transparent cursor-pointer border-none" />
+          <span class="text-[10px] font-mono opacity-60">${value || '#000000'}</span>
         </div>
-        <span class="text-[9px] font-mono opacity-50 uppercase">${value}</span>
       </div>
     `;
   }
 
   _getValueByPath(path) {
-    return path
+    const val = path
       .split('.')
       .reduce((obj, key) => (obj && obj[key] !== undefined ? obj[key] : ''), this.config);
+
+    // Fallback for legacy 'colors' path if editing 'palette'
+    if (path.startsWith('palette.') && (val === '' || val === undefined)) {
+      const legacyPath = path.replace('palette.', 'colors.');
+      return this._getValueByPath(legacyPath);
+    }
+    return val;
   }
 
   _setValueByPath(path, value) {
@@ -225,12 +319,20 @@ REGRAS:
       target = target[key];
     }
     target[lastKey] = value;
+
+    // Basic Sanitization
+    if (path === 'customCss' && typeof value === 'string') {
+      target[lastKey] = value.replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gim, '');
+    }
   }
 
   _attachEvents() {
-    // General changes
-    this.container.querySelectorAll('input, select').forEach((el) => {
-      const eventType = el.type === 'color' || el.type === 'checkbox' ? 'change' : 'input';
+    // General changes (including textarea for Custom CSS)
+    this.container.querySelectorAll('input, select, textarea').forEach((el) => {
+      const eventType =
+        el.tagName === 'TEXTAREA' || (el.type !== 'color' && el.type !== 'checkbox')
+          ? 'input'
+          : 'change';
       el.addEventListener(eventType, () => {
         const path = el.dataset.path;
         let value = el.type === 'checkbox' ? el.checked : el.value;
@@ -238,11 +340,42 @@ REGRAS:
 
         // Update hex text display for color inputs
         if (el.type === 'color') {
-          const hexDisplay = el.parentElement.parentElement.querySelector('span');
+          const parent = el.closest('.flex-col') || el.parentElement.parentElement;
+          const hexDisplay = parent.querySelector('span');
           if (hexDisplay) hexDisplay.textContent = value;
         }
 
         if (this.onChange) this.onChange(this.config);
+
+        // --- LIVE PREVIEW TRIGGER ---
+        this._sendToPreview(this.config);
+      });
+    });
+
+    // Move sections events
+    this.container.querySelectorAll('.btn-move-section').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const idx = parseInt(btn.dataset.idx);
+        const dir = btn.dataset.dir;
+        const sections = [
+          ...(this._getValueByPath('layout.sectionsOrder') || [
+            'hero',
+            'tracklist',
+            'lyrics',
+            'media'
+          ])
+        ];
+
+        const targetIdx = dir === 'up' ? idx - 1 : idx + 1;
+        if (targetIdx >= 0 && targetIdx < sections.length) {
+          [sections[idx], sections[targetIdx]] = [sections[targetIdx], sections[idx]];
+          this._setValueByPath('layout.sectionsOrder', sections);
+          this.render(this.config); // Re-render to update UI
+
+          if (this.onChange) this.onChange(this.config);
+          this._sendToPreview(this.config);
+        }
       });
     });
 
@@ -290,5 +423,24 @@ REGRAS:
       navigator.clipboard.writeText(area.value);
       toast.success('Prompt copiado! Cole no ChatGPT e descreva seu estilo.');
     });
+  }
+
+  /**
+   * Sending real-time updates to the public preview iframe
+   */
+  _sendToPreview(config) {
+    const iframe =
+      document.querySelector('iframe[src*="index.html"]') ||
+      document.getElementById('preview-iframe');
+
+    if (iframe && iframe.contentWindow) {
+      iframe.contentWindow.postMessage(
+        {
+          type: 'UI_CONFIG_UPDATE',
+          config: config
+        },
+        '*'
+      );
+    }
   }
 }

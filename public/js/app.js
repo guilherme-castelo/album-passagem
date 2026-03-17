@@ -22,8 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const tracklist = new TrackList('tracklist-container');
   const lyricsView = new LyricsView({
     title: 'lyrics-title',
-    gate: 'lyrics-gate',
-    flight: 'lyrics-flight',
     content: 'lyrics-content',
     mediaContainer: 'media-container',
     mediaPlayers: 'media-players',

@@ -17,8 +17,8 @@ export class LoadingView {
   reset() {
     if (!this.dom) return;
     this.dom.innerHTML = `
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-blue mb-4"></div>
-            <p class="font-mono text-sm text-gray-500 uppercase tracking-widest animate-pulse">Buscando destinos...</p>
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4 opacity-70"></div>
+            <p class="font-mono text-[10px] text-muted uppercase tracking-[0.2em] animate-pulse">Sincronizando Conteúdo</p>
         `;
   }
 }

@@ -4,8 +4,6 @@ export class LyricsView {
   constructor(elements, onBack, onNavigateTrack) {
     this.dom = {
       title: document.getElementById(elements.title),
-      gate: document.getElementById(elements.gate),
-      flight: document.getElementById(elements.flight),
       content: document.getElementById(elements.content),
       mediaContainer: document.getElementById(elements.mediaContainer),
       mediaPlayers: document.getElementById(elements.mediaPlayers),
@@ -40,43 +38,37 @@ export class LyricsView {
     }
   }
 
-  render(track, navigationState = { canGoBack: false, canGoNext: false }) {
+  render(track, navigationState = { canGoBack: false, canGoNext: false }, uiConfig = {}) {
     if (!track) return;
 
-    // Header
-    this.dom.title.textContent = track.title;
-    this.dom.gate.textContent = `PORTÃO ${track.gate}`;
-    this.dom.flight.textContent = track.flightCode;
+    // Header - Minimalist approach
+    if (this.dom.title) this.dom.title.textContent = track.title;
 
-    // Swipe/Animação de transição nas letras
-    this.dom.content.style.opacity = '0';
-    setTimeout(() => {
-      this.dom.content.textContent = track.lyrics;
-      // Melhoria UX de tipografia nas letras:
-      this.dom.content.classList.add(
-        'text-[clamp(1rem,4vw,1.15rem)]',
-        'leading-relaxed',
-        'tracking-wide'
-      );
-      this.dom.content.style.transition = 'opacity 0.3s ease-in-out';
-      this.dom.content.style.opacity = '1';
-    }, 150);
-
-    // Mídia Renderer OCP
-    const mediaHtml = MediaRenderer.render(track.media);
-    if (mediaHtml) {
-      this.dom.mediaContainer.classList.remove('hidden');
-      this.dom.mediaPlayers.innerHTML = mediaHtml;
-    } else {
-      this.dom.mediaContainer.classList.add('hidden');
-      this.dom.mediaPlayers.innerHTML = '';
+    // Smooth transition for lyrics
+    if (this.dom.content) {
+      this.dom.content.style.opacity = '0';
+      setTimeout(() => {
+        this.dom.content.textContent = track.lyrics || '';
+        this.dom.content.style.transition = 'opacity 0.3s ease-in-out';
+        this.dom.content.style.opacity = '1';
+      }, 150);
     }
 
-    // Atualiza Nav
+    // Media Renderer
+    const mediaHtml = MediaRenderer.render(track.media);
+    if (mediaHtml && this.dom.mediaContainer) {
+      this.dom.mediaContainer.classList.remove('hidden');
+      if (this.dom.mediaPlayers) this.dom.mediaPlayers.innerHTML = mediaHtml;
+    } else if (this.dom.mediaContainer) {
+      this.dom.mediaContainer.classList.add('hidden');
+      if (this.dom.mediaPlayers) this.dom.mediaPlayers.innerHTML = '';
+    }
+
+    // Update Nav
     if (this.dom.btnPrev) this.dom.btnPrev.disabled = !navigationState.canGoBack;
     if (this.dom.btnNext) this.dom.btnNext.disabled = !navigationState.canGoNext;
 
-    // Scroll Top suave
+    // Scroll Top
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }

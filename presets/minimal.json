@@ -1,0 +1,33 @@
+{
+  "theme": "minimal",
+  "palette": {
+    "primary": "#2563eb",
+    "secondary": "#64748b",
+    "background": "#ffffff",
+    "text": "#1e293b",
+    "accent": "#f59e0b"
+  },
+  "typography": {
+    "heading": "Inter",
+    "body": "Inter",
+    "mono": "Roboto Mono",
+    "baseSize": 16
+  },
+  "layout": {
+    "sectionsOrder": ["hero", "tracklist", "lyrics"],
+    "trackDisplay": "list",
+    "showLyrics": true,
+    "showMedia": false
+  },
+  "branding": {
+    "title": "Novo Álbum",
+    "subtitle": "Artista Independente"
+  },
+  "labels": {
+    "trackCode": "Track",
+    "trackTag": "Tag",
+    "cta": "Entrar no Álbum",
+    "from": "Início",
+    "to": "Fim"
+  }
+}
