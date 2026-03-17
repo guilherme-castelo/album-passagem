@@ -12,9 +12,9 @@ export function $$(selector, parent = document) {
   return Array.from(parent.querySelectorAll(selector));
 }
 
-/** 
+/**
  * Creates a DOM element with optional attributes, classes, and children.
- * @param {string} tag 
+ * @param {string} tag
  * @param {Object} opts - { className, id, attrs, text, html, children, events }
  * @returns {HTMLElement}
  */
@@ -34,7 +34,7 @@ export function createElement(tag, opts = {}) {
   if (opts.html) el.innerHTML = opts.html;
 
   if (opts.children) {
-    opts.children.forEach(child => {
+    opts.children.forEach((child) => {
       if (child instanceof HTMLElement) el.appendChild(child);
     });
   }
@@ -50,8 +50,8 @@ export function createElement(tag, opts = {}) {
 
 /**
  * Sets innerHTML safely and returns the container for chaining.
- * @param {HTMLElement} el 
- * @param {string} html 
+ * @param {HTMLElement} el
+ * @param {string} html
  */
 export function setHTML(el, html) {
   el.innerHTML = html;
@@ -74,6 +74,9 @@ export function formatDate(dateStr) {
  */
 export function formatFullDate() {
   return new Date().toLocaleDateString('pt-BR', {
-    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
   });
 }

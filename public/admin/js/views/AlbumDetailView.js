@@ -4,13 +4,12 @@
  */
 import { $ } from '../utils/dom.js';
 import { DataTable } from '../components/DataTable.js';
-import { formatDate } from '../utils/dom.js';
 
 const STATUS_COLORS = {
   'ON TIME': 'badge-success',
-  'DELAYED': 'badge-error',
+  DELAYED: 'badge-error',
   'FINAL CALL': 'badge-warning',
-  'BOARDING': 'badge-info'
+  BOARDING: 'badge-info'
 };
 
 export class AlbumDetailView {
@@ -79,7 +78,9 @@ export class AlbumDetailView {
     this.table = new DataTable($('album-tracks-table'), {
       columns: [
         {
-          key: 'drag', label: '', className: 'w-8 text-center cursor-move opacity-40 hover:opacity-100',
+          key: 'drag',
+          label: '',
+          className: 'w-8 text-center cursor-move opacity-40 hover:opacity-100',
           render: () => `
             <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/>
@@ -89,17 +90,32 @@ export class AlbumDetailView {
         { key: 'flightCode', label: 'Voo', className: 'font-mono text-xs' },
         { key: 'title', label: 'Título', className: 'font-medium' },
         {
-          key: 'status', label: 'Status',
+          key: 'status',
+          label: 'Status',
           render: (val) => `<span class="badge ${STATUS_COLORS[val] || 'badge-info'}">${val}</span>`
         },
         {
-          key: 'interactions', label: 'Likes', className: 'text-xs',
+          key: 'interactions',
+          label: 'Likes',
+          className: 'text-xs',
           render: (val) => `<span style="color:var(--accent-pink)">❤️ ${val?.likes || 0}</span>`
         }
       ],
       actions: [
-        { label: 'Editar', variant: 'ghost', onClick: (row) => { if (this.onEditTrack) this.onEditTrack(row._id); } },
-        { label: 'Excluir', variant: 'danger', onClick: (row) => { if (this.onDeleteTrack) this.onDeleteTrack(row._id, row.title); } }
+        {
+          label: 'Editar',
+          variant: 'ghost',
+          onClick: (row) => {
+            if (this.onEditTrack) this.onEditTrack(row._id);
+          }
+        },
+        {
+          label: 'Excluir',
+          variant: 'danger',
+          onClick: (row) => {
+            if (this.onDeleteTrack) this.onDeleteTrack(row._id, row.title);
+          }
+        }
       ],
       emptyMessage: 'Nenhuma faixa neste álbum.',
       minWidth: '600px'
@@ -109,7 +125,7 @@ export class AlbumDetailView {
     const originalRenderBody = this.table._renderBody.bind(this.table);
     this.table._renderBody = () => {
       originalRenderBody();
-      this.table.tbody.querySelectorAll('tr').forEach(tr => {
+      this.table.tbody.querySelectorAll('tr').forEach((tr) => {
         tr.setAttribute('draggable', 'true');
         tr.classList.add('drag-row');
       });
@@ -146,7 +162,7 @@ export class AlbumDetailView {
 
   _handleReorder() {
     const rows = Array.from(this.table.tbody.querySelectorAll('tr'));
-    const trackIds = rows.map(tr => tr.querySelector('button[data-row-id]').dataset.rowId);
+    const trackIds = rows.map((tr) => tr.querySelector('button[data-row-id]').dataset.rowId);
 
     // Optimistic UI: update flightCodes locally
     rows.forEach((tr, index) => {
@@ -158,9 +174,15 @@ export class AlbumDetailView {
   }
 
   _attachEvents() {
-    $('btn-back-albums').addEventListener('click', () => { if (this.onBack) this.onBack(); });
-    $('btn-edit-album').addEventListener('click', () => { if (this.onEditAlbum) this.onEditAlbum(this._album); });
-    $('btn-add-track-context').addEventListener('click', () => { if (this.onAddTrack) this.onAddTrack(); });
+    $('btn-back-albums').addEventListener('click', () => {
+      if (this.onBack) this.onBack();
+    });
+    $('btn-edit-album').addEventListener('click', () => {
+      if (this.onEditAlbum) this.onEditAlbum(this._album);
+    });
+    $('btn-add-track-context').addEventListener('click', () => {
+      if (this.onAddTrack) this.onAddTrack();
+    });
   }
 
   render(album, tracks) {
@@ -192,5 +214,7 @@ export class AlbumDetailView {
     `;
   }
 
-  setTracksLoading(loading) { this.table.setLoading(loading); }
+  setTracksLoading(loading) {
+    this.table.setLoading(loading);
+  }
 }

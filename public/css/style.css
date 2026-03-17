@@ -5,23 +5,28 @@
 
 /* Tratar scroll suave para UX Mobile */
 html {
-    scroll-behavior: smooth;
-    -webkit-tap-highlight-color: transparent;
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
-    /* Prevenir overflow horizontal no mobile e pull-to-refresh em lugares errados */
-    overscroll-behavior-y: none;
+  /* Prevenir overflow horizontal no mobile e pull-to-refresh em lugares errados */
+  overscroll-behavior-y: none;
 }
 
 /* Animação do Ícone de Voo no Header */
 .flight-icon {
-    animation: flightBob 3s infinite ease-in-out;
+  animation: flightBob 3s infinite ease-in-out;
 }
 
 @keyframes flightBob {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-3px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
 }
 
 /* 
@@ -29,133 +34,137 @@ body {
   As views têm position 'absolute' pra permitirem o translateX suave simulando navegação nativa IOS/Android
 */
 .view-panel {
-    /* Esconde elementos ocultos do screen reader e touch events quando não estão ativos */
-    visibility: hidden;
-    opacity: 0;
+  /* Esconde elementos ocultos do screen reader e touch events quando não estão ativos */
+  visibility: hidden;
+  opacity: 0;
 }
 
 .view-panel.active {
-    /* Volta pra display block mas a opacidade é tratada no JS ou aqui a seguir */
-    visibility: visible;
-    opacity: 1;
-    transform: translateX(0);
-    position: relative;
-    z-index: 10;
+  /* Volta pra display block mas a opacidade é tratada no JS ou aqui a seguir */
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(0);
+  position: relative;
+  z-index: 10;
 }
 
 /* Entrada vindo da Esquerda ou Direita dependendo da navegação */
 .view-panel.slide-out-left {
-    transform: translateX(-100%);
-    opacity: 0;
+  transform: translateX(-100%);
+  opacity: 0;
 }
 
 .view-panel.slide-out-right {
-    transform: translateX(100%);
-    opacity: 0;
+  transform: translateX(100%);
+  opacity: 0;
 }
 
 /* Ticket List Item (Efeito no clique) */
 .track-item {
-    transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+  transition:
+    transform 0.15s ease-out,
+    box-shadow 0.15s ease-out;
 }
 
 .track-item:active {
-    transform: scale(0.97);
-    background-color: #f1f5f9; /* gray-100 equivalente ao tailwind */
+  transform: scale(0.97);
+  background-color: #f1f5f9; /* gray-100 equivalente ao tailwind */
 }
 
 /* Estilo customizado para barra de rolagem nas letras (Desktop/Opcional) */
 ::-webkit-scrollbar {
-    width: 6px;
+  width: 6px;
 }
 ::-webkit-scrollbar-track {
-    background: transparent;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-    background: #CBD5E1; 
-    border-radius: 10px;
+  background: #cbd5e1;
+  border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: #94A3B8; 
+  background: #94a3b8;
 }
 
 /* Interações Sociais */
 .btn-like {
-    transition: all 0.2s ease;
+  transition: all 0.2s ease;
 }
 .btn-like.liked {
-    color: #ef4444; /* red-500 */
-    transform: scale(1.1);
+  color: #ef4444; /* red-500 */
+  transform: scale(1.1);
 }
 .btn-like:active {
-    transform: scale(0.9);
+  transform: scale(0.9);
 }
 
 .star-btn {
-    transition: color 0.15s ease, transform 0.1s ease;
-    color: #e2e8f0; /* slate-200 */
+  transition:
+    color 0.15s ease,
+    transform 0.1s ease;
+  color: #e2e8f0; /* slate-200 */
 }
 .star-btn.active {
-    color: #f59e0b; /* amber-500 */
+  color: #f59e0b; /* amber-500 */
 }
 .star-btn:active {
-    transform: scale(0.85);
+  transform: scale(0.85);
 }
 
 /* Timeline & Gamification */
 .timeline-item {
-    position: relative;
-    padding-left: 2rem;
+  position: relative;
+  padding-left: 2rem;
 }
 
 .timeline-item::before {
-    content: '';
-    position: absolute;
-    left: 0.5rem;
-    top: 2rem;
-    bottom: -1rem;
-    width: 2px;
-    background-image: linear-gradient(to bottom, #cbd5e1 50%, transparent 50%);
-    background-size: 2px 8px; /* Tracejado vertical */
-    z-index: 1;
+  content: '';
+  position: absolute;
+  left: 0.5rem;
+  top: 2rem;
+  bottom: -1rem;
+  width: 2px;
+  background-image: linear-gradient(to bottom, #cbd5e1 50%, transparent 50%);
+  background-size: 2px 8px; /* Tracejado vertical */
+  z-index: 1;
 }
 
 .timeline-item:last-child::before {
-    display: none;
+  display: none;
 }
 
 /* Bolinha da timeline */
 .timeline-dot {
-    position: absolute;
-    left: calc(0.5rem - 4px);
-    top: 1.25rem;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background-color: #0F2C59; /* brand blue */
-    z-index: 2;
-    transition: all 0.3s ease;
+  position: absolute;
+  left: calc(0.5rem - 4px);
+  top: 1.25rem;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #0f2c59; /* brand blue */
+  z-index: 2;
+  transition: all 0.3s ease;
 }
 
 .timeline-dot.visited {
-    background-color: #10b981; /* green-500 */
-    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+  background-color: #10b981; /* green-500 */
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
 }
 
 /* Carimbo estilo passaporte (rotated) */
 .stamp-visited {
-    position: absolute;
-    right: 5px;
-    bottom: 5px;
-    font-family: 'Roboto Mono', monospace;
-    font-size: 0.55rem;
-    font-weight: bold;
-    color: #ef4444; /* red-500 */
-    border: 2px solid #ef4444;
-    padding: 2px 4px;
-    border-radius: 4px;
-    transform: rotate(-15deg);
-    opacity: 0.8;
-    pointer-events: none;
-    z-index: 5;
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 0.55rem;
+  font-weight: bold;
+  color: #ef4444; /* red-500 */
+  border: 2px solid #ef4444;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transform: rotate(-15deg);
+  opacity: 0.8;
+  pointer-events: none;
+  z-index: 5;
 }

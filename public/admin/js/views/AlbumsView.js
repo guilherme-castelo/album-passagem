@@ -4,7 +4,6 @@
 import { $ } from '../utils/dom.js';
 import { DataTable } from '../components/DataTable.js';
 import { ModalComponent } from '../components/ModalComponent.js';
-import { formatDate } from '../utils/dom.js';
 
 export class AlbumsView {
   constructor(ids) {
@@ -25,16 +24,35 @@ export class AlbumsView {
   _buildTable() {
     this.table = new DataTable(this.tableContainerEl, {
       columns: [
-        { key: 'title', label: 'Álbum', className: 'font-medium', render: (v) => `<span style="color:var(--text-primary)">${v}</span>` },
+        {
+          key: 'title',
+          label: 'Álbum',
+          className: 'font-medium',
+          render: (v) => `<span style="color:var(--text-primary)">${v}</span>`
+        },
         { key: 'artist', label: 'Artista', className: 'text-sm' },
         {
-          key: 'date', label: 'Data', className: 'text-xs font-mono',
-          render: (val) => val ? new Date(val).toLocaleDateString('pt-BR') : '--'
+          key: 'date',
+          label: 'Data',
+          className: 'text-xs font-mono',
+          render: (val) => (val ? new Date(val).toLocaleDateString('pt-BR') : '--')
         }
       ],
       actions: [
-        { label: 'Gerenciar', variant: 'ghost', onClick: (row) => { if (this.onView) this.onView(row._id || row.id); } },
-        { label: 'Excluir', variant: 'danger', onClick: (row) => { if (this.onDelete) this.onDelete(row._id || row.id, row.title); } }
+        {
+          label: 'Gerenciar',
+          variant: 'ghost',
+          onClick: (row) => {
+            if (this.onView) this.onView(row._id || row.id);
+          }
+        },
+        {
+          label: 'Excluir',
+          variant: 'danger',
+          onClick: (row) => {
+            if (this.onDelete) this.onDelete(row._id || row.id, row.title);
+          }
+        }
       ],
       emptyMessage: 'Nenhum álbum cadastrado.',
       minWidth: '600px'
@@ -81,8 +99,12 @@ export class AlbumsView {
     panel.querySelector('#album-cancel-btn').addEventListener('click', () => this.modal.close());
   }
 
-  setTableData(albums) { this.table.setData(albums); }
-  setTableLoading(loading) { this.table.setLoading(loading); }
+  setTableData(albums) {
+    this.table.setData(albums);
+  }
+  setTableLoading(loading) {
+    this.table.setLoading(loading);
+  }
 
   openNewForm() {
     this._editingId = null;
@@ -101,7 +123,9 @@ export class AlbumsView {
     };
   }
 
-  closeModal() { this.modal.close(); }
+  closeModal() {
+    this.modal.close();
+  }
   showFormError(msg) {
     const el = $('album-form-error');
     el.textContent = msg;

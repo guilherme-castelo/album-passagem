@@ -1,15 +1,15 @@
 /**
  * TracksView — Tracks table + modal form with Quill editor.
  */
-import { $, $$ } from '../utils/dom.js';
+import { $ } from '../utils/dom.js';
 import { DataTable } from '../components/DataTable.js';
 import { ModalComponent } from '../components/ModalComponent.js';
 
 const STATUS_COLORS = {
   'ON TIME': 'badge-success',
-  'DELAYED': 'badge-error',
+  DELAYED: 'badge-error',
   'FINAL CALL': 'badge-warning',
-  'BOARDING': 'badge-info'
+  BOARDING: 'badge-info'
 };
 
 export class TracksView {
@@ -34,22 +34,52 @@ export class TracksView {
   _buildTable() {
     this.table = new DataTable(this.tableContainerEl, {
       columns: [
-        { key: 'id', label: 'ID', className: 'font-mono text-xs', render: (v) => `<span style="color:var(--text-muted)">${v}</span>` },
-        { key: 'gate', label: 'Portão', className: 'font-mono font-bold', render: (v) => `<span style="color:var(--accent-violet)">${v}</span>` },
-        { key: 'flightCode', label: 'Código', className: 'font-mono text-xs' },
-        { key: 'title', label: 'Título', className: 'font-medium', render: (v) => `<span style="color:var(--text-primary)">${v}</span>` },
         {
-          key: 'status', label: 'Status',
+          key: 'id',
+          label: 'ID',
+          className: 'font-mono text-xs',
+          render: (v) => `<span style="color:var(--text-muted)">${v}</span>`
+        },
+        {
+          key: 'gate',
+          label: 'Portão',
+          className: 'font-mono font-bold',
+          render: (v) => `<span style="color:var(--accent-violet)">${v}</span>`
+        },
+        { key: 'flightCode', label: 'Código', className: 'font-mono text-xs' },
+        {
+          key: 'title',
+          label: 'Título',
+          className: 'font-medium',
+          render: (v) => `<span style="color:var(--text-primary)">${v}</span>`
+        },
+        {
+          key: 'status',
+          label: 'Status',
           render: (val) => `<span class="badge ${STATUS_COLORS[val] || 'badge-info'}">${val}</span>`
         },
         {
-          key: 'interactions', label: 'Likes', className: 'font-mono text-xs',
+          key: 'interactions',
+          label: 'Likes',
+          className: 'font-mono text-xs',
           render: (val) => `<span style="color:var(--accent-pink)">❤️ ${val?.likes || 0}</span>`
         }
       ],
       actions: [
-        { label: 'Editar', variant: 'ghost', onClick: (row) => { if (this.onEdit) this.onEdit(row.id); } },
-        { label: 'Excluir', variant: 'danger', onClick: (row) => { if (this.onDelete) this.onDelete(row.id, row.title); } }
+        {
+          label: 'Editar',
+          variant: 'ghost',
+          onClick: (row) => {
+            if (this.onEdit) this.onEdit(row.id);
+          }
+        },
+        {
+          label: 'Excluir',
+          variant: 'danger',
+          onClick: (row) => {
+            if (this.onDelete) this.onDelete(row.id, row.title);
+          }
+        }
       ],
       emptyMessage: 'Nenhuma faixa cadastrada.',
       minWidth: '700px'
@@ -148,8 +178,12 @@ export class TracksView {
     });
   }
 
-  setTableData(tracks) { this.table.setData(tracks); }
-  setTableLoading(loading) { this.table.setLoading(loading); }
+  setTableData(tracks) {
+    this.table.setData(tracks);
+  }
+  setTableLoading(loading) {
+    this.table.setLoading(loading);
+  }
 
   openNewForm() {
     this.modal.setTitle('Nova Faixa');
@@ -176,12 +210,14 @@ export class TracksView {
       if (this.quill) this.quill.setText(track.lyrics || '');
 
       $('media-fields').innerHTML = '';
-      (track.media || []).forEach(m => this._addMediaField(m.origin, m.content));
+      (track.media || []).forEach((m) => this._addMediaField(m.origin, m.content));
       $('track-form-error').classList.add('hidden');
     }, 50);
   }
 
-  closeForm() { this.modal.close(); }
+  closeForm() {
+    this.modal.close();
+  }
 
   showFormError(msg) {
     const el = $('track-form-error');
@@ -192,7 +228,7 @@ export class TracksView {
   getFormValues() {
     const mediaRows = Array.from(document.querySelectorAll('.media-row'));
     const media = [];
-    mediaRows.forEach(row => {
+    mediaRows.forEach((row) => {
       const origin = row.querySelector('.media-origin').value;
       const content = row.querySelector('.media-content').value.trim();
       if (content) media.push({ type: 'iframe', origin, content });
@@ -213,8 +249,14 @@ export class TracksView {
     const select = $('track-albumId');
     if (!select) return;
 
-    select.innerHTML = '<option value="">Selecione um álbum...</option>' +
-      albums.map(a => `<option value="${a._id || a.id}" ${currentAlbumId === (a._id || a.id) ? 'selected' : ''}>${a.title}</option>`).join('');
+    select.innerHTML =
+      '<option value="">Selecione um álbum...</option>' +
+      albums
+        .map(
+          (a) =>
+            `<option value="${a._id || a.id}" ${currentAlbumId === (a._id || a.id) ? 'selected' : ''}>${a.title}</option>`
+        )
+        .join('');
 
     // If we're in a specific album context, we can optionally hide this or make it readonly
     const container = $('album-select-container');

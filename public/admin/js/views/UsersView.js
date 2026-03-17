@@ -24,15 +24,28 @@ export class UsersView {
   _buildTable() {
     this.table = new DataTable(this.tableContainerEl, {
       columns: [
-        { key: 'username', label: 'Usuário', className: 'font-medium', render: (v) => `<span style="color:var(--text-primary)">${v}</span>` },
         {
-          key: 'createdAt', label: 'Criado em', className: 'text-xs font-mono',
+          key: 'username',
+          label: 'Usuário',
+          className: 'font-medium',
+          render: (v) => `<span style="color:var(--text-primary)">${v}</span>`
+        },
+        {
+          key: 'createdAt',
+          label: 'Criado em',
+          className: 'text-xs font-mono',
           render: (val) => formatDate(val)
         }
       ],
       actions: [
         { label: 'Editar', variant: 'ghost', onClick: (row) => this.openEditForm(row) },
-        { label: 'Excluir', variant: 'danger', onClick: (row) => { if (this.onDelete) this.onDelete(row._id || row.id, row.username); } }
+        {
+          label: 'Excluir',
+          variant: 'danger',
+          onClick: (row) => {
+            if (this.onDelete) this.onDelete(row._id || row.id, row.username);
+          }
+        }
       ],
       emptyMessage: 'Nenhum usuário admin.',
       minWidth: '400px'
@@ -77,8 +90,12 @@ export class UsersView {
     panel.querySelector('#user-cancel-btn').addEventListener('click', () => this.modal.close());
   }
 
-  setTableData(users) { this.table.setData(users); }
-  setTableLoading(loading) { this.table.setLoading(loading); }
+  setTableData(users) {
+    this.table.setData(users);
+  }
+  setTableLoading(loading) {
+    this.table.setLoading(loading);
+  }
 
   /** Opens modal for creating a new user. */
   openNewForm() {

@@ -52,66 +52,90 @@ Each album can define its own visual configuration via the `uiConfig` field. Thi
 ## Field Reference
 
 ### `theme`
-| Value | Description |
-|-------|-------------|
-| `"default"` | Platform default theme |
-| `"dark"` | Dark glassmorphism |
-| `"light"` | Light clean |
-| `"custom"` | Fully custom via colors/typography |
+
+| Value       | Description                        |
+| ----------- | ---------------------------------- |
+| `"default"` | Platform default theme             |
+| `"dark"`    | Dark glassmorphism                 |
+| `"light"`   | Light clean                        |
+| `"custom"`  | Fully custom via colors/typography |
 
 ### `colors`
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| `primary` | Hex | `#0F2C59` | Main brand color |
-| `accent` | Hex | `#F9B572` | Accent/highlight color |
-| `background` | Hex | `#0a0f1a` | Page background |
-| `text` | Hex | `#ffffff` | Primary text |
-| `muted` | Hex | `#94a3b8` | Secondary text |
+
+| Key          | Type | Default   | Description            |
+| ------------ | ---- | --------- | ---------------------- |
+| `primary`    | Hex  | `#0F2C59` | Main brand color       |
+| `accent`     | Hex  | `#F9B572` | Accent/highlight color |
+| `background` | Hex  | `#0a0f1a` | Page background        |
+| `text`       | Hex  | `#ffffff` | Primary text           |
+| `muted`      | Hex  | `#94a3b8` | Secondary text         |
 
 ### `typography`
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| `heading` | String | `Inter` | Google Font for headings |
-| `body` | String | `Inter` | Google Font for body |
-| `mono` | String | `Roboto Mono` | Monospaced font |
+
+| Key       | Type   | Default       | Description              |
+| --------- | ------ | ------------- | ------------------------ |
+| `heading` | String | `Inter`       | Google Font for headings |
+| `body`    | String | `Inter`       | Google Font for body     |
+| `mono`    | String | `Roboto Mono` | Monospaced font          |
 
 ### `layout`
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| `sections` | Array | `["hero","tracklist","lyrics"]` | Visible sections and order |
-| `trackDisplay` | String | `"list"` | `list` or `grid` |
-| `showInteractions` | Boolean | `true` | Show likes/ratings |
-| `showLyrics` | Boolean | `true` | Show lyrics view |
-| `showMedia` | Boolean | `true` | Show media embeds |
+
+| Key                | Type    | Default                         | Description                |
+| ------------------ | ------- | ------------------------------- | -------------------------- |
+| `sections`         | Array   | `["hero","tracklist","lyrics"]` | Visible sections and order |
+| `trackDisplay`     | String  | `"list"`                        | `list` or `grid`           |
+| `showInteractions` | Boolean | `true`                          | Show likes/ratings         |
+| `showLyrics`       | Boolean | `true`                          | Show lyrics view           |
+| `showMedia`        | Boolean | `true`                          | Show media embeds          |
 
 ### `labels`
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| `trackCode` | String | `"Track"` | Label for track identifier |
-| `trackTag` | String | `"Tag"` | Label for track tag/category |
-| `statuses` | Array | `["Published","Draft","Featured","Hidden"]` | Available status values |
-| `cta` | String | `"Listen Now"` | Call-to-action button text |
+
+| Key         | Type   | Default                                     | Description                  |
+| ----------- | ------ | ------------------------------------------- | ---------------------------- |
+| `trackCode` | String | `"Track"`                                   | Label for track identifier   |
+| `trackTag`  | String | `"Tag"`                                     | Label for track tag/category |
+| `statuses`  | Array  | `["Published","Draft","Featured","Hidden"]` | Available status values      |
+| `cta`       | String | `"Listen Now"`                              | Call-to-action button text   |
 
 ### `branding`
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| `title` | String | Album title | Override page title |
-| `subtitle` | String | `""` | Subtitle beneath title |
-| `logo` | String | `""` | URL to logo image |
-| `footer` | String | `""` | Footer text override |
+
+| Key        | Type   | Default     | Description            |
+| ---------- | ------ | ----------- | ---------------------- |
+| `title`    | String | Album title | Override page title    |
+| `subtitle` | String | `""`        | Subtitle beneath title |
+| `logo`     | String | `""`        | URL to logo image      |
+| `footer`   | String | `""`        | Footer text override   |
 
 ---
 
 ## Defaults
 
 When `uiConfig` is not present on an album, the platform defaults apply:
+
 ```javascript
 const DEFAULT_UI_CONFIG = {
   theme: 'default',
-  colors: { primary: '#0F2C59', accent: '#F9B572', background: '#0a0f1a', text: '#ffffff', muted: '#94a3b8' },
+  colors: {
+    primary: '#0F2C59',
+    accent: '#F9B572',
+    background: '#0a0f1a',
+    text: '#ffffff',
+    muted: '#94a3b8'
+  },
   typography: { heading: 'Inter', body: 'Inter', mono: 'Roboto Mono' },
-  layout: { sections: ['hero', 'tracklist', 'lyrics'], trackDisplay: 'list', showInteractions: true, showLyrics: true, showMedia: true },
-  labels: { trackCode: 'Track', trackTag: 'Tag', statuses: ['Published', 'Draft', 'Featured', 'Hidden'], cta: 'Listen Now' },
+  layout: {
+    sections: ['hero', 'tracklist', 'lyrics'],
+    trackDisplay: 'list',
+    showInteractions: true,
+    showLyrics: true,
+    showMedia: true
+  },
+  labels: {
+    trackCode: 'Track',
+    trackTag: 'Tag',
+    statuses: ['Published', 'Draft', 'Featured', 'Hidden'],
+    cta: 'Listen Now'
+  },
   branding: { title: '', subtitle: '', logo: '', footer: '' }
 };
 ```
@@ -131,6 +155,7 @@ const DEFAULT_UI_CONFIG = {
 ## How to Create a New Album Theme
 
 ### Step 1: Create the config JSON
+
 ```json
 {
   "theme": "custom",
@@ -161,6 +186,7 @@ const DEFAULT_UI_CONFIG = {
 ```
 
 ### Step 2: Apply via API
+
 ```bash
 curl -X PUT /api/album/:id \
   -H "Authorization: Bearer <token>" \
@@ -169,7 +195,9 @@ curl -X PUT /api/album/:id \
 ```
 
 ### Step 3: Admin UI (planned)
+
 In the admin Album Hub, a "Theme Editor" tab will provide:
+
 - Color pickers for each color field
 - Font selector (dropdown of Google Fonts)
 - Section toggler (checkboxes for sections array)

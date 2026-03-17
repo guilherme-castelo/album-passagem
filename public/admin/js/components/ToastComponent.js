@@ -17,16 +17,17 @@ class ToastManager {
 
   /**
    * Shows a toast notification.
-   * @param {string} message 
-   * @param {'success'|'error'} type 
+   * @param {string} message
+   * @param {'success'|'error'} type
    * @param {number} duration — ms before auto-dismiss
    */
   show(message, type = 'success', duration = 3000) {
     this._ensureContainer();
 
-    const iconSvg = type === 'success'
-      ? '<svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>'
-      : '<svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>';
+    const iconSvg =
+      type === 'success'
+        ? '<svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>'
+        : '<svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>';
 
     const toastEl = createElement('div', {
       className: `toast toast-${type}`,
@@ -41,8 +42,12 @@ class ToastManager {
     }, duration);
   }
 
-  success(msg, duration) { this.show(msg, 'success', duration); }
-  error(msg, duration) { this.show(msg, 'error', duration); }
+  success(msg, duration) {
+    this.show(msg, 'success', duration);
+  }
+  error(msg, duration) {
+    this.show(msg, 'error', duration);
+  }
 }
 
 export const toast = new ToastManager();

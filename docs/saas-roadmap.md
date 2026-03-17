@@ -9,6 +9,7 @@ O Album Platform nasceu como plataforma de apresentação para álbuns musicais,
 ## Fase Atual: v1.1 ✅
 
 ### O que temos
+
 - Multi-álbum com gestão centralizada (Album Hub)
 - API hierárquica (`/api/album/:id/tracks`)
 - Drag-and-Drop para reordenação de faixas
@@ -21,18 +22,21 @@ O Album Platform nasceu como plataforma de apresentação para álbuns musicais,
 ## Fase 2: Multi-Artista 🔜
 
 ### Objetivo
+
 Permitir que múltiplos artistas tenham seus álbuns na plataforma.
 
 ### Mudanças
-| Área | Mudança |
-|------|---------|
-| **Banco** | Nova collection `artists` (`name`, `bio`, `avatar`, `slug`) |
-| **Álbum** | Novo campo `artistId` referenciando o artista |
-| **API** | `GET /api/artists`, `GET /api/artists/:slug/albums` |
-| **Admin** | Nova seção "Artistas" com CRUD |
-| **Público** | Página `/artista/:slug` com portfólio de álbuns |
+
+| Área        | Mudança                                                     |
+| ----------- | ----------------------------------------------------------- |
+| **Banco**   | Nova collection `artists` (`name`, `bio`, `avatar`, `slug`) |
+| **Álbum**   | Novo campo `artistId` referenciando o artista               |
+| **API**     | `GET /api/artists`, `GET /api/artists/:slug/albums`         |
+| **Admin**   | Nova seção "Artistas" com CRUD                              |
+| **Público** | Página `/artista/:slug` com portfólio de álbuns             |
 
 ### Estrutura de Dados
+
 ```json
 {
   "_id": ObjectId,
@@ -52,39 +56,44 @@ Permitir que múltiplos artistas tenham seus álbuns na plataforma.
 ## Fase 3: Autenticação Pública 🔜
 
 ### Objetivo
+
 Permitir que fãs criem contas para interagir de forma autenticada.
 
 ### Mudanças
-| Área | Mudança |
-|------|---------|
-| **Banco** | Nova collection `fans` com perfil público |
-| **Auth** | OAuth (Google, Spotify) + email/senha |
-| **Interações** | Likes e ratings vinculados ao usuário logado |
-| **Histórico** | Registro de faixas ouvidas por usuário |
-| **Público** | Perfil do fã com músicas curtidas e avaliadas |
+
+| Área           | Mudança                                       |
+| -------------- | --------------------------------------------- |
+| **Banco**      | Nova collection `fans` com perfil público     |
+| **Auth**       | OAuth (Google, Spotify) + email/senha         |
+| **Interações** | Likes e ratings vinculados ao usuário logado  |
+| **Histórico**  | Registro de faixas ouvidas por usuário        |
+| **Público**    | Perfil do fã com músicas curtidas e avaliadas |
 
 ---
 
 ## Fase 4: SaaS & Monetização 🔜
 
 ### Objetivo
+
 Transformar a plataforma em um produto comercial para artistas independentes.
 
 ### Modelo de Negócio
-| Plano | Preço | Recursos |
-|-------|-------|----------|
-| **Free** | R$ 0 | 1 álbum, 10 faixas, analytics básico |
-| **Pro** | R$ 29/mês | Ilimitado, domínio custom, analytics avançado |
-| **Label** | R$ 99/mês | Multi-artista, relatórios, integrações |
+
+| Plano     | Preço     | Recursos                                      |
+| --------- | --------- | --------------------------------------------- |
+| **Free**  | R$ 0      | 1 álbum, 10 faixas, analytics básico          |
+| **Pro**   | R$ 29/mês | Ilimitado, domínio custom, analytics avançado |
+| **Label** | R$ 99/mês | Multi-artista, relatórios, integrações        |
 
 ### Mudanças Técnicas
-| Área | Mudança |
-|------|---------|
-| **Multi-tenant** | `tenantId` em todas as entidades |
-| **Subdomínios** | `artist.albumplatform.com` |
-| **Billing** | Integração com Stripe |
-| **Analytics** | Dashboard público com métricas |
-| **CDN** | Upload de imagens/áudio para S3 ou Cloudinary |
+
+| Área             | Mudança                                       |
+| ---------------- | --------------------------------------------- |
+| **Multi-tenant** | `tenantId` em todas as entidades              |
+| **Subdomínios**  | `artist.albumplatform.com`                    |
+| **Billing**      | Integração com Stripe                         |
+| **Analytics**    | Dashboard público com métricas                |
+| **CDN**          | Upload de imagens/áudio para S3 ou Cloudinary |
 
 ---
 

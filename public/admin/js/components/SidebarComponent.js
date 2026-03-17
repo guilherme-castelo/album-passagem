@@ -36,7 +36,7 @@ export class SidebarComponent {
     }
 
     // Nav links
-    $$('.sidebar-nav-link', this.sidebar).forEach(link => {
+    $$('.sidebar-nav-link', this.sidebar).forEach((link) => {
       link.addEventListener('click', () => {
         const section = link.dataset.section;
         if (section && this.onNavigate) {
@@ -57,7 +57,7 @@ export class SidebarComponent {
 
   /** Sets the active section in the sidebar. */
   setActive(sectionName) {
-    $$('.sidebar-nav-link', this.sidebar).forEach(link => {
+    $$('.sidebar-nav-link', this.sidebar).forEach((link) => {
       link.classList.toggle('active', link.dataset.section === sectionName);
     });
   }
@@ -78,7 +78,10 @@ export class SidebarComponent {
 
   /** Toggles the sidebar (mobile). */
   toggle() {
-    if (this.sidebar.classList.contains('open') || !this.sidebar.classList.contains('-translate-x-full')) {
+    if (
+      this.sidebar.classList.contains('open') ||
+      !this.sidebar.classList.contains('-translate-x-full')
+    ) {
       this.close();
     } else {
       this.open();

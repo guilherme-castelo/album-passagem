@@ -12,8 +12,8 @@
   --bg-card: rgba(255, 255, 255, 0.04);
 
   /* Brand */
-  --brand-blue: #0F2C59;
-  --brand-orange: #F9B572;
+  --brand-blue: #0f2c59;
+  --brand-orange: #f9b572;
   --brand-orange-hover: #ffcc8a;
 
   /* Accent colors */
@@ -71,7 +71,10 @@ body.admin-body {
 body.admin-body::before {
   content: '';
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: -1;
   background:
     radial-gradient(ellipse 80% 50% at 20% 30%, rgba(139, 92, 246, 0.08), transparent),
@@ -96,12 +99,14 @@ body.admin-body::before {
 }
 
 .glass-card {
-  background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-xl);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .glass-card:hover {
@@ -118,7 +123,10 @@ body.admin-body::before {
   padding: 0.75rem 1rem;
   width: 100%;
   outline: none;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background var(--transition-fast);
   font-family: inherit;
   font-size: 0.875rem;
 }
@@ -175,8 +183,14 @@ select.glass-input option {
 }
 
 @keyframes section-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ── Badges ────────────────────────────────────────────────────────────── */
@@ -191,10 +205,26 @@ select.glass-input option {
   letter-spacing: 0.05em;
 }
 
-.badge-success { background: var(--status-success-bg); color: var(--status-success-text); border: 1px solid var(--status-success-border); }
-.badge-error   { background: var(--status-error-bg);   color: var(--status-error-text);   border: 1px solid var(--status-error-border); }
-.badge-warning { background: var(--status-warning-bg); color: var(--status-warning-text); border: 1px solid var(--status-warning-border); }
-.badge-info    { background: var(--status-info-bg);    color: var(--status-info-text);    border: 1px solid var(--status-info-border); }
+.badge-success {
+  background: var(--status-success-bg);
+  color: var(--status-success-text);
+  border: 1px solid var(--status-success-border);
+}
+.badge-error {
+  background: var(--status-error-bg);
+  color: var(--status-error-text);
+  border: 1px solid var(--status-error-border);
+}
+.badge-warning {
+  background: var(--status-warning-bg);
+  color: var(--status-warning-text);
+  border: 1px solid var(--status-warning-border);
+}
+.badge-info {
+  background: var(--status-info-bg);
+  color: var(--status-info-text);
+  border: 1px solid var(--status-info-border);
+}
 
 /* ── Buttons ───────────────────────────────────────────────────────────── */
 .btn-primary {
@@ -340,7 +370,9 @@ select.glass-input option {
   max-width: 36rem;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.05);
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
   animation: modal-in 0.25s ease;
 }
 
@@ -366,8 +398,14 @@ select.glass-input option {
 }
 
 @keyframes modal-in {
-  from { opacity: 0; transform: scale(0.95) translateY(10px); }
-  to   { opacity: 1; transform: scale(1) translateY(0); }
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 /* ── Toast ──────────────────────────────────────────────────────────────── */
@@ -393,12 +431,40 @@ select.glass-input option {
   animation: toast-in 0.3s ease forwards;
 }
 
-.toast.toast-out { animation: toast-out 0.3s ease forwards; }
-.toast-success { background: rgba(17, 24, 39, 0.95); border: 1px solid var(--status-success-border); color: var(--status-success-text); }
-.toast-error   { background: rgba(17, 24, 39, 0.95); border: 1px solid var(--status-error-border);   color: var(--status-error-text); }
+.toast.toast-out {
+  animation: toast-out 0.3s ease forwards;
+}
+.toast-success {
+  background: rgba(17, 24, 39, 0.95);
+  border: 1px solid var(--status-success-border);
+  color: var(--status-success-text);
+}
+.toast-error {
+  background: rgba(17, 24, 39, 0.95);
+  border: 1px solid var(--status-error-border);
+  color: var(--status-error-text);
+}
 
-@keyframes toast-in  { from { opacity: 0; transform: translateX(100%); } to { opacity: 1; transform: translateX(0); } }
-@keyframes toast-out { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(100%); } }
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes toast-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
 
 /* ── Confirm Dialog ────────────────────────────────────────────────────── */
 .dialog-overlay {
@@ -425,7 +491,14 @@ select.glass-input option {
   animation: modal-in 0.2s ease;
 }
 
-@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 
 /* ── Quill Dark Theme Overrides ─────────────────────────────────────── */
 .ql-toolbar.ql-snow {
@@ -434,10 +507,19 @@ select.glass-input option {
   border-bottom: 0 !important;
   border-radius: var(--radius-sm) var(--radius-sm) 0 0;
 }
-.ql-toolbar.ql-snow .ql-stroke { stroke: var(--text-secondary); }
-.ql-toolbar.ql-snow .ql-fill { fill: var(--text-secondary); }
-.ql-toolbar.ql-snow .ql-picker { color: var(--text-secondary); }
-.ql-toolbar.ql-snow .ql-picker-options { background: var(--bg-elevated); border-color: var(--glass-border-strong); }
+.ql-toolbar.ql-snow .ql-stroke {
+  stroke: var(--text-secondary);
+}
+.ql-toolbar.ql-snow .ql-fill {
+  fill: var(--text-secondary);
+}
+.ql-toolbar.ql-snow .ql-picker {
+  color: var(--text-secondary);
+}
+.ql-toolbar.ql-snow .ql-picker-options {
+  background: var(--bg-elevated);
+  border-color: var(--glass-border-strong);
+}
 
 .ql-container.ql-snow {
   border: 1px solid var(--glass-border-strong) !important;
@@ -455,19 +537,41 @@ select.glass-input option {
 
 /* ── Skeleton Loading ──────────────────────────────────────────────────── */
 .skeleton {
-  background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03) 25%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.03) 75%
+  );
   background-size: 200% 100%;
   animation: skeleton-loading 1.5s infinite;
   border-radius: var(--radius-sm);
 }
 
-@keyframes skeleton-loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
 
 /* ── Scrollbar ─────────────────────────────────────────────────────────── */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
 
 /* ── Stat Card Gradient Borders ─────────────────────────────────────── */
 .stat-card {
@@ -478,14 +582,24 @@ select.glass-input option {
 .stat-card::before {
   content: '';
   position: absolute;
-  top: 0; left: 0; right: 0;
+  top: 0;
+  left: 0;
+  right: 0;
   height: 2px;
 }
 
-.stat-card-violet::before { background: linear-gradient(90deg, var(--accent-violet), transparent); }
-.stat-card-pink::before   { background: linear-gradient(90deg, var(--accent-pink), transparent); }
-.stat-card-cyan::before   { background: linear-gradient(90deg, var(--accent-cyan), transparent); }
-.stat-card-yellow::before { background: linear-gradient(90deg, var(--accent-yellow), transparent); }
+.stat-card-violet::before {
+  background: linear-gradient(90deg, var(--accent-violet), transparent);
+}
+.stat-card-pink::before {
+  background: linear-gradient(90deg, var(--accent-pink), transparent);
+}
+.stat-card-cyan::before {
+  background: linear-gradient(90deg, var(--accent-cyan), transparent);
+}
+.stat-card-yellow::before {
+  background: linear-gradient(90deg, var(--accent-yellow), transparent);
+}
 
 /* ── Label ─────────────────────────────────────────────────────────── */
 .label {

@@ -11,48 +11,57 @@ import { LyricsView } from './components/LyricsView.js';
 import { RatingWidget } from './components/RatingWidget.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    
-    // Instancia das Views sem a responsabilidade lógica
-    const checkinView = new CheckinView('checkin-form', 'input-passenger', 'btn-skip-checkin', 'passenger-name');
-    const loadingView = new LoadingView('view-loading');
-    const tracklist = new TrackList('tracklist-container');
-    const lyricsView = new LyricsView({
-        title: 'lyrics-title',
-        gate: 'lyrics-gate',
-        flight: 'lyrics-flight',
-        content: 'lyrics-content',
-        mediaContainer: 'media-container',
-        mediaPlayers: 'media-players',
-        btnBack: 'btn-back',
-        btnPrev: 'btn-prev-track',
-        btnNext: 'btn-next-track'
-    });
-    
-    const ratingWidget = new RatingWidget({
-        btnLike: 'btn-likeTrack',
-        likeCount: 'like-count',
-        ratingAvg: 'rating-avg',
-        starsSelector: '.star-btn'
-    });
+  // Instancia das Views sem a responsabilidade lógica
+  const checkinView = new CheckinView(
+    'checkin-form',
+    'input-passenger',
+    'btn-skip-checkin',
+    'passenger-name'
+  );
+  const loadingView = new LoadingView('view-loading');
+  const tracklist = new TrackList('tracklist-container');
+  const lyricsView = new LyricsView({
+    title: 'lyrics-title',
+    gate: 'lyrics-gate',
+    flight: 'lyrics-flight',
+    content: 'lyrics-content',
+    mediaContainer: 'media-container',
+    mediaPlayers: 'media-players',
+    btnBack: 'btn-back',
+    btnPrev: 'btn-prev-track',
+    btnNext: 'btn-next-track'
+  });
 
-    // Conexão via Controller
-    const controller = new AppController({
-        state: AppState,
-        api: musicService,
-        router: router,
-        views: { checkin: checkinView, loading: loadingView, tracklist, lyrics: lyricsView, rating: ratingWidget }
-    });
+  const ratingWidget = new RatingWidget({
+    btnLike: 'btn-likeTrack',
+    likeCount: 'like-count',
+    ratingAvg: 'rating-avg',
+    starsSelector: '.star-btn'
+  });
 
-    // Wire Events
-    checkinView.onSubmit = (name) => controller.handleCheckin(name);
-    checkinView.onSkip = () => controller.handleSkipCheckin();
-    tracklist.onTrackClick = (track) => controller.handleTrackSelect(track);
-    lyricsView.onBack = () => AppState.set('currentView', 'tracklist');
-    lyricsView.onNavigateTrack = (offset) => controller.handleNavigateTrack(offset);
-    ratingWidget.onLike = () => controller.handleLike();
-    ratingWidget.onRate = (stars) => controller.handleRate(stars);
+  // Conexão via Controller
+  const controller = new AppController({
+    state: AppState,
+    api: musicService,
+    router: router,
+    views: {
+      checkin: checkinView,
+      loading: loadingView,
+      tracklist,
+      lyrics: lyricsView,
+      rating: ratingWidget
+    }
+  });
 
-    // Boot App
-    controller.init();
-    
+  // Wire Events
+  checkinView.onSubmit = (name) => controller.handleCheckin(name);
+  checkinView.onSkip = () => controller.handleSkipCheckin();
+  tracklist.onTrackClick = (track) => controller.handleTrackSelect(track);
+  lyricsView.onBack = () => AppState.set('currentView', 'tracklist');
+  lyricsView.onNavigateTrack = (offset) => controller.handleNavigateTrack(offset);
+  ratingWidget.onLike = () => controller.handleLike();
+  ratingWidget.onRate = (stars) => controller.handleRate(stars);
+
+  // Boot App
+  controller.init();
 });

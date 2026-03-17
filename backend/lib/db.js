@@ -18,7 +18,7 @@ async function connectToDatabase() {
     serverApi: {
       version: ServerApiVersion.v1,
       strict: true,
-      deprecationErrors: true,
+      deprecationErrors: true
     }
   });
 
@@ -34,4 +34,3 @@ async function connectToDatabase() {
 }
 
 module.exports = connectToDatabase;
-

@@ -34,12 +34,22 @@ Integrations follow a **Port/Adapter** pattern:
 ```javascript
 // backend/integrations/IntegrationPort.js
 class IntegrationPort {
-  constructor(name) { this.name = name; }
+  constructor(name) {
+    this.name = name;
+  }
 
-  async search(query) { throw new Error('Not implemented'); }
-  async getTrackInfo(externalId) { throw new Error('Not implemented'); }
-  async getEmbedUrl(externalId) { throw new Error('Not implemented'); }
-  async handleWebhook(payload) { throw new Error('Not implemented'); }
+  async search(query) {
+    throw new Error('Not implemented');
+  }
+  async getTrackInfo(externalId) {
+    throw new Error('Not implemented');
+  }
+  async getEmbedUrl(externalId) {
+    throw new Error('Not implemented');
+  }
+  async handleWebhook(payload) {
+    throw new Error('Not implemented');
+  }
 }
 ```
 
@@ -119,11 +129,11 @@ Per-artist integration credentials stored in a `credentials` collection:
 
 ## Webhook Routes
 
-| Provider | Endpoint | Method | Purpose |
-|----------|----------|--------|---------|
-| Spotify | `/api/integrations/spotify/webhook` | POST | Track updates, playlist changes |
-| YouTube | `/api/integrations/youtube/webhook` | POST | Video status, new uploads |
-| Generic | `/api/integrations/:provider/webhook` | POST | Extensible for future providers |
+| Provider | Endpoint                              | Method | Purpose                         |
+| -------- | ------------------------------------- | ------ | ------------------------------- |
+| Spotify  | `/api/integrations/spotify/webhook`   | POST   | Track updates, playlist changes |
+| YouTube  | `/api/integrations/youtube/webhook`   | POST   | Video status, new uploads       |
+| Generic  | `/api/integrations/:provider/webhook` | POST   | Extensible for future providers |
 
 ### Webhook Payload Contract
 
@@ -146,7 +156,10 @@ Per-artist integration credentials stored in a `credentials` collection:
 ```javascript
 function verifyWebhookSignature(payload, signature, secret) {
   const crypto = require('crypto');
-  const expected = crypto.createHmac('sha256', secret).update(JSON.stringify(payload)).digest('hex');
+  const expected = crypto
+    .createHmac('sha256', secret)
+    .update(JSON.stringify(payload))
+    .digest('hex');
   return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected));
 }
 ```
@@ -176,7 +189,11 @@ The `tracks.media` array supports multiple providers:
 {
   "media": [
     { "type": "iframe", "origin": "youtube", "content": "https://youtube.com/embed/xyz" },
-    { "type": "iframe", "origin": "spotify", "content": "https://open.spotify.com/embed/track/abc" },
+    {
+      "type": "iframe",
+      "origin": "spotify",
+      "content": "https://open.spotify.com/embed/track/abc"
+    },
     { "type": "audio", "origin": "upload", "content": "/uploads/track.mp3" }
   ]
 }

@@ -69,17 +69,17 @@ async function setup() {
     console.log(`\n🏗️  Setting up database: ${DB_NAME}\n`);
 
     // ── 1. Create collections ────────────────────────────────
-    const existingCollections = (await db.listCollections().toArray()).map(c => c.name);
+    const existingCollections = (await db.listCollections().toArray()).map((c) => c.name);
 
     const requiredCollections = [
-      'tenants',      // Multi-tenant: organizations/labels
-      'artists',      // Artist profiles
-      'albums',       // Albums (plural, SaaS naming)
-      'tracks',       // Track data
-      'admins',       // Admin users (per-tenant)
-      'fans',         // Public users (future)
-      'credentials',  // Integration credentials (future)
-      'webhooks'      // Webhook logs (future)
+      'tenants', // Multi-tenant: organizations/labels
+      'artists', // Artist profiles
+      'albums', // Albums (plural, SaaS naming)
+      'tracks', // Track data
+      'admins', // Admin users (per-tenant)
+      'fans', // Public users (future)
+      'credentials', // Integration credentials (future)
+      'webhooks' // Webhook logs (future)
     ];
 
     for (const col of requiredCollections) {
@@ -137,7 +137,7 @@ async function setup() {
         username: 'admin',
         password: hashedPassword,
         role: 'superadmin',
-        tenantId: null,  // superadmin = all tenants
+        tenantId: null, // superadmin = all tenants
         createdAt: new Date()
       });
       console.log('  ✅ Admin "admin" created (password: admin)');
@@ -209,9 +209,27 @@ async function setup() {
         // Create 3 example tracks
         const tracksCollection = db.collection('tracks');
         const exampleTracks = [
-          { title: 'First Track', trackCode: 'TRK01', trackTag: 'Opening', status: 'Published', order: 1 },
-          { title: 'Second Track', trackCode: 'TRK02', trackTag: 'Main', status: 'Published', order: 2 },
-          { title: 'Third Track', trackCode: 'TRK03', trackTag: 'Closing', status: 'Draft', order: 3 }
+          {
+            title: 'First Track',
+            trackCode: 'TRK01',
+            trackTag: 'Opening',
+            status: 'Published',
+            order: 1
+          },
+          {
+            title: 'Second Track',
+            trackCode: 'TRK02',
+            trackTag: 'Main',
+            status: 'Published',
+            order: 2
+          },
+          {
+            title: 'Third Track',
+            trackCode: 'TRK03',
+            trackTag: 'Closing',
+            status: 'Draft',
+            order: 3
+          }
         ];
 
         for (const track of exampleTracks) {
@@ -235,8 +253,7 @@ async function setup() {
     console.log(`\n🎉 Database "${DB_NAME}" is ready!\n`);
     console.log('Collections:');
     const finalCollections = await db.listCollections().toArray();
-    finalCollections.forEach(c => console.log(`  📁 ${c.name}`));
-
+    finalCollections.forEach((c) => console.log(`  📁 ${c.name}`));
   } catch (err) {
     console.error('❌ Setup error:', err);
   } finally {

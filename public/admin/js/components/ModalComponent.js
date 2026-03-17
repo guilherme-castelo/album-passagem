@@ -62,7 +62,9 @@ export class ModalComponent {
       if (e.target === this.overlay) this.close();
     });
     // Close on Escape
-    this._escHandler = (e) => { if (e.key === 'Escape') this.close(); };
+    this._escHandler = (e) => {
+      if (e.key === 'Escape') this.close();
+    };
   }
 
   setTitle(title) {

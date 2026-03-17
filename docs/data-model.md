@@ -13,6 +13,7 @@
 ## Collections
 
 ### `tenants`
+
 Representa uma organização/label na plataforma multi-tenant.
 
 ```json
@@ -26,20 +27,21 @@ Representa uma organização/label na plataforma multi-tenant.
 }
 ```
 
-| Campo | Tipo | Obrigatório | Descrição |
-|-------|------|:-----------:|-----------|
-| `_id` | ObjectId | Auto | Identificador nativo |
-| `name` | String | Sim | Nome da organização |
-| `slug` | String | Sim | Slug único (subdomínio) |
-| `plan` | String | Sim | `free`, `pro`, `label` |
-| `settings` | Object | Não | Configurações do tenant |
-| `createdAt` | Date | Auto | Data de criação |
+| Campo       | Tipo     | Obrigatório | Descrição               |
+| ----------- | -------- | :---------: | ----------------------- |
+| `_id`       | ObjectId |    Auto     | Identificador nativo    |
+| `name`      | String   |     Sim     | Nome da organização     |
+| `slug`      | String   |     Sim     | Slug único (subdomínio) |
+| `plan`      | String   |     Sim     | `free`, `pro`, `label`  |
+| `settings`  | Object   |     Não     | Configurações do tenant |
+| `createdAt` | Date     |    Auto     | Data de criação         |
 
 **Índices:** `slug` (unique)
 
 ---
 
 ### `artists`
+
 Representa um artista vinculado a um tenant.
 
 ```json
@@ -55,20 +57,21 @@ Representa um artista vinculado a um tenant.
 }
 ```
 
-| Campo | Tipo | Obrigatório | Descrição |
-|-------|------|:-----------:|-----------|
-| `tenantId` | String | Sim | Referência ao tenant |
-| `name` | String | Sim | Nome do artista |
-| `slug` | String | Sim | Slug único dentro do tenant |
-| `bio` | String | Não | Biografia |
-| `avatar` | String | Não | URL da imagem |
-| `links` | Object | Não | Links sociais |
+| Campo      | Tipo   | Obrigatório | Descrição                   |
+| ---------- | ------ | :---------: | --------------------------- |
+| `tenantId` | String |     Sim     | Referência ao tenant        |
+| `name`     | String |     Sim     | Nome do artista             |
+| `slug`     | String |     Sim     | Slug único dentro do tenant |
+| `bio`      | String |     Não     | Biografia                   |
+| `avatar`   | String |     Não     | URL da imagem               |
+| `links`    | Object |     Não     | Links sociais               |
 
 **Índices:** `tenantId+slug` (unique), `tenantId`
 
 ---
 
 ### `albums`
+
 Representa um álbum musical (coleção renomeada de `album` → `albums`).
 
 ```json
@@ -87,22 +90,23 @@ Representa um álbum musical (coleção renomeada de `album` → `albums`).
 }
 ```
 
-| Campo | Tipo | Obrigatório | Descrição |
-|-------|------|:-----------:|-----------|
-| `tenantId` | String | Sim | Referência ao tenant |
-| `artistId` | String | Sim | Referência ao artista |
-| `title` | String | Sim | Título do álbum |
-| `artist` | String | Sim | Nome do artista (denormalizado) |
-| `event` | String | Não | Evento associado |
-| `date` | String | Não | Data de lançamento (ISO 8601) |
-| `uiConfig` | Object | Não | Configuração de template/layout ([docs/ui-config.md](ui-config.md)) |
-| `isDefault` | Boolean | Não | Álbum padrão do site público |
+| Campo       | Tipo    | Obrigatório | Descrição                                                           |
+| ----------- | ------- | :---------: | ------------------------------------------------------------------- |
+| `tenantId`  | String  |     Sim     | Referência ao tenant                                                |
+| `artistId`  | String  |     Sim     | Referência ao artista                                               |
+| `title`     | String  |     Sim     | Título do álbum                                                     |
+| `artist`    | String  |     Sim     | Nome do artista (denormalizado)                                     |
+| `event`     | String  |     Não     | Evento associado                                                    |
+| `date`      | String  |     Não     | Data de lançamento (ISO 8601)                                       |
+| `uiConfig`  | Object  |     Não     | Configuração de template/layout ([docs/ui-config.md](ui-config.md)) |
+| `isDefault` | Boolean |     Não     | Álbum padrão do site público                                        |
 
 **Índices:** `artistId`, `tenantId`
 
 ---
 
 ### `tracks`
+
 Representa uma faixa musical vinculada a um álbum.
 
 ```json
@@ -126,24 +130,25 @@ Representa uma faixa musical vinculada a um álbum.
 }
 ```
 
-| Campo | Tipo | Obrigatório | Descrição |
-|-------|------|:-----------:|-----------|
-| `tenantId` | String | Sim | Referência ao tenant |
-| `albumId` | String | Sim | Referência ao álbum |
-| `title` | String | Sim | Título da faixa |
-| `trackCode` | String | Sim | Código identificador (ex: TRK01) |
-| `trackTag` | String | Não | Tag/categoria |
-| `status` | String | Não | Configurável via `uiConfig.labels.statuses` |
-| `order` | Number | Auto | Posição no álbum |
-| `lyrics` | String | Não | Letra da música |
-| `media` | Array | Não | Widgets de mídia incorporáveis |
-| `interactions` | Object | Auto | `{ likes: Number, ratings: [Number] }` |
+| Campo          | Tipo   | Obrigatório | Descrição                                   |
+| -------------- | ------ | :---------: | ------------------------------------------- |
+| `tenantId`     | String |     Sim     | Referência ao tenant                        |
+| `albumId`      | String |     Sim     | Referência ao álbum                         |
+| `title`        | String |     Sim     | Título da faixa                             |
+| `trackCode`    | String |     Sim     | Código identificador (ex: TRK01)            |
+| `trackTag`     | String |     Não     | Tag/categoria                               |
+| `status`       | String |     Não     | Configurável via `uiConfig.labels.statuses` |
+| `order`        | Number |    Auto     | Posição no álbum                            |
+| `lyrics`       | String |     Não     | Letra da música                             |
+| `media`        | Array  |     Não     | Widgets de mídia incorporáveis              |
+| `interactions` | Object |    Auto     | `{ likes: Number, ratings: [Number] }`      |
 
 **Índices:** `albumId+order`, `tenantId`
 
 ---
 
 ### `admins`
+
 Representa um administrador do painel.
 
 ```json
@@ -157,26 +162,29 @@ Representa um administrador do painel.
 }
 ```
 
-| Campo | Tipo | Descrição |
-|-------|------|-----------|
+| Campo      | Tipo        | Descrição                           |
+| ---------- | ----------- | ----------------------------------- |
 | `tenantId` | String/null | `null` = superadmin (acesso global) |
-| `role` | String | `superadmin`, `admin`, `editor` |
+| `role`     | String      | `superadmin`, `admin`, `editor`     |
 
 **Índices:** `username` (unique), `tenantId`
 
 ---
 
 ### `fans` (futuro)
+
 Usuários públicos da plataforma.
 
 **Índices:** `email` (unique sparse)
 
 ### `credentials` (futuro)
+
 Credenciais de integração por artista.
 
 **Índices:** `artistId+provider` (unique)
 
 ### `webhooks` (futuro)
+
 Log de webhooks recebidos.
 
 ---
@@ -205,10 +213,10 @@ Todos os relacionamentos são por **referência via string ID** (`tenantId`, `ar
 
 ```javascript
 // ✅ Correto
-collection.find({ tenantId, albumId })
+collection.find({ tenantId, albumId });
 
 // ❌ Incorreto (vaza dados entre tenants)
-collection.find({ albumId })
+collection.find({ albumId });
 ```
 
 Exceção: superadmins (`tenantId: null`) podem acessar dados de qualquer tenant.

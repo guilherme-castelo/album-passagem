@@ -183,21 +183,27 @@ export class AdminController {
     try {
       const albums = await adminService.getAlbums();
       AdminState.set('albums', albums);
-    } catch (e) { }
+    } catch (e) {}
   }
 
   // ── Section routing ────────────────────────────────────────────────
   _showSection(name) {
-    document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.admin-section').forEach((s) => s.classList.remove('active'));
     const section = document.getElementById(`section-${name}`);
     if (section) section.classList.add('active');
 
     this.views.sidebar.setActive(name);
 
     switch (name) {
-      case 'dashboard': this._loadDashboard(); break;
-      case 'album': this._loadAlbums(); break;
-      case 'users': this._loadUsers(); break;
+      case 'dashboard':
+        this._loadDashboard();
+        break;
+      case 'album':
+        this._loadAlbums();
+        break;
+      case 'users':
+        this._loadUsers();
+        break;
     }
   }
 
@@ -225,7 +231,7 @@ export class AdminController {
     try {
       const tracks = await adminService.getTracks(selected._id);
       this.views.albumDetail.render(selected, tracks);
-    } catch (e) { }
+    } catch (e) {}
   }
 
   // ── Data loaders ───────────────────────────────────────────────────

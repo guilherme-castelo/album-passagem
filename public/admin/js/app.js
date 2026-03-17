@@ -52,7 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (albumHeader && !document.getElementById('btn-new-album')) {
     const btn = document.createElement('button');
     btn.id = 'btn-new-album';
-    btn.className = 'btn-primary flex items-center justify-center gap-2 mt-4 sm:mt-0 sm:absolute sm:right-0 sm:top-1';
+    btn.className =
+      'btn-primary flex items-center justify-center gap-2 mt-4 sm:mt-0 sm:absolute sm:right-0 sm:top-1';
     btn.innerHTML = `
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
       <span>Novo Álbum</span>

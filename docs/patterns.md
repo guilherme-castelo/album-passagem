@@ -10,6 +10,7 @@ Response ← Controller ← Service ← Repository ←
 ```
 
 ### Fluxo de dados
+
 ```javascript
 // Controller: extrai dados do request
 const id = req.params.id || req.query.id;
@@ -45,6 +46,7 @@ track: { _id: "xyz789", albumId: "abc123" }
 ```
 
 ### Vantagens
+
 - **Updates isolados** — Likes/ratings não travam o documento do álbum.
 - **Queries flexíveis** — Buscar tracks por álbum, por ID, ou globalmente.
 - **Escalabilidade** — Sem limite de 16MB do documento MongoDB.
@@ -58,7 +60,7 @@ O `AdminState` / `AppState` implementa um Observer reativo:
 ```javascript
 // Registrar listener
 AdminState.subscribe('currentSection', (newValue) => {
-    this._showSection(newValue);
+  this._showSection(newValue);
 });
 
 // Disparar mudança
@@ -75,19 +77,19 @@ Views nunca chamam API diretamente. Elas expõem callbacks que o Controller cone
 ```javascript
 // Na View: expõe o callback
 class AlbumDetailView {
-    onEditTrack = null; // Controller define isso
-    
-    render() {
-        button.onClick = (row) => {
-            if (this.onEditTrack) this.onEditTrack(row._id);
-        };
-    }
+  onEditTrack = null; // Controller define isso
+
+  render() {
+    button.onClick = (row) => {
+      if (this.onEditTrack) this.onEditTrack(row._id);
+    };
+  }
 }
 
 // No Controller: conecta lógica
 albumDetail.onEditTrack = async (_id) => {
-    const track = await adminService.getTrack(_id);
-    tracks.openEditForm(track);
+  const track = await adminService.getTrack(_id);
+  tracks.openEditForm(track);
 };
 ```
 
@@ -110,6 +112,7 @@ module.exports = async function handler(req, res) {
 ```
 
 ### Por quê?
+
 - **Vercel** permite apenas 1 handler por path prefix.
 - **Menos cold starts** — menos funções serverless.
 - **Consistência** — mesmo padrão em dev (Express) e prod (Vercel).
@@ -123,14 +126,14 @@ Atualizações são refletidas na UI antes da confirmação do servidor:
 ```javascript
 // 1. Atualiza UI imediatamente
 this.views.rating.render(updatedData);
-this.views.rating.showToast("Curtido com sucesso! 🧡");
+this.views.rating.showToast('Curtido com sucesso! 🧡');
 
 // 2. Envia pro servidor em background
 try {
-    await this.api.like(trackId, action);
+  await this.api.like(trackId, action);
 } catch (err) {
-    // 3. Rollback se falhar
-    await this._refreshAlbumHub();
+  // 3. Rollback se falhar
+  await this._refreshAlbumHub();
 }
 ```
 
@@ -142,11 +145,11 @@ O `server.js` emula o ambiente Vercel localmente:
 
 ```javascript
 function vercelCatchAll(handler, prefix) {
-    return async (req, res) => {
-        // Extrai subpath e injeta como array
-        req.vercelPath = subPath.split('/').filter(Boolean);
-        return handler(req, res);
-    };
+  return async (req, res) => {
+    // Extrai subpath e injeta como array
+    req.vercelPath = subPath.split('/').filter(Boolean);
+    return handler(req, res);
+  };
 }
 ```
 
@@ -174,7 +177,9 @@ A reordenação usa HTML5 Drag-and-Drop API nativo:
 Todas as classes de serviço e repositório são exportadas como singletons:
 
 ```javascript
-class TrackRepository { /* ... */ }
+class TrackRepository {
+  /* ... */
+}
 module.exports = new TrackRepository();
 ```
 
@@ -190,10 +195,10 @@ A conexão com o banco é reutilizada entre invocações serverless:
 let cachedDb = null;
 
 async function connectToDatabase() {
-    if (cachedDb) return cachedDb; // Reutiliza
-    const client = new MongoClient(uri);
-    cachedDb = client.db("album-platform");
-    return cachedDb;
+  if (cachedDb) return cachedDb; // Reutiliza
+  const client = new MongoClient(uri);
+  cachedDb = client.db('album-platform');
+  return cachedDb;
 }
 ```
 

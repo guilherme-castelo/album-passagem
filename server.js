@@ -19,22 +19,24 @@ app.use(express.json());
 
 // ─── Vercel Adapter (Emulação Local de Catch-All Routes) ────────────────────
 function vercelCatchAll(handler, prefix) {
-    return async (req, res) => {
-        const urlStr = req.originalUrl.split('?')[0];
-        const subPath = urlStr.startsWith(prefix) ? urlStr.substring(prefix.length) : '';
+  return async (req, res) => {
+    const urlStr = req.originalUrl.split('?')[0];
+    const subPath = urlStr.startsWith(prefix) ? urlStr.substring(prefix.length) : '';
 
-        const pathArray = subPath && subPath !== '/' ? subPath.split('/').filter(Boolean) : [];
+    const pathArray = subPath && subPath !== '/' ? subPath.split('/').filter(Boolean) : [];
 
-        // Atribui diretamente ao req um namespace customizado para evitar limitações do Express
-        req.vercelPath = pathArray;
+    // Atribui diretamente ao req um namespace customizado para evitar limitações do Express
+    req.vercelPath = pathArray;
 
-        // Tenta também injetar no query para compatibilidade máxima com Next.js
-        if (!req.query) req.query = {};
-        try { req.query.path = pathArray; } catch (e) { }
+    // Tenta também injetar no query para compatibilidade máxima com Next.js
+    if (!req.query) req.query = {};
+    try {
+      req.query.path = pathArray;
+    } catch (e) {}
 
-        console.log(`[VercelAdapter] ${req.method} ${req.originalUrl} -> path:`, req.vercelPath);
-        return handler(req, res);
-    };
+    console.log(`[VercelAdapter] ${req.method} ${req.originalUrl} -> path:`, req.vercelPath);
+    return handler(req, res);
+  };
 }
 
 // ─── Roteamento para as 5 Funções Serverless ─────────────────────────────────
@@ -49,16 +51,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // ─── Catch-all: Retorna o index.html para SPAs ───────────────────────────────
 app.get(/.*/, (req, res) => {
-    // Serve admin/index.html para rotas /admin/*
-    if (req.path.startsWith('/admin')) {
-        return res.sendFile(path.join(__dirname, 'public', 'admin', 'index.html'));
-    }
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  // Serve admin/index.html para rotas /admin/*
+  if (req.path.startsWith('/admin')) {
+    return res.sendFile(path.join(__dirname, 'public', 'admin', 'index.html'));
+  }
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.listen(PORT, () => {
-    console.log(`🚀 Server running at http://localhost:${PORT}`);
-    console.log(`⚡ Local-to-Serverless (Vercel Adapter) active`);
-    console.log(`🔐 Admin Panel: http://localhost:${PORT}/admin/login.html`);
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
+  console.log(`⚡ Local-to-Serverless (Vercel Adapter) active`);
+  console.log(`🔐 Admin Panel: http://localhost:${PORT}/admin/login.html`);
 });
-

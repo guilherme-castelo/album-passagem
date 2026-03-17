@@ -14,7 +14,7 @@ export const auth = {
   headers() {
     return {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${this.getToken()}`
+      Authorization: `Bearer ${this.getToken()}`
     };
   },
 

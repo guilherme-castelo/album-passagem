@@ -31,7 +31,7 @@ class AdminStateManager {
 
   /**
    * Subscribe to state changes.
-   * @param {string} key 
+   * @param {string} key
    * @param {Function} callback — (newValue, key) => void
    * @returns {Function} unsubscribe function
    */
@@ -43,14 +43,17 @@ class AdminStateManager {
 
     return () => {
       const arr = this._listeners.get(key);
-      this._listeners.set(key, arr.filter(cb => cb !== callback));
+      this._listeners.set(
+        key,
+        arr.filter((cb) => cb !== callback)
+      );
     };
   }
 
   _notify(key) {
     if (this._listeners.has(key)) {
       const val = this.get(key);
-      this._listeners.get(key).forEach(cb => cb(val, key));
+      this._listeners.get(key).forEach((cb) => cb(val, key));
     }
   }
 }

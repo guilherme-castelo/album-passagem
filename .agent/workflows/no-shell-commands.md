@@ -17,9 +17,11 @@ Instead, when a command needs to be run:
 Instead of running `node scripts/setup-platform.js`, say:
 
 > Execute o seguinte comando no terminal:
+>
 > ```bash
 > node scripts/setup-platform.js
 > ```
+>
 > Me avise o resultado para que eu possa continuar.
 
 ## Applies To

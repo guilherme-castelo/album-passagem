@@ -1,6 +1,5 @@
 require('dotenv').config();
 const connectToDatabase = require('../backend/lib/db');
-const { ObjectId } = require('mongodb');
 
 // Accept CLI args: --albumTitle "Name" --artistName "Name"
 const args = process.argv.slice(2);
@@ -46,7 +45,7 @@ async function migrate() {
   process.exit(0);
 }
 
-migrate().catch(err => {
+migrate().catch((err) => {
   console.error('Migration error:', err);
   process.exit(1);
 });

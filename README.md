@@ -9,6 +9,7 @@ Plataforma SaaS fullstack para gestão e apresentação de álbuns musicais. Com
 O **Album Platform** é uma plataforma SaaS onde artistas independentes podem criar, gerenciar e publicar álbuns musicais com páginas interativas personalizáveis. O sistema suporta múltiplos álbuns, artistas e, futuramente, multi-tenant com portfólios individuais.
 
 ### Objetivo
+
 Oferecer uma plataforma onde artistas possam apresentar seus álbuns com interatividade (likes, ratings, letras, mídia) e gerenciar todo o conteúdo via um painel administrativo intuitivo — com layouts e temas configuráveis por álbum.
 
 ---
@@ -16,6 +17,7 @@ Oferecer uma plataforma onde artistas possam apresentar seus álbuns com interat
 ## ✨ Funcionalidades
 
 ### 🌐 Site Público
+
 - **Tracklist Interativa:** Lista de faixas com status customizáveis.
 - **Player & Letras:** Visualização detalhada de cada faixa com players incorporados (YouTube/Spotify).
 - **Interações (Likes & Ratings):** Curtir faixas e dar notas de 1 a 5 estrelas.
@@ -23,7 +25,9 @@ Oferecer uma plataforma onde artistas possam apresentar seus álbuns com interat
 - **Armazenamento Local:** Interações são salvas no localStorage.
 
 ### 🔐 Painel Administrativo
+
 Interface protegida com design **Glassmorphism** em tema escuro.
+
 - **Dashboard Analítico:** Total de faixas, likes, média de avaliações.
 - **Gestão de Álbuns (Multi-Album):** CRUD completo com Hub centralizado.
 - **Gestão de Faixas:** CRUD via modal com Rich Text editor, drag-and-drop e códigos automáticos.
@@ -75,28 +79,30 @@ album-platform/
 > 📄 Schema completo: [`docs/data-model.md`](docs/data-model.md)
 
 ### `albums`
-| Campo | Tipo | Descrição |
-|-------|------|-----------|
-| `_id` | ObjectId | ID nativo MongoDB |
-| `title` | String | Título do álbum |
-| `artist` | String | Nome do artista |
-| `event` | String | Evento associado |
-| `date` | String | Data de lançamento |
-| `uiConfig` | Object | Configuração de template/layout |
+
+| Campo      | Tipo     | Descrição                       |
+| ---------- | -------- | ------------------------------- |
+| `_id`      | ObjectId | ID nativo MongoDB               |
+| `title`    | String   | Título do álbum                 |
+| `artist`   | String   | Nome do artista                 |
+| `event`    | String   | Evento associado                |
+| `date`     | String   | Data de lançamento              |
+| `uiConfig` | Object   | Configuração de template/layout |
 
 ### `tracks`
-| Campo | Tipo | Descrição |
-|-------|------|-----------|
-| `_id` | ObjectId | ID nativo MongoDB |
-| `albumId` | String | Referência ao álbum |
-| `title` | String | Título da faixa |
-| `order` | Number | Posição no álbum |
-| `trackCode` | String | Código identificador |
-| `trackTag` | String | Tag/categorização |
-| `status` | String | Status configurável |
-| `lyrics` | String | Letra da música |
-| `media` | Array | Widgets de mídia |
-| `interactions` | Object | `{ likes, ratings }` |
+
+| Campo          | Tipo     | Descrição            |
+| -------------- | -------- | -------------------- |
+| `_id`          | ObjectId | ID nativo MongoDB    |
+| `albumId`      | String   | Referência ao álbum  |
+| `title`        | String   | Título da faixa      |
+| `order`        | Number   | Posição no álbum     |
+| `trackCode`    | String   | Código identificador |
+| `trackTag`     | String   | Tag/categorização    |
+| `status`       | String   | Status configurável  |
+| `lyrics`       | String   | Letra da música      |
+| `media`        | Array    | Widgets de mídia     |
+| `interactions` | Object   | `{ likes, ratings }` |
 
 ---
 
@@ -119,6 +125,7 @@ npm install
 ```
 
 **`.env`:**
+
 ```env
 DB_USER=your_user
 DB_PASS=your_password
@@ -142,29 +149,29 @@ npm run dev          # Start dev server
 
 Admin routes require `Authorization: Bearer <token>`
 
-| Método | Endpoint | Auth | Descrição |
-|--------|----------|:----:|-----------|
-| `POST` | `/api/auth/login` | ✗ | JWT Token |
-| `GET` | `/api/musicas` | ✗ | Default album + tracks (legacy) |
-| `POST` | `/api/musicas/:id/like` | ✗ | Toggle like |
-| `POST` | `/api/musicas/:id/rate` | ✗ | Rate 1-5 |
-| `GET/POST` | `/api/album` | ✓ | List / Create albums |
-| `GET/PUT/DELETE` | `/api/album/:id` | ✓ | Album CRUD |
-| `GET/POST` | `/api/album/:id/tracks` | ✓ | Album tracks |
-| `POST` | `/api/album/:id/reorder` | ✓ | Reorder tracks |
-| `GET/PUT/DELETE` | `/api/tracks/:id` | ✓ | Track CRUD |
-| CRUD | `/api/users` | ✓ | Admin management |
+| Método           | Endpoint                 | Auth | Descrição                       |
+| ---------------- | ------------------------ | :--: | ------------------------------- |
+| `POST`           | `/api/auth/login`        |  ✗   | JWT Token                       |
+| `GET`            | `/api/musicas`           |  ✗   | Default album + tracks (legacy) |
+| `POST`           | `/api/musicas/:id/like`  |  ✗   | Toggle like                     |
+| `POST`           | `/api/musicas/:id/rate`  |  ✗   | Rate 1-5                        |
+| `GET/POST`       | `/api/album`             |  ✓   | List / Create albums            |
+| `GET/PUT/DELETE` | `/api/album/:id`         |  ✓   | Album CRUD                      |
+| `GET/POST`       | `/api/album/:id/tracks`  |  ✓   | Album tracks                    |
+| `POST`           | `/api/album/:id/reorder` |  ✓   | Reorder tracks                  |
+| `GET/PUT/DELETE` | `/api/tracks/:id`        |  ✓   | Track CRUD                      |
+| CRUD             | `/api/users`             |  ✓   | Admin management                |
 
 ---
 
 ## 🗺️ Roadmap
 
-| Fase | Objetivo | Status |
-|------|----------|--------|
-| ✅ v1.0 | Core platform with album management | Done |
-| ✅ v1.1 | Multi-album, Album Hub, Drag-and-Drop | Done |
-| 🔜 v1.2 | Configurable templates (`uiConfig`) | Planned |
-| 🔜 v1.3 | Multi-artist support | Planned |
+| Fase    | Objetivo                               | Status  |
+| ------- | -------------------------------------- | ------- |
+| ✅ v1.0 | Core platform with album management    | Done    |
+| ✅ v1.1 | Multi-album, Album Hub, Drag-and-Drop  | Done    |
+| 🔜 v1.2 | Configurable templates (`uiConfig`)    | Planned |
+| 🔜 v1.3 | Multi-artist support                   | Planned |
 | 🔜 v2.0 | SaaS: multi-tenant, auth, integrations | Planned |
 
 > 📄 Sprint plan: [`roadmap/sprints.md`](roadmap/sprints.md) · Backlog: [`backlog/backlog.md`](backlog/backlog.md)
@@ -173,15 +180,15 @@ Admin routes require `Authorization: Bearer <token>`
 
 ## 📚 Documentation
 
-| Document | Description |
-|----------|-------------|
-| [`docs/architecture.md`](docs/architecture.md) | System architecture |
-| [`docs/api.md`](docs/api.md) | Full API reference |
-| [`docs/data-model.md`](docs/data-model.md) | MongoDB schema |
-| [`docs/ui-config.md`](docs/ui-config.md) | Template & uiConfig system |
-| [`docs/admin-flow.md`](docs/admin-flow.md) | Admin panel flow |
-| [`docs/integrations.md`](docs/integrations.md) | Integration architecture |
-| [`docs/development-rules.md`](docs/development-rules.md) | Coding conventions |
-| [`docs/patterns.md`](docs/patterns.md) | Architectural patterns |
-| [`docs/skills.md`](docs/skills.md) | Project evolution guide |
-| [`docs/saas-roadmap.md`](docs/saas-roadmap.md) | SaaS roadmap |
+| Document                                                 | Description                |
+| -------------------------------------------------------- | -------------------------- |
+| [`docs/architecture.md`](docs/architecture.md)           | System architecture        |
+| [`docs/api.md`](docs/api.md)                             | Full API reference         |
+| [`docs/data-model.md`](docs/data-model.md)               | MongoDB schema             |
+| [`docs/ui-config.md`](docs/ui-config.md)                 | Template & uiConfig system |
+| [`docs/admin-flow.md`](docs/admin-flow.md)               | Admin panel flow           |
+| [`docs/integrations.md`](docs/integrations.md)           | Integration architecture   |
+| [`docs/development-rules.md`](docs/development-rules.md) | Coding conventions         |
+| [`docs/patterns.md`](docs/patterns.md)                   | Architectural patterns     |
+| [`docs/skills.md`](docs/skills.md)                       | Project evolution guide    |
+| [`docs/saas-roadmap.md`](docs/saas-roadmap.md)           | SaaS roadmap               |

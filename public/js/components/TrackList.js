@@ -7,26 +7,24 @@ export class TrackList {
   render(tracks = [], visitedTracks = []) {
     if (!this.container) return;
 
-    this.container.innerHTML = "";
-    this.container.className = "flex flex-col space-y-4";
+    this.container.innerHTML = '';
+    this.container.className = 'flex flex-col space-y-4';
 
     tracks.forEach((track, index) => {
-      const trkEl = document.createElement("li");
-      trkEl.className = "timeline-item group";
+      const trkEl = document.createElement('li');
+      trkEl.className = 'timeline-item group';
 
       const trackId = track._id || track.id;
       const isVisited = visitedTracks.includes(trackId);
-      const dotClass = isVisited ? "timeline-dot visited" : "timeline-dot";
-      const stampHtml = isVisited
-        ? '<div class="stamp-visited">BOARDED</div>'
-        : "";
+      const dotClass = isVisited ? 'timeline-dot visited' : 'timeline-dot';
+      const stampHtml = isVisited ? '<div class="stamp-visited">BOARDED</div>' : '';
 
       const statusColor =
-        track.status === "DELAYED"
-          ? "text-red-500"
-          : track.status === "FINAL CALL"
-            ? "text-brand-orange animate-pulse"
-            : "text-green-600";
+        track.status === 'DELAYED'
+          ? 'text-red-500'
+          : track.status === 'FINAL CALL'
+            ? 'text-brand-orange animate-pulse'
+            : 'text-green-600';
 
       trkEl.innerHTML = `
                 <div class="${dotClass}"></div>
@@ -56,7 +54,7 @@ export class TrackList {
                 </div>
             `;
 
-      trkEl.addEventListener("click", () => {
+      trkEl.addEventListener('click', () => {
         if (this.onTrackClick) this.onTrackClick(track);
       });
 
@@ -66,8 +64,8 @@ export class TrackList {
 
   renderSkeleton() {
     if (!this.container) return;
-    this.container.innerHTML = "";
-    this.container.className = "flex flex-col space-y-4";
+    this.container.innerHTML = '';
+    this.container.className = 'flex flex-col space-y-4';
 
     for (let i = 0; i < 3; i++) {
       this.container.innerHTML += `

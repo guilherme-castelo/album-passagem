@@ -1,6 +1,6 @@
 /**
  * DataTable — Reusable glass-styled table component.
- * 
+ *
  * Usage:
  * const table = new DataTable(containerEl, {
  *   columns: [
@@ -13,7 +13,7 @@
  *   ],
  *   emptyMessage: 'Nenhum item encontrado.'
  * });
- * 
+ *
  * table.setData(rows);
  * table.setLoading(true);
  */
@@ -36,7 +36,8 @@ export class DataTable {
     this.container.innerHTML = '';
 
     const wrapper = document.createElement('div');
-    wrapper.className = 'glass rounded-2xl shadow-xl overflow-hidden overflow-x-auto border border-white/20';
+    wrapper.className =
+      'glass rounded-2xl shadow-xl overflow-hidden overflow-x-auto border border-white/20';
 
     const table = document.createElement('table');
     table.className = 'glass-table';
@@ -45,7 +46,7 @@ export class DataTable {
     // Head
     const thead = document.createElement('thead');
     let headHtml = '<tr>';
-    this.columns.forEach(col => {
+    this.columns.forEach((col) => {
       headHtml += `<th>${col.label}</th>`;
     });
     if (this.actions.length) headHtml += '<th>Ações</th>';
@@ -84,32 +85,34 @@ export class DataTable {
       return;
     }
 
-    this.tbody.innerHTML = this._data.map(row => {
-      let html = '<tr>';
-      this.columns.forEach(col => {
-        const val = row[col.key];
-        const rendered = col.render ? col.render(val, row) : (val ?? '--');
-        html += `<td class="${col.className || ''}">${rendered}</td>`;
-      });
-
-      if (this.actions.length) {
-        html += '<td><div class="flex items-center gap-2">';
-        this.actions.forEach((action, i) => {
-          const btnClass = action.variant === 'danger' ? 'btn-danger' : 'btn-ghost';
-          html += `<button class="${btnClass}" data-action="${i}" data-row-id="${row._id || row.id}">${action.label}</button>`;
+    this.tbody.innerHTML = this._data
+      .map((row) => {
+        let html = '<tr>';
+        this.columns.forEach((col) => {
+          const val = row[col.key];
+          const rendered = col.render ? col.render(val, row) : (val ?? '--');
+          html += `<td class="${col.className || ''}">${rendered}</td>`;
         });
-        html += '</div></td>';
-      }
-      html += '</tr>';
-      return html;
-    }).join('');
+
+        if (this.actions.length) {
+          html += '<td><div class="flex items-center gap-2">';
+          this.actions.forEach((action, i) => {
+            const btnClass = action.variant === 'danger' ? 'btn-danger' : 'btn-ghost';
+            html += `<button class="${btnClass}" data-action="${i}" data-row-id="${row._id || row.id}">${action.label}</button>`;
+          });
+          html += '</div></td>';
+        }
+        html += '</tr>';
+        return html;
+      })
+      .join('');
 
     // Bind action clicks
-    this.tbody.querySelectorAll('button[data-action]').forEach(btn => {
+    this.tbody.querySelectorAll('button[data-action]').forEach((btn) => {
       btn.addEventListener('click', () => {
         const actionIndex = parseInt(btn.dataset.action);
         const rowId = btn.dataset.rowId;
-        const row = this._data.find(r => String(r._id || r.id) === rowId);
+        const row = this._data.find((r) => String(r._id || r.id) === rowId);
         if (row && this.actions[actionIndex]) {
           this.actions[actionIndex].onClick(row);
         }

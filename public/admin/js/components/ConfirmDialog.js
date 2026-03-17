@@ -21,7 +21,7 @@ class ConfirmDialogManager {
    * @returns {Promise<boolean>}
    */
   show({ title, message, confirmText = 'Confirmar', cancelText = 'Cancelar' }) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       // Overlay
       const overlay = document.createElement('div');
       overlay.className = 'dialog-overlay';

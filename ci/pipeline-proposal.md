@@ -15,12 +15,13 @@ main ──── production (auto-deploy to Vercel)
 ```
 
 ### Branch Rules
-| Branch | Protection | Merge Method |
-|--------|------------|-------------|
-| `main` | Require 1 approval + green CI | Squash merge |
-| `develop` | Require green CI | Merge commit |
-| `feature/*` | None | PR → develop |
-| `hotfix/*` | Require 1 approval | PR → main + develop |
+
+| Branch      | Protection                    | Merge Method        |
+| ----------- | ----------------------------- | ------------------- |
+| `main`      | Require 1 approval + green CI | Squash merge        |
+| `develop`   | Require green CI              | Merge commit        |
+| `feature/*` | None                          | PR → develop        |
+| `hotfix/*`  | Require 1 approval            | PR → main + develop |
 
 ---
 
@@ -115,27 +116,27 @@ PR merged to main → CI runs
 
 ## Quality Gates
 
-| Gate | Tool | When |
-|------|------|------|
-| Lint | ESLint | Pre-commit + CI |
-| Format | Prettier | Pre-commit |
-| Unit tests | Jest | CI (all PRs) |
-| Security | npm audit | CI (all PRs) |
-| Vulnerability | Dependabot | Weekly scan |
-| E2E smoke | Playwright | CI (develop only) |
-| Code review | GitHub PR | All PRs to main/develop |
+| Gate          | Tool       | When                    |
+| ------------- | ---------- | ----------------------- |
+| Lint          | ESLint     | Pre-commit + CI         |
+| Format        | Prettier   | Pre-commit              |
+| Unit tests    | Jest       | CI (all PRs)            |
+| Security      | npm audit  | CI (all PRs)            |
+| Vulnerability | Dependabot | Weekly scan             |
+| E2E smoke     | Playwright | CI (develop only)       |
+| Code review   | GitHub PR  | All PRs to main/develop |
 
 ---
 
 ## Suggested Tooling
 
-| Category | Tool | Purpose |
-|----------|------|---------|
-| Lint | ESLint (flat config) | Code quality |
-| Format | Prettier | Code formatting |
-| Test | Jest | Unit/integration tests |
-| E2E | Playwright | Browser smoke tests |
-| CI | GitHub Actions | Pipeline automation |
-| Deploy | Vercel | Serverless hosting |
+| Category | Tool                   | Purpose                |
+| -------- | ---------------------- | ---------------------- |
+| Lint     | ESLint (flat config)   | Code quality           |
+| Format   | Prettier               | Code formatting        |
+| Test     | Jest                   | Unit/integration tests |
+| E2E      | Playwright             | Browser smoke tests    |
+| CI       | GitHub Actions         | Pipeline automation    |
+| Deploy   | Vercel                 | Serverless hosting     |
 | Security | Dependabot + npm audit | Vulnerability scanning |
-| Hooks | Husky + lint-staged | Pre-commit checks |
+| Hooks    | Husky + lint-staged    | Pre-commit checks      |

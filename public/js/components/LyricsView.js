@@ -1,4 +1,4 @@
-import { MediaRenderer } from "./MediaRenderer.js";
+import { MediaRenderer } from './MediaRenderer.js';
 
 export class LyricsView {
   constructor(elements, onBack, onNavigateTrack) {
@@ -11,7 +11,7 @@ export class LyricsView {
       mediaPlayers: document.getElementById(elements.mediaPlayers),
       btnBack: document.getElementById(elements.btnBack),
       btnPrev: document.getElementById(elements.btnPrev),
-      btnNext: document.getElementById(elements.btnNext),
+      btnNext: document.getElementById(elements.btnNext)
     };
 
     this.onBack = onBack;
@@ -22,19 +22,19 @@ export class LyricsView {
 
   _bindEvents() {
     if (this.dom.btnBack) {
-      this.dom.btnBack.addEventListener("click", () => {
+      this.dom.btnBack.addEventListener('click', () => {
         if (this.onBack) this.onBack();
       });
     }
 
     if (this.dom.btnPrev) {
-      this.dom.btnPrev.addEventListener("click", () => {
+      this.dom.btnPrev.addEventListener('click', () => {
         if (this.onNavigateTrack) this.onNavigateTrack(-1);
       });
     }
 
     if (this.dom.btnNext) {
-      this.dom.btnNext.addEventListener("click", () => {
+      this.dom.btnNext.addEventListener('click', () => {
         if (this.onNavigateTrack) this.onNavigateTrack(1);
       });
     }
@@ -49,36 +49,34 @@ export class LyricsView {
     this.dom.flight.textContent = track.flightCode;
 
     // Swipe/Animação de transição nas letras
-    this.dom.content.style.opacity = "0";
+    this.dom.content.style.opacity = '0';
     setTimeout(() => {
       this.dom.content.textContent = track.lyrics;
       // Melhoria UX de tipografia nas letras:
       this.dom.content.classList.add(
-        "text-[clamp(1rem,4vw,1.15rem)]",
-        "leading-relaxed",
-        "tracking-wide",
+        'text-[clamp(1rem,4vw,1.15rem)]',
+        'leading-relaxed',
+        'tracking-wide'
       );
-      this.dom.content.style.transition = "opacity 0.3s ease-in-out";
-      this.dom.content.style.opacity = "1";
+      this.dom.content.style.transition = 'opacity 0.3s ease-in-out';
+      this.dom.content.style.opacity = '1';
     }, 150);
 
     // Mídia Renderer OCP
     const mediaHtml = MediaRenderer.render(track.media);
     if (mediaHtml) {
-      this.dom.mediaContainer.classList.remove("hidden");
+      this.dom.mediaContainer.classList.remove('hidden');
       this.dom.mediaPlayers.innerHTML = mediaHtml;
     } else {
-      this.dom.mediaContainer.classList.add("hidden");
-      this.dom.mediaPlayers.innerHTML = "";
+      this.dom.mediaContainer.classList.add('hidden');
+      this.dom.mediaPlayers.innerHTML = '';
     }
 
     // Atualiza Nav
-    if (this.dom.btnPrev)
-      this.dom.btnPrev.disabled = !navigationState.canGoBack;
-    if (this.dom.btnNext)
-      this.dom.btnNext.disabled = !navigationState.canGoNext;
+    if (this.dom.btnPrev) this.dom.btnPrev.disabled = !navigationState.canGoBack;
+    if (this.dom.btnNext) this.dom.btnNext.disabled = !navigationState.canGoNext;
 
     // Scroll Top suave
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }

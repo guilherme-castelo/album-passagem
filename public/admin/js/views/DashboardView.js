@@ -10,7 +10,7 @@ export class DashboardView {
 
   render(tracks) {
     const totalLikes = tracks.reduce((s, t) => s + (t.interactions?.likes || 0), 0);
-    const allRatings = tracks.flatMap(t => t.interactions?.ratings || []);
+    const allRatings = tracks.flatMap((t) => t.interactions?.ratings || []);
     const avgRating = allRatings.length
       ? (allRatings.reduce((a, b) => a + b, 0) / allRatings.length).toFixed(1)
       : '--';
@@ -49,9 +49,12 @@ export class DashboardView {
       .sort((a, b) => (b.interactions?.likes || 0) - (a.interactions?.likes || 0))
       .slice(0, 5);
 
-    if (!sorted.length) return '<p style="color: var(--text-muted)" class="text-sm py-4 text-center">Nenhuma faixa encontrada.</p>';
+    if (!sorted.length)
+      return '<p style="color: var(--text-muted)" class="text-sm py-4 text-center">Nenhuma faixa encontrada.</p>';
 
-    return sorted.map((t, i) => `
+    return sorted
+      .map(
+        (t, i) => `
       <div class="flex items-center justify-between py-2.5 px-3 rounded-lg hover:bg-white/5 transition-colors group">
         <div class="flex items-center gap-3">
           <span class="font-mono text-xs w-5" style="color: var(--text-muted)">${i + 1}</span>
@@ -62,7 +65,9 @@ export class DashboardView {
           ${t.interactions?.likes || 0}
         </span>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   _iconMusic() {
