@@ -95,18 +95,20 @@ app.use('/api/album', vercelCatchAll(albumHandler, '/api/album'));
 
 ## Frontend
 
-### Site Público
+### Site Público (Album Renderer Engine)
 
-Arquitetura **MVC** com ES6 Modules:
+Arquitetura **MVC** agnóstica guiada por metadados:
 
+- **Logic Engine**: O código não possui estilos ou textos fixos. Ele atua como um motor que "veste" a configuração recebida.
+- **ThemeManager**: O cérebro que traduz o `uiConfig` para variáveis CSS, fontes dinâmicas e reordenação de seções.
 - **State** (`AppState.js`): Store reativo com Observer pattern e persistência em localStorage.
-- **Controller** (`AppController.js`): Orquestra views, state, API e router.
-- **Views**: Componentes puros que manipulam DOM (`TrackList`, `LyricsView`, `RatingWidget`).
-- **Router** (`ViewRouter.js`): Transições animadas entre telas.
+- **Controller** (`AppController.js`): Orquestra views, state, API e vincula temas.
+- **Views**: Componentes neutros que manipulam DOM (`TrackList`, `LyricsView`, `RatingWidget`).
+- **Router** (`ViewRouter.js`): Navegação fluida e assíncrona.
 
-### Painel Admin
+### Painel Admin (Platform Control)
 
-Mesma arquitetura, com componentes reutilizáveis:
+Mesma arquitetura, focada em gestão multitenant:
 
 - **AdminState.js**: Estado global com `subscribe()` reativo.
 - **AdminController.js**: Orquestra seções (Dashboard, Albums, Users) e o Album Hub.

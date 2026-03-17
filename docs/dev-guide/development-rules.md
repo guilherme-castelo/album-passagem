@@ -122,9 +122,10 @@ public/admin/js/
 3. **Sanitizar input** — whitelist de campos permitidos (ex: `ALLOWED_FIELDS`).
 4. **Auth antes da lógica** — verificar JWT no início do handler.
 
-### UX do Admin
+### UX & UI (Neutralidade Visual)
 
-1. **Feedback visual** — Toast para toda ação (sucesso e erro).
-2. **Confirmação** — ConfirmDialog antes de exclusões.
-3. **Skeleton loading** — Mostrar esqueletos enquanto dados carregam.
-4. **Optimistic UI** — Atualizar UI imediatamente, rollback se API falhar.
+1. **Agnosticismo Total**: Proibido usar cores fixas (hex/rgb) ou fontes específicas no CSS/JS. Tudo deve vir de variáveis CSS ou `uiConfig`.
+2. **Abstração de Labels**: Textos de interface (ex: "Entrar", "Músicas") devem usar `data-label` para serem traduzíveis via Admin.
+3. **Skeleton Loading**: Sempre mostrar esqueletos enquanto dados carregam para manter a fluidez percebida.
+4. **Optimistic UI**: Atualizar UI imediatamente em interações sociais (likes), com rollback automático.
+5. **Feedback Visual**: Toasts consistentes para toda ação do usuário no Admin.
