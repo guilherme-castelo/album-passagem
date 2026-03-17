@@ -13,7 +13,8 @@ export class AdminController {
    * @param {Object} views
    * @param {import('../components/SidebarComponent.js').SidebarComponent} views.sidebar
    * @param {import('../views/DashboardView.js').DashboardView} views.dashboard
-   * @param {import('../views/AlbumView.js').AlbumView} views.album
+   * @param {import('../views/AlbumsView.js').AlbumsView} views.albums
+   * @param {import('../views/AlbumDetailView.js').AlbumDetailView} views.albumDetail
    * @param {import('../views/TracksView.js').TracksView} views.tracks
    * @param {import('../views/UsersView.js').UsersView} views.users
    */
@@ -32,72 +33,117 @@ export class AdminController {
 
   // ── View event wiring ─────────────────────────────────────────────
   _bindViews() {
-    const { sidebar, album, tracks, users } = this.views;
+    const { sidebar, albums, albumDetail, tracks, users } = this.views;
 
     // Sidebar
     sidebar.onNavigate = (section) => {
       AdminState.set('currentSection', section);
+      AdminState.set('selectedAlbum', null); // Reset context when moving between top sections
     };
     sidebar.onLogout = () => auth.logout();
 
-    // Album
-    album.onSave = async (data) => {
-      try {
-        await adminService.updateAlbum(data);
-        toast.success('Álbum atualizado!');
-      } catch (e) {
-        toast.error(e.message || 'Erro ao salvar álbum');
-      }
+    // Albums List
+    albums.onView = async (id) => {
+      await this._openAlbumHub(id);
     };
 
-    // Tracks
-    tracks.onSave = async (data, id) => {
+    albums.onSave = async (data, id) => {
       try {
         if (id) {
-          await adminService.updateTrack(id, data);
-          toast.success('Faixa atualizada!');
+          await adminService.updateAlbum(id, data);
+          toast.success('Álbum atualizado!');
         } else {
-          await adminService.createTrack(data);
-          toast.success('Faixa criada!');
+          await adminService.createAlbum(data);
+          toast.success('Álbum criado!');
         }
-        tracks.closeForm();
-        await this._loadTracks();
+        albums.closeModal();
+        await this._loadAlbums();
       } catch (e) {
-        tracks.showFormError(e.message || 'Erro ao salvar.');
+        albums.showFormError(e.message || 'Erro ao salvar álbum');
       }
     };
 
-    tracks.onEdit = async (id) => {
+    const btnNewAlbum = document.getElementById('btn-new-album');
+    if (btnNewAlbum) btnNewAlbum.addEventListener('click', () => albums.openNewForm());
+
+    // Album Detail (Hub)
+    albumDetail.onBack = () => {
+      AdminState.set('selectedAlbum', null);
+      this._loadAlbums();
+    };
+
+    albumDetail.onAddTrack = () => {
+      const album = AdminState.get('selectedAlbum');
+      tracks.setAlbums(AdminState.get('albums'), album._id);
+      tracks.openNewForm();
+    };
+
+    albumDetail.onEditTrack = async (_id) => {
       try {
-        const track = await adminService.getTrack(id);
+        const track = await adminService.getTrack(_id);
+        const albums = AdminState.get('albums');
+        tracks.setAlbums(albums, track.albumId);
         tracks.openEditForm(track);
       } catch (e) {
         toast.error('Erro ao carregar faixa');
       }
     };
 
-    tracks.onDelete = async (id, title) => {
+    albumDetail.onDeleteTrack = async (_id, title) => {
       const ok = await confirmDialog.show({
         title: 'Excluir Faixa',
-        message: `Deseja excluir a faixa "${title}"? Essa ação não pode ser desfeita.`,
+        message: `Deseja excluir a faixa "${title}"?`,
         confirmText: 'Excluir',
         cancelText: 'Cancelar'
       });
       if (!ok) return;
       try {
-        await adminService.deleteTrack(id);
+        await adminService.deleteTrack(_id);
         toast.success(`Faixa "${title}" excluída!`);
-        await this._loadTracks();
+        await this._refreshAlbumHub();
       } catch (e) {
         toast.error('Erro ao excluir faixa');
       }
     };
 
-    // Users
-    users.onSave = async (data, id) => {
+    albumDetail.onReorder = async (trackIds) => {
+      const album = AdminState.get('selectedAlbum');
+      if (!album) return;
       try {
-        if (id) {
-          await adminService.updateUser(id, data);
+        await adminService.reorderTracks(album._id, trackIds);
+        toast.success('Ordem salva!');
+      } catch (e) {
+        toast.error('Erro ao salvar ordem');
+        await this._refreshAlbumHub(); // Rollback local UI
+      }
+    };
+
+    // Tracks (Global logic removed, now only used via Hub)
+    tracks.onSave = async (data, _id) => {
+      try {
+        const selected = AdminState.get('selectedAlbum');
+        if (_id) {
+          await adminService.updateTrack(_id, data);
+          toast.success('Faixa atualizada!');
+        } else {
+          await adminService.createTrack(data, selected ? selected._id : data.albumId);
+          toast.success('Faixa criada!');
+        }
+        tracks.closeForm();
+
+        if (selected) {
+          await this._refreshAlbumHub();
+        }
+      } catch (e) {
+        tracks.showFormError(e.message || 'Erro ao salvar.');
+      }
+    };
+
+    // Users
+    users.onSave = async (data, _id) => {
+      try {
+        if (_id) {
+          await adminService.updateUser(_id, data);
           toast.success('Usuário atualizado!');
         } else {
           await adminService.createUser(data);
@@ -133,57 +179,85 @@ export class AdminController {
     this._showSection('dashboard');
     this.views.sidebar.setActive('dashboard');
     await this._loadDashboard();
+    // Pre-load albums for global selects
+    try {
+      const albums = await adminService.getAlbums();
+      AdminState.set('albums', albums);
+    } catch (e) { }
   }
 
   // ── Section routing ────────────────────────────────────────────────
   _showSection(name) {
-    // Toggle visibility
     document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
     const section = document.getElementById(`section-${name}`);
     if (section) section.classList.add('active');
 
-    // Update sidebar
     this.views.sidebar.setActive(name);
 
-    // Load data for section
     switch (name) {
       case 'dashboard': this._loadDashboard(); break;
-      case 'album': this._loadAlbum(); break;
-      case 'tracks': this._loadTracks(); break;
+      case 'album': this._loadAlbums(); break;
       case 'users': this._loadUsers(); break;
     }
+  }
+
+  async _openAlbumHub(id) {
+    try {
+      const album = await adminService.getAlbum(id);
+      const tracks = await adminService.getTracks(id);
+      AdminState.set('selectedAlbum', album);
+
+      this.views.albumDetail.render(album, tracks);
+
+      document.getElementById('albums-list-container').classList.add('hidden');
+      document.getElementById('album-detail-container').classList.remove('hidden');
+
+      const btnNewAlbum = document.getElementById('btn-new-album');
+      if (btnNewAlbum) btnNewAlbum.classList.add('hidden');
+    } catch (e) {
+      toast.error('Erro ao abrir álbum');
+    }
+  }
+
+  async _refreshAlbumHub() {
+    const selected = AdminState.get('selectedAlbum');
+    if (!selected) return;
+    try {
+      const tracks = await adminService.getTracks(selected._id);
+      this.views.albumDetail.render(selected, tracks);
+    } catch (e) { }
   }
 
   // ── Data loaders ───────────────────────────────────────────────────
   async _loadDashboard() {
     try {
-      const tracks = await adminService.getTracks();
-      AdminState.set('tracks', tracks);
-      this.views.dashboard.render(tracks);
+      const albums = await adminService.getAlbums();
+      const firstAlbumId = albums[0]?._id;
+      if (firstAlbumId) {
+        const tracks = await adminService.getTracks(firstAlbumId);
+        AdminState.set('tracks', tracks);
+        this.views.dashboard.render(tracks);
+      }
     } catch (e) {
       toast.error('Erro ao carregar dashboard');
     }
   }
 
-  async _loadAlbum() {
-    try {
-      const data = await adminService.getAlbum();
-      AdminState.set('album', data);
-      this.views.album.setValues(data);
-    } catch (e) {
-      toast.error('Erro ao carregar álbum');
-    }
-  }
+  async _loadAlbums() {
+    document.getElementById('albums-list-container').classList.remove('hidden');
+    document.getElementById('album-detail-container').classList.add('hidden');
 
-  async _loadTracks() {
-    this.views.tracks.setTableLoading(true);
+    const btnNewAlbum = document.getElementById('btn-new-album');
+    if (btnNewAlbum) btnNewAlbum.classList.remove('hidden');
+
+    this.views.albums.setTableLoading(true);
     try {
-      const tracks = await adminService.getTracks();
-      AdminState.set('tracks', tracks);
-      this.views.tracks.setTableData(tracks);
+      const albums = await adminService.getAlbums();
+      AdminState.set('albums', albums);
+      this.views.albums.setTableData(albums);
     } catch (e) {
-      toast.error('Erro ao carregar faixas');
-      this.views.tracks.setTableData([]);
+      toast.error('Erro ao carregar álbuns');
+      this.views.albums.setTableData([]);
     }
   }
 

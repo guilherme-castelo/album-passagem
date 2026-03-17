@@ -32,43 +32,68 @@ export const adminService = {
     return data;
   },
 
-  // ── Album ────────────────────────────────────────────
-  getAlbum() {
+  // ─── Albums ─────────────────────────────────────────────
+  getAlbums() {
     return request('/api/album');
   },
 
-  updateAlbum(albumData) {
+  getAlbum(id) {
+    return request(`/api/album/${id}`);
+  },
+
+  createAlbum(albumData) {
     return request('/api/album', {
+      method: 'POST',
+      body: JSON.stringify(albumData)
+    });
+  },
+
+  updateAlbum(id, albumData) {
+    return request(`/api/album/${id}`, {
       method: 'PUT',
       body: JSON.stringify(albumData)
     });
   },
 
-  // ── Tracks ───────────────────────────────────────────
-  getTracks() {
-    return request('/api/tracks');
+  deleteAlbum(id) {
+    return request(`/api/album/${id}`, { method: 'DELETE' });
   },
 
-  getTrack(id) {
-    return request(`/api/tracks/${id}`);
+  // ─── Tracks (contextual or global) ──────────────────────
+  getTracks(albumId) {
+    if (!albumId) throw new Error('albumId é obrigatório para listar faixas');
+    return request(`/api/album/${albumId}/tracks`);
   },
 
-  createTrack(trackData) {
-    return request('/api/tracks', {
+  getTrack(trackId) {
+    return request(`/api/tracks/${trackId}`);
+  },
+
+  createTrack(data, albumId) {
+    return request(`/api/album/${albumId}/tracks`, {
       method: 'POST',
-      body: JSON.stringify(trackData)
+      body: JSON.stringify(data)
     });
   },
 
-  updateTrack(id, trackData) {
-    return request(`/api/tracks/${id}`, {
+  updateTrack(trackId, data) {
+    return request(`/api/tracks/${trackId}`, {
       method: 'PUT',
-      body: JSON.stringify(trackData)
+      body: JSON.stringify(data)
     });
   },
 
-  deleteTrack(id) {
-    return request(`/api/tracks/${id}`, { method: 'DELETE' });
+  deleteTrack(trackId) {
+    return request(`/api/tracks/${trackId}`, {
+      method: 'DELETE'
+    });
+  },
+
+  reorderTracks(albumId, trackIds) {
+    return request(`/api/album/${albumId}/reorder`, {
+      method: 'POST',
+      body: JSON.stringify({ trackIds })
+    });
   },
 
   // ── Users ────────────────────────────────────────────

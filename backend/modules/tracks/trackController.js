@@ -6,18 +6,28 @@ const trackController = {
     // GET /api/tracks (admin)
     async list(req, res) {
         try {
-            const tracks = await trackService.getAllPublic();
+            const tracks = await trackService.list();
             return sendSuccess(res, tracks);
         } catch (err) {
             return sendError(res, 500, 'Erro ao listar faixas.');
         }
     },
 
+    // GET /api/albums/:id/tracks
+    async listByAlbum(req, res) {
+        try {
+            const albumId = req.params.id || req.query.id || req.vercelParams?.id;
+            const tracks = await trackService.list({ albumId });
+            return sendSuccess(res, tracks);
+        } catch (err) {
+            return sendError(res, 500, 'Erro ao listar faixas do álbum.');
+        }
+    },
+
     // GET /api/tracks/:id (admin)
     async getById(req, res) {
         try {
-            const id = parseInt(req.params.id || req.query.id || req.vercelParams?.id, 10);
-            if (isNaN(id)) return sendError(res, 400, 'ID inválido.');
+            const id = req.params.id || req.query.id || req.vercelParams?.id;
             const track = await trackService.findById(id);
             return sendSuccess(res, track);
         } catch (err) {
@@ -38,10 +48,21 @@ const trackController = {
     // PUT /api/tracks/:id (admin)
     async update(req, res) {
         try {
-            const id = parseInt(req.params.id || req.query.id, 10);
-            if (isNaN(id)) return sendError(res, 400, 'ID inválido.');
+            const id = req.params.id || req.query.id;
             const track = await trackService.update(id, req.body);
             return sendSuccess(res, track);
+        } catch (err) {
+            return sendError(res, 400, err.message);
+        }
+    },
+
+    // POST /api/albums/:id/reorder
+    async reorder(req, res) {
+        try {
+            const albumId = req.params.id || req.query.id;
+            const { trackIds } = req.body;
+            const result = await trackService.updateOrder(albumId, trackIds);
+            return sendSuccess(res, result);
         } catch (err) {
             return sendError(res, 400, err.message);
         }
@@ -50,8 +71,7 @@ const trackController = {
     // DELETE /api/tracks/:id (admin)
     async delete(req, res) {
         try {
-            const id = parseInt(req.params.id || req.query.id, 10);
-            if (isNaN(id)) return sendError(res, 400, 'ID inválido.');
+            const id = req.params.id || req.query.id;
             const result = await trackService.delete(id);
             return sendSuccess(res, result);
         } catch (err) {
@@ -62,9 +82,7 @@ const trackController = {
     // POST /api/tracks/:id/like (público)
     async like(req, res) {
         try {
-            const id = parseInt(req.params.id || req.vercelParams?.id, 10);
-            if (isNaN(id)) return sendError(res, 400, 'ID inválido.');
-
+            const id = req.params.id || req.vercelParams?.id;
             const { action } = req.body;
             const track = await trackService.findById(id);
             const newLikes = trackService.toggleLike(track, action);
@@ -78,9 +96,7 @@ const trackController = {
     // POST /api/tracks/:id/rate (público)
     async rate(req, res) {
         try {
-            const id = parseInt(req.params.id || req.vercelParams?.id, 10);
-            if (isNaN(id)) return sendError(res, 400, 'ID inválido.');
-
+            const id = req.params.id || req.vercelParams?.id;
             const { rating, oldRating } = req.body;
             if (!rating || rating < 1 || rating > 5) return sendError(res, 400, 'Rating inválido (1-5).');
 

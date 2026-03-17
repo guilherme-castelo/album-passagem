@@ -25,7 +25,9 @@ export class TracksView {
     this.onDelete = null;
 
     this.quill = null;
-    this._buildTable();
+    if (this.tableContainerEl) {
+      this._buildTable();
+    }
     this._buildModal();
   }
 
@@ -80,9 +82,17 @@ export class TracksView {
           </div>
         </div>
 
-        <div>
-          <label class="label">Título da Faixa</label>
-          <input type="text" id="track-title" class="glass-input" placeholder="Nome da música" />
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="label">Título da Faixa</label>
+            <input type="text" id="track-title" class="glass-input" placeholder="Nome da música" required />
+          </div>
+          <div id="album-select-container">
+            <label class="label">Álbum</label>
+            <select id="track-albumId" class="glass-input" required>
+              <option value="">Selecione um álbum...</option>
+            </select>
+          </div>
         </div>
 
         <div>
@@ -111,11 +121,9 @@ export class TracksView {
     `);
 
     const panel = this.modal.getBodyElement().closest('.modal-panel');
-
     panel.querySelector('#track-save-btn').addEventListener('click', () => {
       if (this.onSave) {
-        const id = $('track-id').value;
-        this.onSave(this.getFormValues(), id || null);
+        this.onSave(this.getFormValues(), this._editingId);
       }
     });
 
@@ -149,25 +157,22 @@ export class TracksView {
     // setTimeout because modal needs to be visible for Quill to initialize
     setTimeout(() => {
       this._initQuill();
-      const form = $('track-form');
-      if (form) form.reset();
-      $('track-id').value = '';
       if (this.quill) this.quill.setText('');
       $('media-fields').innerHTML = '';
-      $('track-form-error').classList.add('hidden');
     }, 50);
   }
 
   openEditForm(track) {
-    this.modal.setTitle(`Editando: ${track.title}`);
+    this._editingId = track._id || track.id;
+    this.modal.setTitle('Editar Música');
     this.modal.open();
     setTimeout(() => {
       this._initQuill();
-      $('track-id').value = track.id;
       $('track-gate').value = track.gate || '';
       $('track-flightCode').value = track.flightCode || '';
       $('track-title').value = track.title || '';
       $('track-status').value = track.status || 'ON TIME';
+      $('track-albumId').value = track.albumId || '';
       if (this.quill) this.quill.setText(track.lyrics || '');
 
       $('media-fields').innerHTML = '';
@@ -185,7 +190,7 @@ export class TracksView {
   }
 
   getFormValues() {
-    const mediaRows = $$('.media-row', $('media-fields'));
+    const mediaRows = Array.from(document.querySelectorAll('.media-row'));
     const media = [];
     mediaRows.forEach(row => {
       const origin = row.querySelector('.media-origin').value;
@@ -194,6 +199,7 @@ export class TracksView {
     });
 
     return {
+      albumId: $('track-albumId').value,
       gate: $('track-gate').value.trim(),
       flightCode: $('track-flightCode').value.trim(),
       title: $('track-title').value.trim(),
@@ -203,10 +209,26 @@ export class TracksView {
     };
   }
 
+  setAlbums(albums, currentAlbumId = null) {
+    const select = $('track-albumId');
+    if (!select) return;
+
+    select.innerHTML = '<option value="">Selecione um álbum...</option>' +
+      albums.map(a => `<option value="${a._id || a.id}" ${currentAlbumId === (a._id || a.id) ? 'selected' : ''}>${a.title}</option>`).join('');
+
+    // If we're in a specific album context, we can optionally hide this or make it readonly
+    const container = $('album-select-container');
+    if (currentAlbumId && container) {
+      container.classList.add('opacity-50', 'pointer-events-none');
+    } else if (container) {
+      container.classList.remove('opacity-50', 'pointer-events-none');
+    }
+  }
+
   _addMediaField(origin = 'youtube', content = '') {
     const container = $('media-fields');
     const div = document.createElement('div');
-    div.className = 'media-row flex flex-col sm:flex-row items-center gap-2 p-2 rounded-lg border' ;
+    div.className = 'media-row flex flex-col sm:flex-row items-center gap-2 p-2 rounded-lg border';
     div.style.cssText = 'background: rgba(255,255,255,0.03); border-color: var(--glass-border);';
     div.innerHTML = `
       <select class="media-origin glass-input" style="padding:0.5rem; width: auto; min-width: 7rem;">

@@ -11,13 +11,25 @@ const DEFAULT_ALBUM = {
 const ALLOWED_FIELDS = ['title', 'artist', 'event', 'date'];
 
 class AlbumService {
-    async getAlbum() {
-        const album = await albumRepository.findOne();
-        // Se não existir no banco, retorna o padrão
+    async listAlbums() {
+        return albumRepository.findAll();
+    }
+
+    async getAlbum(id) {
+        if (!id) return DEFAULT_ALBUM;
+        const album = await albumRepository.findById(id);
         return album || DEFAULT_ALBUM;
     }
 
-    async updateAlbum(data) {
+    async createAlbum(data) {
+        const sanitized = {};
+        ALLOWED_FIELDS.forEach(field => {
+            if (data[field] !== undefined) sanitized[field] = data[field];
+        });
+        return albumRepository.create(sanitized);
+    }
+
+    async updateAlbum(id, data) {
         const sanitized = {};
         ALLOWED_FIELDS.forEach(field => {
             if (data[field] !== undefined) sanitized[field] = data[field];
@@ -27,7 +39,11 @@ class AlbumService {
             throw new Error('Nenhum campo válido para atualização.');
         }
 
-        return albumRepository.updateOne(sanitized);
+        return albumRepository.update(id, sanitized);
+    }
+
+    async deleteAlbum(id) {
+        return albumRepository.delete(id);
     }
 }
 

@@ -8,54 +8,59 @@ class TrackRepository {
 
     // ─── Leitura ───────────────────────────────────────────────────────────────
 
-    async findAll() {
+    async findAll(query = {}) {
         const collection = await this.getCollection();
-        return collection.find({}, { projection: { _id: 0 } }).sort({ id: 1 }).toArray();
+        return collection.find(query).sort({ order: 1, createdAt: 1 }).toArray();
     }
 
     async findById(trackId) {
+        const { ObjectId } = require('mongodb');
         const collection = await this.getCollection();
-        return collection.findOne({ id: trackId }, { projection: { _id: 0 } });
+        return collection.findOne({ _id: new ObjectId(trackId) });
     }
 
     // ─── Criação ───────────────────────────────────────────────────────────────
 
     async create(trackData) {
         const collection = await this.getCollection();
-        // Gera o próximo ID sequencial
-        const last = await collection.find({}).sort({ id: -1 }).limit(1).toArray();
-        const nextId = last.length > 0 ? last[0].id + 1 : 1;
 
-        const doc = { ...trackData, id: nextId };
-        await collection.insertOne(doc);
-        const { _id, ...result } = doc;
-        return result;
+        const doc = {
+            ...trackData,
+            albumId: trackData.albumId || null,
+            order: trackData.order || 999,
+            createdAt: new Date()
+        };
+        const result = await collection.insertOne(doc);
+        return { ...doc, _id: result.insertedId };
     }
 
     // ─── Atualização ───────────────────────────────────────────────────────────
 
     async update(trackId, data) {
+        const { ObjectId } = require('mongodb');
         const collection = await this.getCollection();
         const result = await collection.findOneAndUpdate(
-            { id: trackId },
+            { _id: new ObjectId(trackId) },
             { $set: { ...data, updatedAt: new Date() } },
-            { returnDocument: 'after', projection: { _id: 0 } }
+            { returnDocument: 'after' }
         );
         return result;
     }
 
     async updateLikes(trackId, likes) {
+        const { ObjectId } = require('mongodb');
         const collection = await this.getCollection();
         await collection.updateOne(
-            { id: trackId },
+            { _id: new ObjectId(trackId) },
             { $set: { 'interactions.likes': likes } }
         );
     }
 
     async updateRatings(trackId, ratings) {
+        const { ObjectId } = require('mongodb');
         const collection = await this.getCollection();
         await collection.updateOne(
-            { id: trackId },
+            { _id: new ObjectId(trackId) },
             { $set: { 'interactions.ratings': ratings } }
         );
     }
@@ -63,8 +68,9 @@ class TrackRepository {
     // ─── Remoção ───────────────────────────────────────────────────────────────
 
     async delete(trackId) {
+        const { ObjectId } = require('mongodb');
         const collection = await this.getCollection();
-        const result = await collection.deleteOne({ id: trackId });
+        const result = await collection.deleteOne({ _id: new ObjectId(trackId) });
         return result.deletedCount > 0;
     }
 }
