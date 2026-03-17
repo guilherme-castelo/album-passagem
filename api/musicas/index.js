@@ -1,31 +1,31 @@
+const albumService = require('../../backend/modules/album/albumService');
+const trackService = require('../../backend/modules/tracks/trackService');
 const trackController = require('../../backend/modules/tracks/trackController');
 const applyCors = require('../../backend/lib/cors');
 const { sendError, sendMethodNotAllowed, sendSuccess } = require('../../backend/lib/response');
-const trackRepository = require('../../backend/repositories/trackRepository');
-const trackService = require('../../backend/services/trackService');
 
 module.exports = async function handler(req, res) {
     if (applyCors(req, res)) return;
 
-    let path = req.query.path || req.vercelPath || []; // /api/musicas/:id/like -> ['123', 'like']
+    let path = req.query.path || req.vercelPath || [];
     if (typeof path === 'string') path = path.split('/').filter(Boolean);
 
     const id = path[0];
     const action = path[1];
 
-    // Inject para retrocompatibilidade com o trackController
     req.params = req.params || {};
     if (id) req.params.id = id;
 
-    console.log(`[MusicasHandler] id: ${id}, action: ${action}, method: ${req.method}`);
-
     try {
         if (req.method === 'GET') {
-            const albumData = trackService.getAlbumInfo();
-            const tracks = await trackRepository.findAll();
+            // Para o site público, pegamos o primeiro álbum como padrão
+            const albums = await albumService.listAlbums();
+            const album = albums[0] || await albumService.getAlbum(); // Fallback pro DEFAULT_ALBUM se vazio
+
+            const tracks = await trackService.list(album.id ? { albumId: album.id } : {});
 
             return sendSuccess(res, {
-                album: albumData,
+                album: album,
                 tracks: tracks
             });
         }
@@ -37,7 +37,7 @@ module.exports = async function handler(req, res) {
 
         return sendMethodNotAllowed(res);
     } catch (error) {
-        console.error('API Error [Musicas]:', error);
+        console.error('API Error [Musicas Legacy]:', error);
         return sendError(res, 500, "Erro interno do servidor.");
     }
 };

@@ -6,8 +6,10 @@ const ALLOWED_STATUSES = ['ON TIME', 'DELAYED', 'FINAL CALL', 'BOARDING'];
 class TrackService {
     // ─── Público ────────────────────────────────────────────────────────────────
 
-    async getAllPublic() {
-        return trackRepository.findAll();
+    // ─── Leitura ────────────────────────────────────────────────────────────────
+
+    async list(filters = {}) {
+        return trackRepository.findAll(filters);
     }
 
     async findById(id) {
@@ -26,12 +28,24 @@ class TrackService {
     }
 
     async update(id, data) {
-        await this.findById(id); // Garante que existe
-        if (data.status) this._validateStatus(data.status);
-
-        // Não permite sobrescrever ID nem interactions via PUT
-        const { id: _, interactions, ...safe } = data;
+        await this.findById(id);
+        const { _id, interactions, ...safe } = data;
         return trackRepository.update(id, safe);
+    }
+
+    async updateOrder(albumId, trackIds) {
+        if (!albumId || !Array.isArray(trackIds)) {
+            throw new Error('Parâmetros inválidos para reordenação.');
+        }
+
+        const updates = trackIds.map((id, index) => {
+            const order = index + 1;
+            const flightCode = `PSG${String(order).padStart(2, '0')}`;
+            return trackRepository.update(id, { order, flightCode });
+        });
+
+        await Promise.all(updates);
+        return { success: true };
     }
 
     async delete(id) {

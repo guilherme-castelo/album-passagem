@@ -6,8 +6,9 @@ class AdminStateManager {
   constructor() {
     this._state = {
       currentSection: 'dashboard',
+      albums: [],
+      selectedAlbum: null,
       tracks: [],
-      album: {},
       users: [],
       isLoading: false
     };

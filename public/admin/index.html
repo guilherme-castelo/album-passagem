@@ -1,17 +1,20 @@
 <!doctype html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin — Painel | Passagem</title>
 
   <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@500;700&display=swap"
+    rel="stylesheet" />
   <!-- Tailwind (CDN for prototyping) -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
-      theme: { extend: { colors: { brand: { blue: "#0F2C59", orange: "#F9B572", light: "#F8F9FA" } }, fontFamily: { sans: ["Inter","sans-serif"], mono: ["Roboto Mono","monospace"] } } }
+      theme: { extend: { colors: { brand: { blue: "#0F2C59", orange: "#F9B572", light: "#F8F9FA" } }, fontFamily: { sans: ["Inter", "sans-serif"], mono: ["Roboto Mono", "monospace"] } } }
     };
   </script>
   <!-- Design System -->
@@ -27,20 +30,27 @@
   <div id="mobile-overlay" class="fixed inset-0 bg-black/50 z-20 hidden backdrop-blur-sm lg:hidden"></div>
 
   <!-- ═══════════════════ SIDEBAR ═══════════════════ -->
-  <aside id="admin-sidebar" class="admin-sidebar w-64 min-h-screen glass-panel flex flex-col fixed top-0 left-0 z-30 shadow-2xl -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out border-r border-white/10">
+  <aside id="admin-sidebar"
+    class="admin-sidebar w-64 min-h-screen glass-panel flex flex-col fixed top-0 left-0 z-30 shadow-2xl -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out border-r border-white/10">
     <!-- Brand -->
     <div class="p-6 border-b border-white/10 bg-black/10 flex justify-between items-center">
       <div class="flex items-center space-x-3">
         <div class="w-10 h-10 bg-brand-orange rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
-          <svg class="w-5 h-5 text-brand-blue" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg>
+          <svg class="w-5 h-5 text-brand-blue" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+          </svg>
         </div>
         <div>
           <h1 class="text-white font-bold text-sm tracking-wide">Passagem Admin</h1>
           <p id="admin-username" class="text-blue-300 text-xs font-mono">carregando...</p>
         </div>
       </div>
-      <button class="lg:hidden text-gray-300 hover:text-white" onclick="document.getElementById('admin-sidebar').classList.add('-translate-x-full'); document.getElementById('mobile-overlay').classList.add('hidden');">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      <button class="lg:hidden text-gray-300 hover:text-white"
+        onclick="document.getElementById('admin-sidebar').classList.add('-translate-x-full'); document.getElementById('mobile-overlay').classList.add('hidden');">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
       </button>
     </div>
 
@@ -48,19 +58,24 @@
     <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
       <p class="text-blue-400/60 text-[10px] uppercase tracking-widest font-mono px-4 mb-2">Menu</p>
       <a class="sidebar-link sidebar-nav-link active" data-section="dashboard">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+        </svg>
         <span>Dashboard</span>
       </a>
       <a class="sidebar-link sidebar-nav-link" data-section="album">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/></svg>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+        </svg>
         <span>Álbum</span>
       </a>
-      <a class="sidebar-link sidebar-nav-link" data-section="tracks">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
-        <span>Faixas</span>
-      </a>
       <a class="sidebar-link sidebar-nav-link" data-section="users">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
         <span>Usuários</span>
       </a>
     </nav>
@@ -68,11 +83,17 @@
     <!-- Footer -->
     <div class="p-4 border-t border-white/10 bg-black/10">
       <a href="/" target="_blank" class="sidebar-link text-xs hover:text-brand-orange">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+        </svg>
         <span>Ver Site</span>
       </a>
       <a class="sidebar-link text-red-400 hover:text-red-300 hover:bg-red-500/10 active:scale-95" data-action="logout">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
         <span>Sair</span>
       </a>
     </div>
@@ -81,15 +102,21 @@
   <!-- ═══════════════════ MAIN ═══════════════════ -->
   <main class="lg:ml-64 flex-1 min-h-screen flex flex-col w-full">
     <!-- Mobile Header -->
-    <header class="lg:hidden glass-panel border-b border-white/10 p-4 sticky top-0 z-10 flex items-center justify-between">
+    <header
+      class="lg:hidden glass-panel border-b border-white/10 p-4 sticky top-0 z-10 flex items-center justify-between">
       <div class="flex items-center space-x-3">
         <div class="w-8 h-8 bg-brand-orange rounded-lg flex items-center justify-center">
-          <svg class="w-4 h-4 text-brand-blue" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg>
+          <svg class="w-4 h-4 text-brand-blue" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+          </svg>
         </div>
         <h1 class="font-bold text-sm">Painel</h1>
       </div>
       <button id="btn-hamburger" class="text-white p-2">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
       </button>
     </header>
 
@@ -100,40 +127,34 @@
       <section id="section-dashboard" class="admin-section active">
         <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-2">
           <h2 class="text-2xl font-bold text-white">Dashboard</h2>
-          <span class="text-sm text-blue-300 font-mono bg-white/5 py-1 px-3 rounded-lg border border-white/10 inline-block w-max" id="current-date"></span>
+          <span
+            class="text-sm text-blue-300 font-mono bg-white/5 py-1 px-3 rounded-lg border border-white/10 inline-block w-max"
+            id="current-date"></span>
         </div>
         <div id="dashboard-content">
           <!-- DashboardView renders here -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="glass rounded-2xl p-6 border border-white/10"><div class="skeleton h-20"></div></div>
-            <div class="glass rounded-2xl p-6 border border-white/10"><div class="skeleton h-20"></div></div>
-            <div class="glass rounded-2xl p-6 border border-white/10"><div class="skeleton h-20"></div></div>
+            <div class="glass rounded-2xl p-6 border border-white/10">
+              <div class="skeleton h-20"></div>
+            </div>
+            <div class="glass rounded-2xl p-6 border border-white/10">
+              <div class="skeleton h-20"></div>
+            </div>
+            <div class="glass rounded-2xl p-6 border border-white/10">
+              <div class="skeleton h-20"></div>
+            </div>
           </div>
         </div>
       </section>
 
       <!-- ── ÁLBUM ──────────────────────────── -->
       <section id="section-album" class="admin-section">
-        <h2 class="text-2xl font-bold text-white mb-8 border-b border-white/10 pb-4">Informações do Álbum</h2>
-        <div id="album-content">
-          <!-- AlbumView renders here -->
+        <h2 class="text-2xl font-bold text-white mb-8 border-b border-white/10 pb-4">Gestão de Álbuns</h2>
+        <div id="albums-list-container">
+          <!-- AlbumsView list renders here -->
         </div>
-      </section>
-
-      <!-- ── FAIXAS ─────────────────────────── -->
-      <section id="section-tracks" class="admin-section">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4 border-b border-white/10 pb-4">
-          <h2 class="text-2xl font-bold text-white">Gerenciar Faixas</h2>
-          <button id="btn-new-track" class="btn-primary flex items-center justify-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-            <span>Nova Faixa</span>
-          </button>
-        </div>
-        <div id="tracks-table-container">
-          <!-- DataTable renders here -->
-        </div>
-        <div id="tracks-form-container">
-          <!-- TracksView form renders here -->
+        <div id="album-detail-container" class="hidden">
+          <!-- AlbumDetailView (Hub) renders here -->
         </div>
       </section>
 
@@ -142,7 +163,9 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4 border-b border-white/10 pb-4">
           <h2 class="text-2xl font-bold text-white">Usuários Admin</h2>
           <button id="btn-new-user" class="btn-primary flex items-center justify-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
             <span>Novo Usuário</span>
           </button>
         </div>
@@ -161,4 +184,5 @@
   <script type="module" src="/admin/js/app.js"></script>
 
 </body>
+
 </html>

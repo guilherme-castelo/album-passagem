@@ -14,7 +14,8 @@ export class TrackList {
       const trkEl = document.createElement("li");
       trkEl.className = "timeline-item group";
 
-      const isVisited = visitedTracks.includes(track.id);
+      const trackId = track._id || track.id;
+      const isVisited = visitedTracks.includes(trackId);
       const dotClass = isVisited ? "timeline-dot visited" : "timeline-dot";
       const stampHtml = isVisited
         ? '<div class="stamp-visited">BOARDED</div>'

@@ -13,7 +13,7 @@ export const musicService = {
     },
 
     async like(trackId, action) {
-        const response = await fetch(`${this.getBaseUrl()}/api/musicas/${trackId}/like`, { 
+        const response = await fetch(`${this.getBaseUrl()}/api/musicas/${trackId}/like`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ action })
@@ -25,7 +25,7 @@ export const musicService = {
     },
 
     async rate(trackId, rating, oldRating) {
-        const response = await fetch(`${this.getBaseUrl()}/api/musicas/${trackId}/rate`, { 
+        const response = await fetch(`${this.getBaseUrl()}/api/musicas/${trackId}/rate`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ rating, oldRating })
