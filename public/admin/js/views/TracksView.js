@@ -42,11 +42,11 @@ export class TracksView {
         },
         {
           key: 'gate',
-          label: 'Portão',
+          label: 'Tag',
           className: 'font-mono font-bold',
           render: (v) => `<span style="color:var(--accent-violet)">${v}</span>`
         },
-        { key: 'flightCode', label: 'Código', className: 'font-mono text-xs' },
+        { key: 'flightCode', label: 'Cód. Faixa', className: 'font-mono text-xs' },
         {
           key: 'title',
           label: 'Título',
@@ -94,12 +94,12 @@ export class TracksView {
         <input type="hidden" id="track-id" />
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <label class="label">Portão (Gate)</label>
-            <input type="text" id="track-gate" class="glass-input" placeholder="A01" />
+            <label class="label">Tag / Categoria</label>
+            <input type="text" id="track-gate" class="glass-input" placeholder="Ex: Lado A" />
           </div>
           <div>
-            <label class="label">Código do Voo</label>
-            <input type="text" id="track-flightCode" class="glass-input" placeholder="PSG01" />
+            <label class="label">Cód. Identificação</label>
+            <input type="text" id="track-flightCode" class="glass-input" placeholder="01" />
           </div>
           <div>
             <label class="label">Status</label>

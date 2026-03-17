@@ -63,6 +63,23 @@ export class AdminController {
       }
     };
 
+    albums.onDelete = async (id, title) => {
+      const ok = await confirmDialog.show({
+        title: 'Excluir Álbum',
+        message: `Deseja excluir o álbum "${title}"? Todas as músicas vinculadas serão apagadas!`,
+        confirmText: 'Excluir',
+        cancelText: 'Cancelar'
+      });
+      if (!ok) return;
+      try {
+        await adminService.deleteAlbum(id);
+        toast.success(`Álbum "${title}" excluído!`);
+        await this._loadAlbums();
+      } catch (e) {
+        toast.error('Erro ao excluir álbum');
+      }
+    };
+
     const btnNewAlbum = document.getElementById('btn-new-album');
     if (btnNewAlbum) btnNewAlbum.addEventListener('click', () => albums.openNewForm());
 

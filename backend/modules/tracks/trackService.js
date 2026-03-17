@@ -1,6 +1,6 @@
 const trackRepository = require('./trackRepository');
 
-const REQUIRED_FIELDS = ['title', 'gate', 'flightCode'];
+const REQUIRED_FIELDS = ['title', 'gate', 'flightCode', 'albumId'];
 const ALLOWED_STATUSES = ['ON TIME', 'DELAYED', 'FINAL CALL', 'BOARDING'];
 
 class TrackService {
@@ -87,6 +87,7 @@ class TrackService {
 
   _buildTrackDoc(data) {
     return {
+      albumId: data.albumId,
       gate: data.gate,
       flightCode: data.flightCode,
       title: data.title,

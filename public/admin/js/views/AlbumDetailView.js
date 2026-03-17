@@ -128,7 +128,7 @@ export class AlbumDetailView {
             </svg>
           `
         },
-        { key: 'flightCode', label: 'Voo', className: 'font-mono text-xs' },
+        { key: 'flightCode', label: 'Cód. Faixa', className: 'font-mono text-xs' },
         { key: 'title', label: 'Título', className: 'font-medium' },
         {
           key: 'status',

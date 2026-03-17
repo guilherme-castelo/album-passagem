@@ -35,10 +35,14 @@ const trackController = {
     }
   },
 
-  // POST /api/tracks (admin)
+  // POST /api/tracks (admin) OU POST /api/album/:id/tracks
   async create(req, res) {
     try {
-      const track = await trackService.create(req.body);
+      const albumId = req.params.id || req.query.id || req.vercelParams?.id;
+      const data = { ...req.body };
+      if (albumId && !data.albumId) data.albumId = albumId;
+
+      const track = await trackService.create(data);
       return sendSuccess(res, track, 201);
     } catch (err) {
       return sendError(res, 400, err.message);
