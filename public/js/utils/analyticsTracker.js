@@ -35,11 +35,23 @@ export class AnalyticsTracker {
     }
 
     _getReferrer() {
+        // 1. Tenta resgatar parâmetros de marketing via URL da bio/ads (Ex: ?origem=instagram)
+        const params = new URLSearchParams(window.location.search);
+        const sourceQuery = params.get('utm_source') || params.get('origem') || params.get('ref');
+        if (sourceQuery) {
+            return String(sourceQuery).toLowerCase();
+        }
+
+        // 2. Tenta capturar o metadado real do navegador (Geralmente bloqueado por redes sociais)
         let ref = document.referrer;
-        if (!ref) return 'Direct';
+        if (!ref) return 'Direct'; // Tráfego Limpo/Link copiado e colado direto
+        
         try {
             const url = new URL(ref);
-            return url.hostname; // e.g., "instagram.com"
+            // Ignore se a origem detectada for o proprio site para nao bugar como referrer externo
+            if (url.hostname === window.location.hostname) return 'Direct';
+            
+            return url.hostname.replace('www.', ''); // "instagram.com", "linktr.ee"
         } catch {
             return ref;
         }
