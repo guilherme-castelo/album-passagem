@@ -252,9 +252,11 @@ export class AdminController {
 
       const album = await adminService.getAlbum(id);
       const tracks = await adminService.getTracks(id);
+      const metrics = await adminService.getTrackAnalytics().catch(() => []); // Fail silently if not available
+      
       AdminState.set('selectedAlbum', album);
 
-      this.views.albumDetail.render(album, tracks);
+      this.views.albumDetail.render(album, tracks, metrics);
 
       return true;
     } catch (e) {
@@ -268,7 +270,8 @@ export class AdminController {
     if (!selected) return;
     try {
       const tracks = await adminService.getTracks(selected._id);
-      this.views.albumDetail.render(selected, tracks);
+      const metrics = await adminService.getTrackAnalytics().catch(() => []);
+      this.views.albumDetail.render(selected, tracks, metrics);
     } catch (e) { }
   }
 
@@ -283,9 +286,14 @@ export class AdminController {
       }
       const firstAlbumId = albums[0]?._id;
       if (firstAlbumId) {
-        const tracks = await adminService.getTracks(firstAlbumId);
+        const [tracks, analytics, trackAnalytics] = await Promise.all([
+          adminService.getTracks(firstAlbumId),
+          adminService.getDashboardAnalytics().catch(() => ({})),
+          adminService.getTrackAnalytics().catch(() => ([]))
+        ]);
+        
         AdminState.set('tracks', tracks);
-        this.views.dashboard.render(tracks);
+        this.views.dashboard.render(tracks, analytics, trackAnalytics);
       }
     } catch (e) {
       toast.error('Erro ao carregar dashboard');

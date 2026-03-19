@@ -124,5 +124,14 @@ export const adminService = {
 
   deleteUser(id) {
     return request(`/api/users/${id}`, { method: 'DELETE' });
+  },
+
+  // ── Analytics ────────────────────────────────────────
+  getDashboardAnalytics() {
+    return request('/api/analytics/dashboard');
+  },
+
+  getTrackAnalytics() {
+    return request('/api/analytics/tracks');
   }
 };
