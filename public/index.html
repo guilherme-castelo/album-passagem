@@ -69,12 +69,19 @@
               class="text-[0.65rem] uppercase tracking-widest text-blue-200 font-mono"
               >Passenger / Passageiro</span
             >
-            <h1
-              id="passenger-name"
-              class="text-xl font-bold uppercase tracking-wide"
+            <button
+              id="btn-edit-passenger"
+              class="flex items-center gap-2 group focus:outline-none rounded px-1 -ml-1 py-1 transition-colors text-left"
+              title="Trocar passageiro"
             >
-              Desconhecido
-            </h1>
+              <h1
+                id="passenger-name"
+                class="text-xl font-bold uppercase tracking-wide text-white group-hover:text-brand-orange transition-colors"
+              >
+                Desconhecido
+              </h1>
+              <svg class="w-4 h-4 text-blue-300 group-hover:text-brand-orange md:opacity-0 md:group-hover:opacity-100 transition-all pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+            </button>
           </div>
           <div class="text-right">
             <span

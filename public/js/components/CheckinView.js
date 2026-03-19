@@ -27,6 +27,10 @@ export class CheckinView {
         });
     }
 
+    prefill(name) {
+        if (this.input) this.input.value = name || '';
+    }
+
     render(passengerName) {
         if (this.display) {
             this.display.textContent = passengerName || 'Desconhecido';

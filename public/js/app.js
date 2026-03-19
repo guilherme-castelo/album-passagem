@@ -52,6 +52,11 @@ document.addEventListener('DOMContentLoaded', () => {
     ratingWidget.onLike = () => controller.handleLike();
     ratingWidget.onRate = (stars) => controller.handleRate(stars);
 
+    const btnEditPassenger = document.getElementById('btn-edit-passenger');
+    if (btnEditPassenger) {
+        btnEditPassenger.addEventListener('click', () => controller.handleEditPassenger());
+    }
+
     // Boot App
     controller.init();
     

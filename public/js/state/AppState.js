@@ -34,12 +34,7 @@ class ApplicationState {
     // Persiste itens específicos no localStorage
     persist(key) {
         if (['passengerName', 'likedTracks', 'ratedTracks', 'visitedTracks'].includes(key)) {
-            let val = this.state[key];
-            if (key === 'passengerName') {
-                storage.set(key, typeof val === 'string' ? val : JSON.stringify(val)); 
-            } else {
-                storage.set(key, val);
-            }
+            storage.set(key, this.state[key]);
         }
     }
 

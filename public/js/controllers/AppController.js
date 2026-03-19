@@ -22,8 +22,12 @@ export class AppController {
     }
 
     async init() {
-        if (this.state.get('passengerName')) {
-            this.views.checkin.render(this.state.get('passengerName'));
+        // Verifica se a chave existe na localStorage para confirmar se o usuário já passou do check-in
+        const hasCompletedCheckin = window.localStorage.getItem('passengerName') !== null;
+
+        if (hasCompletedCheckin) {
+            const name = this.state.get('passengerName') || 'Desconhecido';
+            this.views.checkin.render(name);
             this.state.set('currentView', 'loading');
             await this.loadData();
         } else {
@@ -48,6 +52,12 @@ export class AppController {
 
         this.state.set('currentView', 'loading');
         await this.loadData();
+    }
+
+    handleEditPassenger() {
+        const currentName = this.state.get('passengerName');
+        this.views.checkin.prefill(currentName);
+        this.state.set('currentView', 'checkin');
     }
 
     async loadData() {

@@ -11,11 +11,7 @@ export const storage = {
     
     set(key, value) {
         try {
-            if (typeof value === 'object') {
-                localStorage.setItem(key, JSON.stringify(value));
-            } else {
-                localStorage.setItem(key, value);
-            }
+            localStorage.setItem(key, JSON.stringify(value));
         } catch (e) {
             console.warn(`Error writing to localStorage for key "${key}"`, e);
         }
