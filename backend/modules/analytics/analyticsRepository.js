@@ -26,7 +26,8 @@ class AnalyticsRepository {
                     deviceType: payload.deviceType || 'desktop',
                     referrer: payload.referrer || 'direct',
                     duration: payload.duration || 0,
-                    trackViews: trackViews
+                    trackViews: trackViews,
+                    passengerName: payload.passengerName || 'Anônimo'
                 },
                 $setOnInsert: { createdAt: new Date() }
             },
@@ -55,6 +56,12 @@ class AnalyticsRepository {
                         { $group: { _id: '$referrer', count: { $sum: 1 } } },
                         { $sort: { count: -1 } },
                         { $limit: 5 }
+                    ],
+                    recentPassengers: [
+                        { $match: { passengerName: { $exists: true, $ne: 'Anônimo', $ne: null } } },
+                        { $sort: { updatedAt: -1 } },
+                        { $limit: 50 },
+                        { $project: { passengerName: 1, duration: 1, updatedAt: 1 } }
                     ]
                 }
             }

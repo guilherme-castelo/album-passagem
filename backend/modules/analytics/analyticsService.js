@@ -14,7 +14,8 @@ class AnalyticsService {
             totalVisits: global.totalVisits,
             avgDuration: global.avgDuration,
             devices: stats.devices,
-            referrers: stats.referrers
+            referrers: stats.referrers,
+            recentPassengers: stats.recentPassengers || []
         };
     }
 

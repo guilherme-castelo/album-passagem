@@ -97,13 +97,16 @@ export class AnalyticsTracker {
             duration: this.trackDurations[id]
         }));
 
+        const passengerName = localStorage.getItem('passengerName') || 'Anônimo';
+
         return {
             sessionId: this.sessionId,
             data: {
                 deviceType: this.deviceType,
                 referrer: this.referrer,
                 duration: totalDurationParams,
-                trackViews: trackViews
+                trackViews: trackViews,
+                passengerName: passengerName
             }
         };
     }

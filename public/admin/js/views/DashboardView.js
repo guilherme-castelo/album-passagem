@@ -36,6 +36,7 @@ export class DashboardView {
   render(tracks, analytics = {}, trackAnalytics = []) {
     this._tracks = tracks; // Store for modal
     this._trackAnalytics = trackAnalytics; // Store for modal
+    this._analytics = analytics; // Novo payload armazenado para o Modal detalhado dos Cards
     
     const totalLikes = tracks.reduce((s, t) => s + (t.interactions?.likes || 0), 0);
     const allRatings = tracks.flatMap(t => t.interactions?.ratings || []);
@@ -99,10 +100,10 @@ export class DashboardView {
         VISÃO GERAL DO PÚBLICO
       </h3>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-5 mb-8">
-        ${this._statCard('Visitantes Totais', visitors, '--text-primary', 'glass-card hover:bg-white/5', visitorsIcon)}
-        ${this._statCard('Tempo Médio', avgTime, '--text-primary', 'glass-card hover:bg-white/5', timeIcon)}
-        ${this._statCard('Dispositivo', String(topDevice).toUpperCase(), '--accent-blue', 'glass-card hover:bg-white/5', deviceIcon)}
-        ${this._statCard('Top Origem', String(topSource).toUpperCase(), '--accent-blue', 'glass-card hover:bg-white/5', sourceIcon)}
+        ${this._statCard('Visitantes Totais', visitors, '--text-primary', 'glass-card hover:bg-white/5', visitorsIcon, 'visitors')}
+        ${this._statCard('Tempo Médio', avgTime, '--text-primary', 'glass-card hover:bg-white/5', timeIcon, 'time')}
+        ${this._statCard('Dispositivo', String(topDevice).toUpperCase(), '--accent-blue', 'glass-card hover:bg-white/5', deviceIcon, 'devices')}
+        ${this._statCard('Top Origem', String(topSource).toUpperCase(), '--accent-blue', 'glass-card hover:bg-white/5', sourceIcon, 'referrers')}
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
@@ -119,6 +120,13 @@ export class DashboardView {
           </div>
         </div>
       </div>
+      
+      <!-- Overlay Modal genérico para Insights Cards -->
+      <div id="metric-modal-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div id="metric-modal-content" class="glass-card border border-white/20 w-full max-w-md p-6 rounded-2xl shadow-2xl transform scale-95 transition-transform duration-300">
+          <!-- Conteudo do Modal de Métrica -->
+        </div>
+      </div>
     `;
 
     setTimeout(() => {
@@ -127,11 +135,17 @@ export class DashboardView {
     }, 50);
   }
 
-  _statCard(label, value, colorVar, borderClass, iconSvg) {
+  _statCard(label, value, colorVar, borderClass, iconSvg = '', metricType = null) {
+    const actionClass = metricType ? 'cursor-pointer hover:border-white/30 transition-colors metric-card' : '';
+    const eyeIcon = metricType ? `<svg class="w-4 h-4 opacity-30 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>` : '';
+    
     return `
-      <div class="glass-card stat-card ${borderClass} p-5 relative overflow-hidden">
-        <div class="absolute top-3 right-3 opacity-10" style="color: var(${colorVar})">${iconSvg}</div>
-        <p class="label mb-2">${label}</p>
+      <div class="glass-card stat-card ${borderClass} ${actionClass} p-5 relative overflow-hidden group" ${metricType ? `data-metric="${metricType}"` : ''}>
+        <div class="absolute top-3 right-3 opacity-10 group-hover:opacity-20 transition-all group-hover:scale-110" style="color: var(${colorVar})">${iconSvg}</div>
+        <p class="label mb-2 flex items-center justify-between">
+           ${label} 
+           ${eyeIcon}
+        </p>
         <p class="text-3xl font-bold" style="color: var(${colorVar})">${value}</p>
       </div>
     `;
@@ -270,6 +284,7 @@ export class DashboardView {
   }
 
   _attachModalEvents() {
+      // Eventos para as Faixas (Modal Existente)
       const rows = document.querySelectorAll('.dashboard-track-row');
       rows.forEach(r => {
           r.addEventListener('click', () => {
@@ -278,16 +293,243 @@ export class DashboardView {
           });
       });
 
-      const overlay = document.getElementById('track-modal-overlay');
-      if (overlay) {
-          overlay.addEventListener('click', (e) => {
-              if (e.target === overlay) {
-                  overlay.classList.add('hidden');
+      const trackOverlay = document.getElementById('track-modal-overlay');
+      if (trackOverlay) {
+          trackOverlay.addEventListener('click', (e) => {
+              if (e.target === trackOverlay) {
+                  trackOverlay.classList.add('hidden');
                   document.getElementById('track-modal-content').classList.remove('scale-100');
                   document.getElementById('track-modal-content').classList.add('scale-95');
               }
           });
       }
+
+      // Eventos para as Cartões de Audience (Novo Modal)
+      const metricCards = document.querySelectorAll('.metric-card');
+      metricCards.forEach(c => {
+          c.addEventListener('click', () => {
+              this._openMetricModal(c.dataset.metric);
+          });
+      });
+
+      const metricOverlay = document.getElementById('metric-modal-overlay');
+      if (metricOverlay) {
+          metricOverlay.addEventListener('click', (e) => {
+              if (e.target === metricOverlay) {
+                  metricOverlay.classList.add('hidden');
+                  document.getElementById('metric-modal-content').classList.remove('scale-100');
+                  document.getElementById('metric-modal-content').classList.add('scale-95');
+              }
+          });
+      }
+  }
+
+  _openMetricModal(type) {
+      const overlay = document.getElementById('metric-modal-overlay');
+      const content = document.getElementById('metric-modal-content');
+      
+      let title = '';
+      let bodyHtml = '';
+      
+      const { devices=[], referrers=[], totalVisits=0, avgDuration=0 } = this._analytics || {};
+      const formatDuration = (secs) => {
+          if (!secs) return '0s';
+          const m = Math.floor(secs / 60);
+          const s = Math.floor(secs % 60);
+          return m > 0 ? `${m}m ${s}s` : `${s}s`;
+      };
+
+      if (type === 'devices') {
+          title = 'Resumo de Aparelhos';
+          const top3 = devices.sort((a,b) => b.count - a.count).slice(0, 3);
+          bodyHtml = `
+            <div class="space-y-3 mt-4">
+              <div class="h-40 mb-6 relative w-full flex justify-center"><canvas id="modal-metric-chart"></canvas></div>
+              ${top3.length ? top3.map(d => `
+                <div class="flex justify-between items-center p-3 bg-white/5 hover:bg-white/10 rounded-lg border border-white/5 transition-colors">
+                  <span class="text-xs font-bold text-white uppercase tracking-wider">${d._id}</span>
+                  <span class="font-mono text-blue-400 text-sm font-bold">${d.count} acessos</span>
+                </div>
+              `).join('') : '<p class="text-gray-500 text-sm text-center py-4">Sem dados</p>'}
+            </div>
+          `;
+      } else if (type === 'referrers') {
+          title = 'Resumo de Tráfego';
+          const top3 = referrers.sort((a,b) => b.count - a.count).slice(0, 3);
+          bodyHtml = `
+            <div class="space-y-3 mt-4 max-h-[60vh] overflow-y-auto pr-2">
+              <div class="h-40 mb-6 relative w-full flex justify-center"><canvas id="modal-metric-chart"></canvas></div>
+              ${top3.length ? top3.map(r => `
+                <div class="flex justify-between items-center p-3 bg-white/5 hover:bg-white/10 rounded-lg border border-white/5 transition-colors">
+                  <span class="text-xs font-bold text-white break-all pr-4 uppercase tracking-widest">${r._id === 'direct' ? 'Tráfego Direto' : r._id}</span>
+                  <span class="font-mono text-blue-400 font-bold whitespace-nowrap">${r.count} <span class="text-xs text-gray-400 font-sans">clicks</span></span>
+                </div>
+              `).join('') : '<p class="text-gray-500 text-sm text-center py-4">Sem dados</p>'}
+            </div>
+          `;
+      } else if (type === 'time') {
+          title = 'Média de Retenção Visual';
+          bodyHtml = `
+             <div class="flex flex-col items-center justify-center p-6 bg-black/20 rounded-xl border border-white/5 mt-4">
+                <span class="text-xs text-gray-500 font-mono uppercase tracking-widest mb-2">Tempo Geral Estimado</span>
+                <span class="text-4xl font-bold text-blue-400 font-mono drop-shadow-lg">⏱️ ${formatDuration(avgDuration)}</span>
+             </div>
+
+             <h4 class="text-xs text-gray-400 uppercase tracking-widest mt-6 mb-3 border-b border-white/10 pb-2">Retenção Individual por Música</h4>
+             <div class="space-y-2 max-h-[35vh] overflow-y-auto pr-1">
+                ${this._tracks.map(t => {
+                   const mx = this._trackAnalytics?.find(x => String(x._id) === String(t._id || t.id));
+                   const avg = mx && mx.uniqueListeners ? Math.floor(mx.totalTimeSpent / mx.uniqueListeners) : 0;
+                   if (avg === 0) return '';
+                   return `
+                     <div class="flex justify-between items-center p-3 bg-white/5 hover:bg-white/10 rounded-lg border border-white/5 transition-colors">
+                       <span class="text-xs font-bold text-white uppercase truncate pr-2">${t.title}</span>
+                       <span class="font-mono text-blue-400 text-sm font-bold whitespace-nowrap">⏱️ ${formatDuration(avg)}</span>
+                     </div>
+                   `;
+                }).filter(Boolean).join('') || '<p class="text-gray-500 text-xs text-center py-4">As pessoas ainda não ficaram tempo suficiente nas faixas para ranquear uma média.</p>'}
+             </div>
+          `;
+      } else if (type === 'visitors') {
+          title = 'Visitantes Únicos';
+          let { recentPassengers = [] } = this._analytics || {};
+          recentPassengers = recentPassengers.filter(p => p.passengerName && p.passengerName !== 'Anônimo');
+          
+          let currentPage = 1;
+          const itemsPerPage = 5;
+          const totalPages = Math.ceil(recentPassengers.length / itemsPerPage) || 1;
+
+          const renderPassengersPage = (page) => {
+             const start = (page - 1) * itemsPerPage;
+             const paginated = recentPassengers.slice(start, start + itemsPerPage);
+             
+             let html = `<div class="space-y-2 max-h-[30vh] overflow-y-auto pr-1">`;
+             if (paginated.length) {
+                 html += paginated.map(p => {
+                    const safeName = p.passengerName;
+                    return `
+                    <div class="flex justify-between items-center p-3 bg-white/5 hover:bg-white/10 rounded-lg border border-white/5 transition-colors">
+                      <div class="flex items-center gap-3 truncate">
+                          <div class="w-8 h-8 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-xs uppercase flex-shrink-0">
+                              ${safeName.substring(0,2)}
+                          </div>
+                          <span class="text-xs font-bold text-white uppercase truncate">${safeName}</span>
+                      </div>
+                      <span class="font-mono text-gray-400 text-[10px] whitespace-nowrap border border-white/10 px-2 py-1 rounded-md">Retenção: <b class="text-white">${formatDuration(p.duration)}</b></span>
+                    </div>
+                 `}).join('');
+             } else {
+                 html += '<p class="text-gray-500 text-xs text-center py-4 border border-dashed border-white/10 rounded-xl">Nenhum check-in identificado recebido ainda.</p>';
+             }
+             html += `</div>`;
+             
+             html += `
+               <div class="flex justify-between items-center mt-4 border-t border-white/10 pt-3 px-1">
+                  <button id="btn-prev-page" class="text-[10px] font-bold uppercase text-gray-400 hover:text-white disabled:opacity-30 disabled:hover:text-gray-400 p-1 flex items-center gap-1 transition-colors" ${page <= 1 ? 'disabled' : ''}>
+                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> Anterior
+                  </button>
+                  <span class="text-[10px] font-mono text-gray-500 bg-white/5 px-2 py-1 rounded">Pág ${page}/${totalPages}</span>
+                  <button id="btn-next-page" class="text-[10px] font-bold uppercase text-gray-400 hover:text-white disabled:opacity-30 disabled:hover:text-gray-400 p-1 flex items-center gap-1 transition-colors" ${page >= totalPages ? 'disabled' : ''}>
+                     Próxima <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                  </button>
+               </div>
+             `;
+             
+             return html;
+          };
+
+          bodyHtml = `
+             <div class="flex flex-col items-center justify-center p-6 bg-black/20 rounded-xl border border-white/5 mt-4">
+                <span class="text-xs text-gray-500 font-mono uppercase tracking-widest mb-2">Tráfego Acumulado</span>
+                <span class="text-4xl font-bold text-white font-mono drop-shadow-lg">👥 ${totalVisits}</span>
+             </div>
+
+             <h4 class="text-xs text-blue-400 uppercase tracking-widest mt-6 mb-3 border-b border-white/10 pb-2 flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg> Passageiros Identificados (Feed)</h4>
+             <div id="passengers-container" class="mb-6">
+                 ${renderPassengersPage(currentPage)}
+             </div>
+
+             <h4 class="text-xs text-gray-400 uppercase tracking-widest mt-6 mb-3 border-b border-white/10 pb-2">Visitantes por Música</h4>
+             <div class="space-y-2 max-h-[25vh] overflow-y-auto pr-1">
+                ${this._tracks.map(t => {
+                   const mx = this._trackAnalytics?.find(x => String(x._id) === String(t._id || t.id));
+                   const u = mx ? mx.uniqueListeners : 0;
+                   if (u === 0) return '';
+                   return `
+                     <div class="flex justify-between items-center p-3 bg-white/5 hover:bg-white/10 rounded-lg border border-white/5 transition-colors">
+                       <span class="text-xs font-bold text-white uppercase truncate pr-2">${t.title}</span>
+                       <span class="font-mono text-blue-400 text-sm font-bold whitespace-nowrap">👥 ${u}</span>
+                     </div>
+                   `;
+                }).filter(Boolean).join('') || '<p class="text-gray-500 text-xs text-center py-4 border border-white/5 rounded-xl">Nenhum play isolado registrado nas mídias do álbum ainda.</p>'}
+             </div>
+          `;
+
+          // Override local functions scope for global pagination hook
+          window._renderVisitorsPage = (modifier) => {
+              if (modifier === -1 && currentPage > 1) currentPage--;
+              if (modifier === 1 && currentPage < totalPages) currentPage++;
+              document.getElementById('passengers-container').innerHTML = renderPassengersPage(currentPage);
+          };
+      }
+
+      content.innerHTML = `
+        <div class="flex justify-between items-center mb-2 border-b border-white/10 pb-4">
+            <h2 class="text-xl font-bold text-white tracking-tight uppercase">${title}</h2>
+            <button class="text-gray-400 hover:text-white transition-colors p-1 bg-white/5 rounded-full" onclick="document.getElementById('metric-modal-overlay').classList.add('hidden');">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        ${bodyHtml}
+      `;
+
+      overlay.classList.remove('hidden');
+      setTimeout(() => {
+          content.classList.remove('scale-95');
+          content.classList.add('scale-100');
+          
+          if (type === 'visitors' && window._renderVisitorsPage) {
+              const connectBtns = () => {
+                  const bp = document.getElementById('btn-prev-page');
+                  const bn = document.getElementById('btn-next-page');
+                  if (bp) bp.onclick = () => { window._renderVisitorsPage(-1); connectBtns(); };
+                  if (bn) bn.onclick = () => { window._renderVisitorsPage(1); connectBtns(); };
+              };
+              connectBtns();
+          }
+
+          const ctx = document.getElementById('modal-metric-chart');
+          if (ctx && window.Chart) {
+              if (type === 'devices') {
+                  const dTop = devices.sort((a,b) => b.count - a.count).slice(0, 3);
+                  new Chart(ctx, {
+                      type: 'doughnut',
+                      data: {
+                          labels: dTop.map(d => String(d._id).toUpperCase()),
+                          datasets: [{
+                              data: dTop.map(d => d.count),
+                              backgroundColor: ['#F9B572', '#0F2C59', '#3b82f6'],
+                              borderWidth: 0, hoverOffset: 4
+                          }]
+                      },
+                      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: {color: '#9ca3af', font: {family: 'Inter', size: 10}} } }, cutout: '70%' }
+                  });
+              } else if (type === 'referrers') {
+                  const rTop = referrers.sort((a,b) => b.count - a.count).slice(0, 3);
+                  new Chart(ctx, {
+                      type: 'bar',
+                      data: {
+                          labels: rTop.map(r => String(r._id === 'direct' ? 'DIRETO' : r._id).substring(0, 10)),
+                          datasets: [{
+                              data: rTop.map(r => r.count),
+                              backgroundColor: '#3b82f6', borderRadius: 4, barThickness: 20
+                          }]
+                      },
+                      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display:false } }, scales: { y: { display: false, grid: {display: false} }, x: { ticks: {color: '#9ca3af', font: {size: 9}}, grid: {display: false} } } }
+                  });
+              }
+          }
+      }, 50);
   }
 
   _openTrackModal(trackId) {
