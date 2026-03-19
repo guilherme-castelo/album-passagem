@@ -102,8 +102,8 @@ export class DashboardView {
       <div class="grid grid-cols-2 md:grid-cols-4 gap-5 mb-8">
         ${this._statCard('Visitantes Totais', visitors, '--text-primary', 'glass-card hover:bg-white/5', visitorsIcon, 'visitors')}
         ${this._statCard('Tempo Médio', avgTime, '--text-primary', 'glass-card hover:bg-white/5', timeIcon, 'time')}
-        ${this._statCard('Dispositivo', String(topDevice).toUpperCase(), '--accent-blue', 'glass-card hover:bg-white/5', deviceIcon, 'devices')}
-        ${this._statCard('Top Origem', String(topSource).toUpperCase(), '--accent-blue', 'glass-card hover:bg-white/5', sourceIcon, 'referrers')}
+        ${this._statCard('Dispositivo', String(topDevice).toUpperCase(), '--accent-blue', 'glass-card hover:bg-white/5', deviceIcon, 'devices', 'text-md')}
+        ${this._statCard('Top Origem', String(topSource).toUpperCase(), '--accent-blue', 'glass-card hover:bg-white/5', sourceIcon, 'referrers', 'text-md')}
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
@@ -135,7 +135,7 @@ export class DashboardView {
     }, 50);
   }
 
-  _statCard(label, value, colorVar, borderClass, iconSvg = '', metricType = null) {
+  _statCard(label, value, colorVar, borderClass, iconSvg = '', metricType = null, fontSize = 'text-3xl') {
     const actionClass = metricType ? 'cursor-pointer hover:border-white/30 transition-colors metric-card' : '';
     const eyeIcon = metricType ? `<svg class="w-4 h-4 opacity-30 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>` : '';
     
@@ -146,7 +146,7 @@ export class DashboardView {
            ${label} 
            ${eyeIcon}
         </p>
-        <p class="text-3xl font-bold" style="color: var(${colorVar})">${value}</p>
+        <p class="${fontSize} font-bold" style="color: var(${colorVar})">${value}</p>
       </div>
     `;
   }
