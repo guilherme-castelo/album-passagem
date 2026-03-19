@@ -8,6 +8,26 @@ export class DashboardView {
     this.container = $(containerId);
   }
 
+  renderLoading() {
+    this.container.innerHTML = `
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+        ${this._statCard('Total de Faixas', '<div class="h-8 w-16 skeleton rounded mt-1" style="opacity:0.2"></div>', '--accent-violet', 'stat-card-violet', this._iconMusic())}
+        ${this._statCard('Total de Likes', '<div class="h-8 w-16 skeleton rounded mt-1" style="opacity:0.2"></div>', '--accent-pink', 'stat-card-pink', this._iconHeart())}
+        ${this._statCard('Avaliação Média', '<div class="h-8 w-16 skeleton rounded mt-1" style="opacity:0.2"></div>', '--accent-yellow', 'stat-card-yellow', this._iconStar())}
+      </div>
+
+      <div class="glass-card py-5 px-2 md:p-5">
+        <h3 class="font-semibold text-sm mb-4 flex items-center gap-2" style="color: var(--text-secondary)">
+          <svg class="w-4 h-4" style="color: var(--accent-violet)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+          FAIXAS MAIS CURTIDAS
+        </h3>
+        <div class="space-y-1">
+          ${this._renderTopTracksSkeletons()}
+        </div>
+      </div>
+    `;
+  }
+
   render(tracks) {
     const totalLikes = tracks.reduce((s, t) => s + (t.interactions?.likes || 0), 0);
     const allRatings = tracks.flatMap(t => t.interactions?.ratings || []);
@@ -69,8 +89,23 @@ export class DashboardView {
         </span>
         <span class="col-span-2 flex justify-end font-mono text-xs flex items-center gap-1 truncate " style="color: var(--accent-yellow)">
           ${this._iconStar('w-3 h-3', 'var(--accent-yellow)')}
-          ${this._returnRates(t).avgRating || 0} | ${this._returnRates(t).totalRating || 0}
-        </span>
+      </div>
+    `).join('');
+  }
+
+  _renderTopTracksSkeletons() {
+    return Array(10).fill(`
+      <div class="grid grid-cols-7 w-full py-3 px-0 md:px-3 rounded-lg hover:bg-white/5 transition-colors group">
+        <div class="col-span-4 flex justify-start items-center gap-2">
+          <div class="skeleton h-3 w-4 rounded opacity-20"></div>
+          <div class="skeleton h-4 w-32 rounded opacity-20"></div>
+        </div>
+        <div class="col-span-1 flex justify-center items-center">
+          <div class="skeleton h-3 w-8 rounded opacity-20"></div>
+        </div>
+        <div class="col-span-2 flex justify-end items-center">
+          <div class="skeleton h-3 w-12 rounded opacity-20"></div>
+        </div>
       </div>
     `).join('');
   }

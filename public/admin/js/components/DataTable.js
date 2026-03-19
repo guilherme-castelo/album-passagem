@@ -65,12 +65,16 @@ export class DataTable {
 
   _renderBody() {
     if (this._loading) {
-      this.tbody.innerHTML = `<tr><td colspan="${this.columns.length + (this.actions.length ? 1 : 0)}" class="text-center py-8 text-blue-300">
-        <div class="flex items-center justify-center gap-2">
-          <div class="w-5 h-5 border-2 border-blue-300/30 border-t-blue-300 rounded-full animate-spin"></div>
-          <span>Carregando...</span>
-        </div>
-      </td></tr>`;
+      const colCount = this.columns.length + (this.actions.length ? 1 : 0);
+      let skeletonHtml = '';
+      for (let i = 0; i < 1; i++) {
+        skeletonHtml += `
+          <tr>
+            ${Array(colCount).fill('<td class="py-6"><div class="skeleton h-4 w-full rounded" style="opacity: 0.15"></div></td>').join('')}
+          </tr>
+        `;
+      }
+      this.tbody.innerHTML = skeletonHtml;
       return;
     }
 

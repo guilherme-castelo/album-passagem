@@ -243,6 +243,7 @@ export class AdminController {
 
   // ── Data loaders ───────────────────────────────────────────────────
   async _loadDashboard() {
+    this.views.dashboard.renderLoading();
     try {
       let albums = AdminState.get('albums');
       if (!albums || !albums.length) {
