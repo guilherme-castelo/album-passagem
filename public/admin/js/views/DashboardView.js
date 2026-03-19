@@ -396,14 +396,14 @@ export class DashboardView {
           recentPassengers = recentPassengers.filter(p => p.passengerName && p.passengerName !== 'Anônimo');
           
           let currentPage = 1;
-          const itemsPerPage = 5;
+          const itemsPerPage = 3;
           const totalPages = Math.ceil(recentPassengers.length / itemsPerPage) || 1;
 
           const renderPassengersPage = (page) => {
              const start = (page - 1) * itemsPerPage;
              const paginated = recentPassengers.slice(start, start + itemsPerPage);
              
-             let html = `<div class="space-y-2 max-h-[30vh] overflow-y-auto pr-1">`;
+             let html = `<div class="space-y-2 pr-1 min-h-[160px]">`;
              if (paginated.length) {
                  html += paginated.map(p => {
                     const safeName = p.passengerName;
