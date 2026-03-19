@@ -2,6 +2,7 @@
  * AdminService — Centralized API layer for all admin CRUD operations.
  */
 import { auth } from '../utils/auth.js';
+import { toast } from '../components/ToastComponent.js';
 
 function getBaseUrl() {
   return window.location.hostname === 'localhost' ? 'http://localhost:3001' : '';
@@ -13,7 +14,13 @@ async function request(url, options = {}) {
     headers: auth.headers()
   });
   const data = await res.json();
+
   if (!res.ok) {
+    if (res.status === 401 || res.status === 403) {
+      toast.error('Sessão expirada. Faça login novamente.', 3000);
+      setTimeout(() => auth.logout(), 2500);
+      throw new Error('Sessão expirada');
+    }
     throw new Error(data.error || `HTTP ${res.status}`);
   }
   return data;
