@@ -26,6 +26,12 @@
 
 <body class="admin-body font-sans min-h-screen flex">
 
+  <!-- INITIAL APP LOADER (Auth Verifier) -->
+  <div id="app-loader" class="fixed inset-0 z-[999] flex flex-col items-center justify-center bg-[#0a0e1a] transition-opacity duration-300">
+    <div class="w-12 h-12 border-4 border-brand-orange/20 border-t-brand-orange rounded-full animate-spin"></div>
+    <p class="text-white font-mono mt-4 text-sm animate-pulse tracking-wide">Carregando...</p>
+  </div>
+
   <!-- MOBILE OVERLAY -->
   <div id="mobile-overlay" class="fixed inset-0 bg-black/50 z-20 hidden backdrop-blur-sm lg:hidden"></div>
 

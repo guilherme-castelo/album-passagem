@@ -163,6 +163,32 @@ export class AlbumDetailView {
     $('btn-add-track-context').addEventListener('click', () => { if (this.onAddTrack) this.onAddTrack(); });
   }
 
+  renderLoading() {
+    $('display-album-id').innerHTML = '<div class="skeleton h-3 w-16 inline-block rounded opacity-20"></div>';
+    
+    const display = $('album-info-display');
+    display.innerHTML = `
+      <div>
+        <p class="label">Título</p>
+        <div class="skeleton h-5 w-3/4 rounded mt-1 opacity-20"></div>
+      </div>
+      <div>
+        <p class="label">Artista</p>
+        <div class="skeleton h-5 w-2/3 rounded mt-1 opacity-20"></div>
+      </div>
+      <div>
+        <p class="label">Evento</p>
+        <div class="skeleton h-5 w-1/2 rounded mt-1 opacity-20"></div>
+      </div>
+      <div>
+        <p class="label">Data</p>
+        <div class="skeleton h-5 w-2/4 rounded mt-1 opacity-20"></div>
+      </div>
+    `;
+
+    this.table.setLoading(true);
+  }
+
   render(album, tracks) {
     this._album = album;
     $('display-album-id').textContent = album.id || album._id;

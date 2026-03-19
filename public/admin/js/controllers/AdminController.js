@@ -29,6 +29,14 @@ export class AdminController {
     AdminState.subscribe('currentSection', (section) => {
       this._showSection(section);
     });
+
+    AdminState.subscribe('selectedAlbum', (album) => {
+      if (album) {
+        localStorage.setItem('admin_selected_album', album._id || album.id);
+      } else {
+        localStorage.removeItem('admin_selected_album');
+      }
+    });
   }
 
   // ── View event wiring ─────────────────────────────────────────────
@@ -37,8 +45,8 @@ export class AdminController {
 
     // Sidebar
     sidebar.onNavigate = (section) => {
+      AdminState.set('selectedAlbum', null); // Reset context first!
       AdminState.set('currentSection', section);
-      AdminState.set('selectedAlbum', null); // Reset context when moving between top sections
     };
     sidebar.onLogout = () => auth.logout();
 
@@ -190,22 +198,40 @@ export class AdminController {
 
   // ── Init ───────────────────────────────────────────────────────────
   async init() {
-    // Pre-load albums for global selects
+    // Pre-load albums for global selects and to verify token validity
     try {
       const albums = await adminService.getAlbums();
       AdminState.set('albums', albums);
-    } catch (e) { }
+    } catch (e) {
+      if (e.message === 'Sessão expirada') {
+        // Stop execution. The service will redirect. Keep the loader on screen.
+        return;
+      }
+    }
 
-    this._showSection('dashboard');
+    const loader = document.getElementById('app-loader');
+    if (loader) {
+      loader.classList.add('opacity-0', 'pointer-events-none');
+      setTimeout(() => loader.remove(), 300);
+    }
+
+    const lastSection = localStorage.getItem('admin_current_section') || 'dashboard';
+    this._showSection(lastSection);
   }
 
   // ── Section routing ────────────────────────────────────────────────
   _showSection(name) {
     document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
-    const section = document.getElementById(`section-${name}`);
-    if (section) section.classList.add('active');
-
+    // Fallback to dashboard if invalid section name
+    let section = document.getElementById(`section-${name}`);
+    if (!section) {
+      name = 'dashboard';
+      section = document.getElementById(`section-dashboard`);
+    }
+    
+    section.classList.add('active');
     this.views.sidebar.setActive(name);
+    localStorage.setItem('admin_current_section', name);
 
     switch (name) {
       case 'dashboard': this._loadDashboard(); break;
@@ -216,19 +242,24 @@ export class AdminController {
 
   async _openAlbumHub(id) {
     try {
+      // Immediate UI transition
+      document.getElementById('albums-list-container').classList.add('hidden');
+      document.getElementById('album-detail-container').classList.remove('hidden');
+      const btnNewAlbum = document.getElementById('btn-new-album');
+      if (btnNewAlbum) btnNewAlbum.classList.add('hidden');
+      
+      this.views.albumDetail.renderLoading();
+
       const album = await adminService.getAlbum(id);
       const tracks = await adminService.getTracks(id);
       AdminState.set('selectedAlbum', album);
 
       this.views.albumDetail.render(album, tracks);
 
-      document.getElementById('albums-list-container').classList.add('hidden');
-      document.getElementById('album-detail-container').classList.remove('hidden');
-
-      const btnNewAlbum = document.getElementById('btn-new-album');
-      if (btnNewAlbum) btnNewAlbum.classList.add('hidden');
+      return true;
     } catch (e) {
       toast.error('Erro ao abrir álbum');
+      return false;
     }
   }
 
@@ -262,6 +293,13 @@ export class AdminController {
   }
 
   async _loadAlbums() {
+    const savedAlbumId = localStorage.getItem('admin_selected_album');
+    if (savedAlbumId) {
+      const success = await this._openAlbumHub(savedAlbumId);
+      if (success) return;
+      localStorage.removeItem('admin_selected_album');
+    }
+
     document.getElementById('albums-list-container').classList.remove('hidden');
     document.getElementById('album-detail-container').classList.add('hidden');
 
