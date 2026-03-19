@@ -72,6 +72,17 @@ export class AdminController {
       this._loadAlbums();
     };
 
+    albumDetail.onEditAlbum = async (albumObj) => {
+      try {
+        albums.openEditFormSkeleton();
+        const album = await adminService.getAlbum(albumObj._id || albumObj.id);
+        albums.populateEditForm(album);
+      } catch (e) {
+        albums.closeModal();
+        toast.error('Erro ao carregar álbum');
+      }
+    };
+
     albumDetail.onAddTrack = () => {
       const album = AdminState.get('selectedAlbum');
       tracks.setAlbums(AdminState.get('albums'), album._id);
@@ -80,11 +91,14 @@ export class AdminController {
 
     albumDetail.onEditTrack = async (_id) => {
       try {
-        const track = await adminService.getTrack(_id);
         const albums = AdminState.get('albums');
-        tracks.setAlbums(albums, track.albumId);
-        tracks.openEditForm(track);
+        tracks.setAlbums(albums);
+        tracks.openEditFormSkeleton();
+
+        const track = await adminService.getTrack(_id);
+        tracks.populateEditForm(track);
       } catch (e) {
+        tracks.closeForm();
         toast.error('Erro ao carregar faixa');
       }
     };

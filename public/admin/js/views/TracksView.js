@@ -162,23 +162,40 @@ export class TracksView {
     }, 50);
   }
 
-  openEditForm(track) {
-    this._editingId = track._id || track.id;
-    this.modal.setTitle('Editar Música');
+  openEditFormSkeleton() {
+    this._editingId = null;
+    this.modal.setTitle('Carregando Faixa...');
     this.modal.open();
+    this.modal.setLoading(true);
+    // setTimeout because modal needs to be visible for Quill to initialize
     setTimeout(() => {
       this._initQuill();
-      $('track-gate').value = track.gate || '';
-      $('track-flightCode').value = track.flightCode || '';
-      $('track-title').value = track.title || '';
-      $('track-status').value = track.status || 'ON TIME';
-      $('track-albumId').value = track.albumId || '';
-      if (this.quill) this.quill.setText(track.lyrics || '');
-
+      if (this.quill) this.quill.setText('');
+      $('track-gate').value = '';
+      $('track-flightCode').value = '';
+      $('track-title').value = '';
+      $('track-status').value = 'ON TIME';
+      $('track-albumId').value = '';
       $('media-fields').innerHTML = '';
-      (track.media || []).forEach(m => this._addMediaField(m.origin, m.content));
       $('track-form-error').classList.add('hidden');
     }, 50);
+  }
+
+  populateEditForm(track) {
+    this._editingId = track._id || track.id;
+    this.modal.setTitle('Editar Música');
+    this.modal.setLoading(false);
+    
+    $('track-gate').value = track.gate || '';
+    $('track-flightCode').value = track.flightCode || '';
+    $('track-title').value = track.title || '';
+    $('track-status').value = track.status || 'ON TIME';
+    $('track-albumId').value = track.albumId || '';
+    if (this.quill) this.quill.setText(track.lyrics || '');
+
+    $('media-fields').innerHTML = '';
+    (track.media || []).forEach(m => this._addMediaField(m.origin, m.content));
+    $('track-form-error').classList.add('hidden');
   }
 
   closeForm() { this.modal.close(); }

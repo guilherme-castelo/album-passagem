@@ -463,6 +463,23 @@ select.glass-input option {
 
 @keyframes skeleton-loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
+/* Form Skeletons */
+.modal-loading-skeletons input,
+.modal-loading-skeletons select,
+.modal-loading-skeletons textarea,
+.modal-loading-skeletons .ql-editor {
+  color: transparent !important;
+  pointer-events: none;
+  background-image: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.03) 75%) !important;
+  background-size: 200% 100% !important;
+  animation: skeleton-loading 1.5s infinite !important;
+  border-color: var(--glass-border) !important;
+}
+
+.modal-loading-skeletons .ql-editor::before {
+  color: transparent !important;
+}
+
 /* ── Scrollbar ─────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }

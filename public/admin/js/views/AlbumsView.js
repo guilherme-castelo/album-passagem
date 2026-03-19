@@ -92,6 +92,33 @@ export class AlbumsView {
     this.modal.open();
   }
 
+  openEditFormSkeleton() {
+    this._editingId = null;
+    this.modal.setTitle('Carregando Álbum...');
+    $('album-form').reset();
+    $('album-form-error').classList.add('hidden');
+    this.modal.open();
+    this.modal.setLoading(true);
+  }
+
+  populateEditForm(album) {
+    this._editingId = album._id || album.id;
+    this.modal.setTitle('Editar Álbum');
+    this.modal.setLoading(false);
+    
+    $('album-title').value = album.title || '';
+    $('album-artist').value = album.artist || '';
+    $('album-event').value = album.event || '';
+    if (album.date) {
+      try {
+        $('album-date').value = new Date(album.date).toISOString().slice(0, 16);
+      } catch(e) { }
+    } else {
+      $('album-date').value = '';
+    }
+    $('album-form-error').classList.add('hidden');
+  }
+
   getValues() {
     return {
       title: $('album-title').value.trim(),

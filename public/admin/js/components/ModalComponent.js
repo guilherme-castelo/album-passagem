@@ -82,6 +82,22 @@ export class ModalComponent {
     this.footerEl.style.display = html ? '' : 'none';
   }
 
+  setLoading(isLoading) {
+    if (isLoading) {
+      this.bodyEl.classList.add('modal-loading-skeletons');
+      this.footerEl.querySelectorAll('button').forEach(btn => {
+        btn.disabled = true;
+        btn.classList.add('opacity-50', 'cursor-not-allowed');
+      });
+    } else {
+      this.bodyEl.classList.remove('modal-loading-skeletons');
+      this.footerEl.querySelectorAll('button').forEach(btn => {
+        btn.disabled = false;
+        btn.classList.remove('opacity-50', 'cursor-not-allowed');
+      });
+    }
+  }
+
   open() {
     this.overlay.style.display = '';
     document.body.style.overflow = 'hidden';
