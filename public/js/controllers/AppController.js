@@ -1,3 +1,5 @@
+import { analytics } from '../utils/analyticsTracker.js';
+
 export class AppController {
     constructor(dependencies) {
         this.state = dependencies.state;
@@ -107,6 +109,9 @@ export class AppController {
 
         this.views.rating.render(track.interactions || {}, isLiked, userRating);
         this.state.set('currentView', 'lyrics');
+
+        // Trigger analytics telemetry mapping
+        analytics.startViewingTrack(trackId);
     }
 
     handleNavigateTrack(offset) {

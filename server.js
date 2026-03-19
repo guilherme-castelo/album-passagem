@@ -9,6 +9,7 @@ const albumHandler = require('./api/album/index');
 const trackHandler = require('./api/tracks/index');
 const userHandler = require('./api/users/index');
 const musicasHandler = require('./api/musicas/index');
+const analyticsHandler = require('./api/analytics/index');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -43,6 +44,7 @@ app.use('/api/album', vercelCatchAll(albumHandler, '/api/album'));
 app.use('/api/tracks', vercelCatchAll(trackHandler, '/api/tracks'));
 app.use('/api/users', vercelCatchAll(userHandler, '/api/users'));
 app.use('/api/musicas', vercelCatchAll(musicasHandler, '/api/musicas'));
+app.use('/api/analytics', vercelCatchAll(analyticsHandler, '/api/analytics'));
 
 // ─── Servir Frontend Estático ────────────────────────────────────────────────
 app.use(express.static(path.join(__dirname, 'public')));

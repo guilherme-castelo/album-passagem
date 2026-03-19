@@ -93,7 +93,18 @@ export class AlbumDetailView {
           render: (val) => `<span class="badge ${STATUS_COLORS[val] || 'badge-info'}">${val}</span>`
         },
         {
-          key: 'interactions', label: 'Likes', className: 'text-xs',
+          key: '_analytics', label: 'Retenção Média', className: 'text-xs hidden md:table-cell w-32 flex-shrink-0',
+          render: (val) => {
+              if (!val || val.uniqueListeners === 0) return '<span style="color:var(--text-muted)">--</span>';
+              const avg = Math.floor(val.totalTimeSpent / val.uniqueListeners);
+              const m = Math.floor(avg / 60);
+              const s = avg % 60;
+              const timeStr = m > 0 ? `${m}m ${s}s` : `${s}s`;
+              return `<span class="font-mono" style="color:var(--accent-blue)">⏱️ ${timeStr}</span>`;
+          }
+        },
+        {
+          key: 'interactions', label: 'Likes', className: 'text-xs md:table-cell',
           render: (val) => `<span style="color:var(--accent-pink)">❤️ ${val?.likes || 0}</span>`
         }
       ],
@@ -189,11 +200,21 @@ export class AlbumDetailView {
     this.table.setLoading(true);
   }
 
-  render(album, tracks) {
+  render(album, tracks, metrics = []) {
     this._album = album;
     $('display-album-id').textContent = album.id || album._id;
     this._renderInfo(album);
-    this.table.setData(tracks);
+    
+    // Injeta as métricas de tempo para que a DataTable as renderize na coluna _analytics
+    const enrichedTracks = tracks.map(t => {
+       const m = metrics.find(mx => String(mx._id) === String(t._id || t.id));
+       return {
+           ...t,
+           _analytics: m || { totalTimeSpent: 0, uniqueListeners: 0 }
+       };
+    });
+
+    this.table.setData(enrichedTracks);
   }
 
   _renderInfo(data) {
