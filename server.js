@@ -49,13 +49,20 @@ app.use('/api/analytics', vercelCatchAll(analyticsHandler, '/api/analytics'));
 // ─── Servir Frontend Estático ────────────────────────────────────────────────
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ─── Catch-all: Retorna o index.html para SPAs ───────────────────────────────
+// ─── Catch-all: Retorna o index.html para SPAs ou Redireciona ─────────────
 app.get(/.*/, (req, res) => {
     // Serve admin/index.html para rotas /admin/*
     if (req.path.startsWith('/admin')) {
         return res.sendFile(path.join(__dirname, 'public', 'admin', 'index.html'));
     }
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    
+    // Se a rota for exatamente a raiz raiz, entrega o index.html
+    if (req.path === '/' || req.path === '/index.html') {
+        return res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    }
+
+    // Qualquer outra rota não mapeada (que não for um arquivo existente no express.static) redireciona para a raiz
+    return res.redirect('/');
 });
 
 app.listen(PORT, () => {
