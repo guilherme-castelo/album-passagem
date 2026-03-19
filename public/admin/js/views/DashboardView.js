@@ -89,6 +89,8 @@ export class DashboardView {
         </span>
         <span class="col-span-2 flex justify-end font-mono text-xs flex items-center gap-1 truncate " style="color: var(--accent-yellow)">
           ${this._iconStar('w-3 h-3', 'var(--accent-yellow)')}
+          ${this._returnRates(t).avgRating} (${this._returnRates(t).totalRating})
+        </span>
       </div>
     `).join('');
   }
