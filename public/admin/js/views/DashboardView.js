@@ -22,7 +22,7 @@ export class DashboardView {
         ${this._statCard('Avaliação Média', avgRating === '--' ? '--' : `${avgRating}★`, '--accent-yellow', 'stat-card-yellow', this._iconStar())}
       </div>
 
-      <div class="glass-card p-5">
+      <div class="glass-card py-5 px-2 md:p-5">
         <h3 class="font-semibold text-sm mb-4 flex items-center gap-2" style="color: var(--text-secondary)">
           <svg class="w-4 h-4" style="color: var(--accent-violet)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
           FAIXAS MAIS CURTIDAS
@@ -58,16 +58,16 @@ export class DashboardView {
     if (!sorted.length) return '<p style="color: var(--text-muted)" class="text-sm py-4 text-center">Nenhuma faixa encontrada.</p>';
 
     return sorted.map((t, i) => `
-      <div class="grid grid-cols-3 w-full py-2.5 px-3 rounded-lg hover:bg-white/5 transition-colors group">
-        <div class="flex justify-start">
+      <div class="grid grid-cols-7 w-full py-2.5 px-0 md:px-3 rounded-lg hover:bg-white/5 transition-colors group">
+        <div class="col-span-4 flex justify-start">
           <span class="font-mono text-xs w-5" style="color: var(--text-muted)">${i + 1}</span>
-          <span class="font-medium text-sm" style="color: var(--text-primary)">${t.title}</span>
+          <span class="font-medium text-sm truncate max-w-[200px]" style="color: var(--text-primary)">${t.title}</span>
         </div>
-        <span class="flex justify-end font-mono text-xs flex items-center gap-1" style="color: var(--accent-pink)">
+        <span class="flex justify-center font-mono text-xs flex items-center gap-1" style="color: var(--accent-pink)">
           ${this._iconHeart('w-3 h-3', 'var(--accent-pink)')}
           ${t.interactions?.likes || 0}
         </span>
-        <span class="flex justify-end font-mono text-xs flex items-center gap-1" style="color: var(--accent-yellow)">
+        <span class="col-span-2 flex justify-end font-mono text-xs flex items-center gap-1 truncate " style="color: var(--accent-yellow)">
           ${this._iconStar('w-3 h-3', 'var(--accent-yellow)')}
           ${this._returnRates(t).avgRating || 0} | ${this._returnRates(t).totalRating || 0}
         </span>

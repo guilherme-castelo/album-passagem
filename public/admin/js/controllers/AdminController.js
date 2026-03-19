@@ -176,14 +176,13 @@ export class AdminController {
 
   // ── Init ───────────────────────────────────────────────────────────
   async init() {
-    this._showSection('dashboard');
-    this.views.sidebar.setActive('dashboard');
-    await this._loadDashboard();
     // Pre-load albums for global selects
     try {
       const albums = await adminService.getAlbums();
       AdminState.set('albums', albums);
     } catch (e) { }
+
+    this._showSection('dashboard');
   }
 
   // ── Section routing ────────────────────────────────────────────────
@@ -231,7 +230,11 @@ export class AdminController {
   // ── Data loaders ───────────────────────────────────────────────────
   async _loadDashboard() {
     try {
-      const albums = await adminService.getAlbums();
+      let albums = AdminState.get('albums');
+      if (!albums || !albums.length) {
+        albums = await adminService.getAlbums();
+        AdminState.set('albums', albums);
+      }
       const firstAlbumId = albums[0]?._id;
       if (firstAlbumId) {
         const tracks = await adminService.getTracks(firstAlbumId);
