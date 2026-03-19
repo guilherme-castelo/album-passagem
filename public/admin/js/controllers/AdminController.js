@@ -250,9 +250,11 @@ export class AdminController {
       
       this.views.albumDetail.renderLoading();
 
-      const album = await adminService.getAlbum(id);
-      const tracks = await adminService.getTracks(id);
-      const metrics = await adminService.getTrackAnalytics().catch(() => []); // Fail silently if not available
+      const [album, tracks, metrics] = await Promise.all([
+          adminService.getAlbum(id),
+          adminService.getTracks(id),
+          adminService.getTrackAnalytics().catch(() => [])
+      ]);
       
       AdminState.set('selectedAlbum', album);
 
@@ -269,8 +271,10 @@ export class AdminController {
     const selected = AdminState.get('selectedAlbum');
     if (!selected) return;
     try {
-      const tracks = await adminService.getTracks(selected._id);
-      const metrics = await adminService.getTrackAnalytics().catch(() => []);
+      const [tracks, metrics] = await Promise.all([
+         adminService.getTracks(selected._id),
+         adminService.getTrackAnalytics().catch(() => [])
+      ]);
       this.views.albumDetail.render(selected, tracks, metrics);
     } catch (e) { }
   }

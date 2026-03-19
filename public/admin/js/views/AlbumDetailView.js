@@ -129,6 +129,9 @@ export class AlbumDetailView {
   }
 
   _setupDragAndDrop() {
+    if (this._isDragSetup) return;
+    this._isDragSetup = true;
+
     const tbody = this.table.tbody;
     let draggedRow = null;
 
