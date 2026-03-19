@@ -3,7 +3,7 @@
  */
 import { $ } from '../utils/dom.js';
 import { DataTable } from '../components/DataTable.js';
-import { ModalComponent } from '../components/ModalComponent.js';
+import { BaseFormModal } from '../components/BaseFormModal.js';
 import { formatDate } from '../utils/dom.js';
 
 export class AlbumsView {
@@ -17,9 +17,9 @@ export class AlbumsView {
     /** @type {Function|null} (id, title) => void */
     this.onDelete = null;
 
-    this._editingId = null;
     this._buildTable();
-    this._buildModal();
+    this.form = new AlbumFormModal();
+    this.form.onSave = (data, id) => { if (this.onSave) this.onSave(data, id); };
   }
 
   _buildTable() {
@@ -41,9 +41,28 @@ export class AlbumsView {
     });
   }
 
-  _buildModal() {
-    this.modal = new ModalComponent({ title: 'Novo Álbum', size: 'md' });
-    this.modal.setBody(`
+  setTableData(albums) { this.table.setData(albums); }
+  setTableLoading(loading) { this.table.setLoading(loading); }
+
+  openNewForm() { this.form.openNew(); }
+  openEditFormSkeleton() { this.form.openSkeleton(); }
+  populateEditForm(album) { this.form.populate(album); }
+  closeModal() { this.form.close(); }
+  showFormError(msg) { this.form.showError(msg); }
+}
+
+class AlbumFormModal extends BaseFormModal {
+  constructor() {
+    super({
+      titleNew: 'Novo Álbum',
+      titleEdit: 'Editar Álbum',
+      size: 'md',
+      saveBtnText: 'Salvar Álbum'
+    });
+  }
+
+  _getFormHtml() {
+    return `
       <form id="album-form" class="space-y-4">
         <div>
           <label class="label">Título</label>
@@ -63,49 +82,25 @@ export class AlbumsView {
             <input type="datetime-local" id="album-date" class="glass-input" />
           </div>
         </div>
-        <div id="album-form-error" class="hidden text-sm rounded-lg px-4 py-3" style="background: var(--status-error-bg); border: 1px solid var(--status-error-border); color: var(--status-error-text);"></div>
       </form>
-    `);
-
-    this.modal.setFooter(`
-      <button id="album-cancel-btn" class="btn-ghost">Cancelar</button>
-      <button id="album-save-btn" class="btn-save">Salvar Álbum</button>
-    `);
-
-    const panel = this.modal.getBodyElement().closest('.modal-panel');
-    panel.querySelector('#album-save-btn').addEventListener('click', () => {
-      if (this.onSave) {
-        this.onSave(this.getValues(), this._editingId);
-      }
-    });
-    panel.querySelector('#album-cancel-btn').addEventListener('click', () => this.modal.close());
+    `;
   }
 
-  setTableData(albums) { this.table.setData(albums); }
-  setTableLoading(loading) { this.table.setLoading(loading); }
-
-  openNewForm() {
-    this._editingId = null;
-    this.modal.setTitle('Novo Álbum');
-    $('album-form').reset();
-    $('album-form-error').classList.add('hidden');
-    this.modal.open();
+  _getFormValues() {
+    return {
+      title: $('album-title').value.trim(),
+      artist: $('album-artist').value.trim(),
+      event: $('album-event').value.trim(),
+      date: $('album-date').value
+    };
   }
 
-  openEditFormSkeleton() {
-    this._editingId = null;
-    this.modal.setTitle('Carregando Álbum...');
-    $('album-form').reset();
-    $('album-form-error').classList.add('hidden');
-    this.modal.open();
-    this.modal.setLoading(true);
+  onReset() {
+    const form = $('album-form');
+    if (form) form.reset();
   }
 
-  populateEditForm(album) {
-    this._editingId = album._id || album.id;
-    this.modal.setTitle('Editar Álbum');
-    this.modal.setLoading(false);
-    
+  onPopulate(album) {
     $('album-title').value = album.title || '';
     $('album-artist').value = album.artist || '';
     $('album-event').value = album.event || '';
@@ -116,22 +111,5 @@ export class AlbumsView {
     } else {
       $('album-date').value = '';
     }
-    $('album-form-error').classList.add('hidden');
-  }
-
-  getValues() {
-    return {
-      title: $('album-title').value.trim(),
-      artist: $('album-artist').value.trim(),
-      event: $('album-event').value.trim(),
-      date: $('album-date').value
-    };
-  }
-
-  closeModal() { this.modal.close(); }
-  showFormError(msg) {
-    const el = $('album-form-error');
-    el.textContent = msg;
-    el.classList.remove('hidden');
   }
 }

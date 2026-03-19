@@ -3,7 +3,7 @@
  */
 import { $, $$ } from '../utils/dom.js';
 import { DataTable } from '../components/DataTable.js';
-import { ModalComponent } from '../components/ModalComponent.js';
+import { BaseFormModal } from '../components/BaseFormModal.js';
 
 const STATUS_COLORS = {
   'ON TIME': 'badge-success',
@@ -24,11 +24,12 @@ export class TracksView {
     /** @type {Function|null} (id, title) => void */
     this.onDelete = null;
 
-    this.quill = null;
     if (this.tableContainerEl) {
       this._buildTable();
     }
-    this._buildModal();
+    
+    this.form = new TrackFormModal();
+    this.form.onSave = (data, id) => { if(this.onSave) this.onSave(data, id); };
   }
 
   _buildTable() {
@@ -56,10 +57,31 @@ export class TracksView {
     });
   }
 
-  _buildModal() {
-    this.modal = new ModalComponent({ title: 'Nova Faixa', size: 'lg' });
+  setTableData(tracks) { this.table.setData(tracks); }
+  setTableLoading(loading) { this.table.setLoading(loading); }
 
-    this.modal.setBody(`
+  openNewForm() { this.form.openNew(); }
+  openEditFormSkeleton() { this.form.openSkeleton(); }
+  populateEditForm(track) { this.form.populate(track); }
+  closeForm() { this.form.close(); }
+  showFormError(msg) { this.form.showError(msg); }
+  setAlbums(albums, currentAlbumId = null) { this.form.setAlbums(albums, currentAlbumId); }
+}
+
+class TrackFormModal extends BaseFormModal {
+  constructor() {
+    super({
+      titleNew: 'Nova Faixa',
+      titleEdit: 'Editar Música',
+      size: 'lg',
+      saveBtnText: 'Salvar Faixa'
+    });
+    this.quill = null;
+    this.modal.getBodyElement().closest('.modal-panel').querySelector('#btn-add-media')?.addEventListener('click', () => this._addMediaField());
+  }
+
+  _getFormHtml() {
+    return `
       <form id="track-form" class="space-y-5">
         <input type="hidden" id="track-id" />
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -110,31 +132,14 @@ export class TracksView {
           </div>
           <div id="media-fields" class="space-y-2"></div>
         </div>
-
-        <div id="track-form-error" class="hidden text-sm rounded-lg px-4 py-3" style="background: var(--status-error-bg); border: 1px solid var(--status-error-border); color: var(--status-error-text);"></div>
       </form>
-    `);
-
-    this.modal.setFooter(`
-      <button id="track-cancel-btn" class="btn-ghost">Cancelar</button>
-      <button id="track-save-btn" class="btn-save">Salvar Faixa</button>
-    `);
-
-    const panel = this.modal.getBodyElement().closest('.modal-panel');
-    panel.querySelector('#track-save-btn').addEventListener('click', () => {
-      if (this.onSave) {
-        this.onSave(this.getFormValues(), this._editingId);
-      }
-    });
-
-    panel.querySelector('#track-cancel-btn').addEventListener('click', () => this.modal.close());
-    panel.querySelector('#btn-add-media').addEventListener('click', () => this._addMediaField());
+    `;
   }
 
   _initQuill() {
     if (this.quill) return;
     if (typeof Quill === 'undefined') return;
-    this.quill = new Quill('#lyrics-editor', {
+    this.quill = new Quill(this.modal.getBodyElement().querySelector('#lyrics-editor'), {
       theme: 'snow',
       placeholder: 'Insira a letra da música aqui...',
       modules: {
@@ -148,66 +153,9 @@ export class TracksView {
     });
   }
 
-  setTableData(tracks) { this.table.setData(tracks); }
-  setTableLoading(loading) { this.table.setLoading(loading); }
-
-  openNewForm() {
-    this.modal.setTitle('Nova Faixa');
-    this.modal.open();
-    // setTimeout because modal needs to be visible for Quill to initialize
-    setTimeout(() => {
-      this._initQuill();
-      if (this.quill) this.quill.setText('');
-      $('media-fields').innerHTML = '';
-    }, 50);
-  }
-
-  openEditFormSkeleton() {
-    this._editingId = null;
-    this.modal.setTitle('Carregando Faixa...');
-    this.modal.open();
-    this.modal.setLoading(true);
-    // setTimeout because modal needs to be visible for Quill to initialize
-    setTimeout(() => {
-      this._initQuill();
-      if (this.quill) this.quill.setText('');
-      $('track-gate').value = '';
-      $('track-flightCode').value = '';
-      $('track-title').value = '';
-      $('track-status').value = 'ON TIME';
-      $('track-albumId').value = '';
-      $('media-fields').innerHTML = '';
-      $('track-form-error').classList.add('hidden');
-    }, 50);
-  }
-
-  populateEditForm(track) {
-    this._editingId = track._id || track.id;
-    this.modal.setTitle('Editar Música');
-    this.modal.setLoading(false);
-    
-    $('track-gate').value = track.gate || '';
-    $('track-flightCode').value = track.flightCode || '';
-    $('track-title').value = track.title || '';
-    $('track-status').value = track.status || 'ON TIME';
-    $('track-albumId').value = track.albumId || '';
-    if (this.quill) this.quill.setText(track.lyrics || '');
-
-    $('media-fields').innerHTML = '';
-    (track.media || []).forEach(m => this._addMediaField(m.origin, m.content));
-    $('track-form-error').classList.add('hidden');
-  }
-
-  closeForm() { this.modal.close(); }
-
-  showFormError(msg) {
-    const el = $('track-form-error');
-    el.textContent = msg;
-    el.classList.remove('hidden');
-  }
-
-  getFormValues() {
-    const mediaRows = Array.from(document.querySelectorAll('.media-row'));
+  _getFormValues() {
+    const parent = this.modal.getBodyElement();
+    const mediaRows = Array.from(parent.querySelectorAll('.media-row'));
     const media = [];
     mediaRows.forEach(row => {
       const origin = row.querySelector('.media-origin').value;
@@ -216,25 +164,52 @@ export class TracksView {
     });
 
     return {
-      albumId: $('track-albumId').value,
-      gate: $('track-gate').value.trim(),
-      flightCode: $('track-flightCode').value.trim(),
-      title: $('track-title').value.trim(),
-      status: $('track-status').value,
+      albumId: parent.querySelector('#track-albumId').value,
+      gate: parent.querySelector('#track-gate').value.trim(),
+      flightCode: parent.querySelector('#track-flightCode').value.trim(),
+      title: parent.querySelector('#track-title').value.trim(),
+      status: parent.querySelector('#track-status').value,
       lyrics: this.quill ? this.quill.getText().trim() : '',
       media
     };
   }
 
+  onReset() {
+    setTimeout(() => {
+      this._initQuill();
+      if (this.quill) this.quill.setText('');
+      const p = this.modal.getBodyElement();
+      p.querySelector('#track-gate').value = '';
+      p.querySelector('#track-flightCode').value = '';
+      p.querySelector('#track-title').value = '';
+      p.querySelector('#track-status').value = 'ON TIME';
+      p.querySelector('#track-albumId').value = '';
+      p.querySelector('#media-fields').innerHTML = '';
+      p.querySelector('#btn-add-media').onclick = () => this._addMediaField();
+    }, 50);
+  }
+
+  onPopulate(track) {
+    const p = this.modal.getBodyElement();
+    p.querySelector('#track-gate').value = track.gate || '';
+    p.querySelector('#track-flightCode').value = track.flightCode || '';
+    p.querySelector('#track-title').value = track.title || '';
+    p.querySelector('#track-status').value = track.status || 'ON TIME';
+    p.querySelector('#track-albumId').value = track.albumId || '';
+    if (this.quill) this.quill.setText(track.lyrics || '');
+
+    p.querySelector('#media-fields').innerHTML = '';
+    (track.media || []).forEach(m => this._addMediaField(m.origin, m.content));
+  }
+
   setAlbums(albums, currentAlbumId = null) {
-    const select = $('track-albumId');
+    const select = this.modal.getBodyElement().querySelector('#track-albumId');
     if (!select) return;
 
     select.innerHTML = '<option value="">Selecione um álbum...</option>' +
       albums.map(a => `<option value="${a._id || a.id}" ${currentAlbumId === (a._id || a.id) ? 'selected' : ''}>${a.title}</option>`).join('');
 
-    // If we're in a specific album context, we can optionally hide this or make it readonly
-    const container = $('album-select-container');
+    const container = this.modal.getBodyElement().querySelector('#album-select-container');
     if (currentAlbumId && container) {
       container.classList.add('opacity-50', 'pointer-events-none');
     } else if (container) {
@@ -243,7 +218,8 @@ export class TracksView {
   }
 
   _addMediaField(origin = 'youtube', content = '') {
-    const container = $('media-fields');
+    const container = this.modal.getBodyElement().querySelector('#media-fields');
+    if (!container) return;
     const div = document.createElement('div');
     div.className = 'media-row flex flex-col sm:flex-row items-center gap-2 p-2 rounded-lg border';
     div.style.cssText = 'background: rgba(255,255,255,0.03); border-color: var(--glass-border);';
