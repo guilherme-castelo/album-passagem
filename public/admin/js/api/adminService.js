@@ -5,7 +5,7 @@ import { auth } from '../utils/auth.js';
 import { toast } from '../components/ToastComponent.js';
 
 function getBaseUrl() {
-  return window.location.hostname === 'localhost' ? 'http://localhost:3001' : '';
+  return window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.hostname;
 }
 
 async function request(url, options = {}) {
