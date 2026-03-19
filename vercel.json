@@ -26,6 +26,10 @@
       "destination": "/api/album/index.js"
     },
     {
+      "source": "/api/analytics/:path*",
+      "destination": "/api/analytics/index.js"
+    },
+    {
       "source": "/:path((?!api/).*)",
       "destination": "/public/:path"
     }
