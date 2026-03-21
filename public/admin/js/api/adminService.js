@@ -9,14 +9,19 @@ function getBaseUrl() {
 }
 
 async function request(url, options = {}) {
+  const { silent, ...fetchOptions } = options;
   const res = await fetch(`${getBaseUrl()}${url}`, {
-    ...options,
+    ...fetchOptions,
     headers: auth.headers()
   });
   const data = await res.json();
 
   if (!res.ok) {
     if (res.status === 401 || res.status === 403) {
+      if (silent) {
+        auth.logout();
+        throw new Error('Sessão expirada');
+      }
       toast.error('Sessão expirada. Faça login novamente.', 3000);
       setTimeout(() => auth.logout(), 2500);
       throw new Error('Sessão expirada');
@@ -40,8 +45,8 @@ export const adminService = {
   },
 
   // ─── Albums ─────────────────────────────────────────────
-  getAlbums() {
-    return request('/api/album');
+  getAlbums(options = {}) {
+    return request('/api/album', options);
   },
 
   getAlbum(id) {
@@ -127,8 +132,8 @@ export const adminService = {
   },
 
   // ── Analytics ────────────────────────────────────────
-  getDashboardAnalytics() {
-    return request('/api/analytics/dashboard');
+  getDashboardAnalytics(options = {}) {
+    return request('/api/analytics/dashboard', options);
   },
 
   getTrackAnalytics() {

@@ -202,9 +202,12 @@ export class AdminController {
     try {
       const albums = await adminService.getAlbums();
       AdminState.set('albums', albums);
+      
+      // Force token validation using a protected endpoint
+      await adminService.getDashboardAnalytics({ silent: true });
     } catch (e) {
       if (e.message === 'Sessão expirada') {
-        // Stop execution. The service will redirect. Keep the loader on screen.
+        // Stop execution. The service already redirected. Keep the loader on screen.
         return;
       }
     }
