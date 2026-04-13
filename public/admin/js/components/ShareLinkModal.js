@@ -11,10 +11,19 @@ export class ShareLinkModal {
         this.commonSources = [
             { label: 'Instagram (Bio)', source: 'instagram', medium: 'perfil', campaign: 'bio' },
             { label: 'Instagram (Stories)', source: 'instagram', medium: 'stories', campaign: 'stories' },
+            { label: 'TikTok (Bio)', source: 'tiktok', medium: 'perfil', campaign: 'bio' },
+            { label: 'TikTok (Vídeo)', source: 'tiktok', medium: 'video', campaign: 'divulgacao' },
             { label: 'WhatsApp (Status)', source: 'whatsapp', medium: 'stories', campaign: 'status' },
             { label: 'WhatsApp (Direto)', source: 'whatsapp', medium: 'direct', campaign: 'chat' },
+            { label: 'Telegram (Canal)', source: 'telegram', medium: 'channel', campaign: 'promo' },
+            { label: 'YouTube (Desc)', source: 'youtube', medium: 'video', campaign: 'descricao' },
+            { label: 'Twitter / X', source: 'twitter', medium: 'post', campaign: 'feed' },
+            { label: 'Threads', source: 'threads', medium: 'post', campaign: 'feed' },
+            { label: 'Email / News', source: 'email', medium: 'newsletter', campaign: 'mailing' },
             { label: 'Facebook (Ads)', source: 'facebook', medium: 'cpc', campaign: 'ads' },
-            { label: 'Linktree', source: 'linktree', medium: 'referral', campaign: 'bio' }
+            { label: 'Spotify (Bio)', source: 'spotify', medium: 'perfil', campaign: 'artist' },
+            { label: 'QR Code (Físico)', source: 'qr_code', medium: 'impressao', campaign: 'evento' },
+            { label: 'Linktree', source: 'linktree', medium: 'referral', campaign: 'aggregator' }
         ];
 
         this._initialize();
