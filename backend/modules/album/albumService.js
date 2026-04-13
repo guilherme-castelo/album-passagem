@@ -5,10 +5,11 @@ const DEFAULT_ALBUM = {
     title: 'Passagem',
     artist: 'Bruno',
     event: 'Pré-lançamento Teatro Belas Artes',
-    date: '2026-03-18T20:00:00-04:00'
+    date: '2026-03-18T20:00:00-04:00',
+    preSaveLink: ''
 };
 
-const ALLOWED_FIELDS = ['title', 'artist', 'event', 'date'];
+const ALLOWED_FIELDS = ['title', 'artist', 'event', 'date', 'preSaveLink'];
 
 class AlbumService {
     async listAlbums() {

@@ -198,6 +198,10 @@ export class AlbumDetailView {
         <p class="label">Data</p>
         <div class="skeleton h-5 w-2/4 rounded mt-1 opacity-20"></div>
       </div>
+      <div>
+        <p class="label">Pre-save Link</p>
+        <div class="skeleton h-5 w-full rounded mt-1 opacity-20"></div>
+      </div>
     `;
 
     this.table.setLoading(true);
@@ -238,6 +242,10 @@ export class AlbumDetailView {
       <div>
         <p class="label">Data</p>
         <p class="font-medium text-white">${data.date ? new Date(data.date).toLocaleDateString('pt-BR') : '--'}</p>
+      </div>
+      <div class="md:col-span-4">
+        <p class="label">Link de Pre-save</p>
+        ${data.preSaveLink ? `<a href="${data.preSaveLink}" target="_blank" class="text-brand-orange hover:underline text-sm break-all font-mono">${data.preSaveLink}</a>` : '<p class="text-white/40 italic text-sm">Não configurado</p>'}
       </div>
     `;
   }

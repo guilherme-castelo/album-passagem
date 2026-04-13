@@ -71,6 +71,17 @@ export class AppController {
             this.state.set('albumData', data.album);
             this.state.set('tracks', data.tracks);
 
+            // Update Pre-save Banner
+            const banner = document.getElementById('pre-save-banner');
+            if (banner) {
+                if (data.album && data.album.preSaveLink) {
+                    banner.href = data.album.preSaveLink;
+                    banner.classList.remove('hidden');
+                } else {
+                    banner.classList.add('hidden');
+                }
+            }
+
             // Artificial delay pra mostrar a animação "buscando voos"
             setTimeout(() => {
                 this.views.tracklist.render(data.tracks, this.state.get('visitedTracks'));

@@ -82,6 +82,10 @@ class AlbumFormModal extends BaseFormModal {
             <input type="datetime-local" id="album-date" class="glass-input" />
           </div>
         </div>
+        <div>
+          <label class="label">Link de Pre-save (Opcional)</label>
+          <input type="url" id="album-pre-save-link" class="glass-input" placeholder="https://spotify.com/pre-save/..." />
+        </div>
       </form>
     `;
   }
@@ -91,7 +95,8 @@ class AlbumFormModal extends BaseFormModal {
       title: $('album-title').value.trim(),
       artist: $('album-artist').value.trim(),
       event: $('album-event').value.trim(),
-      date: $('album-date').value
+      date: $('album-date').value,
+      preSaveLink: $('album-pre-save-link').value.trim()
     };
   }
 
@@ -111,5 +116,6 @@ class AlbumFormModal extends BaseFormModal {
     } else {
       $('album-date').value = '';
     }
+    $('album-pre-save-link').value = album.preSaveLink || '';
   }
 }
