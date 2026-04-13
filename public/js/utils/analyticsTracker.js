@@ -6,6 +6,7 @@ export class AnalyticsTracker {
     constructor() {
         this.sessionId = this._getOrInitSession();
         this.deviceType = this._detectDevice();
+        this.utmData = this._getUTMData();
         this.referrer = this._getReferrer();
         
         this.sessionStart = Date.now();
@@ -34,12 +35,19 @@ export class AnalyticsTracker {
         return 'desktop';
     }
 
-    _getReferrer() {
-        // 1. Tenta resgatar parâmetros de marketing via URL da bio/ads (Ex: ?origem=instagram)
+    _getUTMData() {
         const params = new URLSearchParams(window.location.search);
-        const sourceQuery = params.get('utm_source') || params.get('origem') || params.get('ref');
-        if (sourceQuery) {
-            return String(sourceQuery).toLowerCase();
+        return {
+            source: params.get('utm_source') || params.get('origem') || null,
+            medium: params.get('utm_medium') || null,
+            campaign: params.get('utm_campaign') || null
+        };
+    }
+
+    _getReferrer() {
+        // 1. Prioriza dados UTM capturados
+        if (this.utmData && this.utmData.source) {
+            return String(this.utmData.source).toLowerCase();
         }
 
         // 2. Tenta capturar o metadado real do navegador (Geralmente bloqueado por redes sociais)
@@ -104,6 +112,9 @@ export class AnalyticsTracker {
             data: {
                 deviceType: this.deviceType,
                 referrer: this.referrer,
+                utm_source: this.utmData.source,
+                utm_medium: this.utmData.medium,
+                utm_campaign: this.utmData.campaign,
                 duration: totalDurationParams,
                 trackViews: trackViews,
                 passengerName: passengerName

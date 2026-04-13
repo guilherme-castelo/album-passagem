@@ -25,6 +25,9 @@ class AnalyticsRepository {
                     updatedAt: new Date(),
                     deviceType: payload.deviceType || 'desktop',
                     referrer: payload.referrer || 'direct',
+                    utm_source: payload.utm_source || null,
+                    utm_medium: payload.utm_medium || null,
+                    utm_campaign: payload.utm_campaign || null,
                     duration: payload.duration || 0,
                     trackViews: trackViews,
                     passengerName: payload.passengerName || 'Anônimo'

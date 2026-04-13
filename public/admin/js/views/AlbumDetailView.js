@@ -4,6 +4,7 @@
  */
 import { $ } from '../utils/dom.js';
 import { DataTable } from '../components/DataTable.js';
+import { ShareLinkModal } from '../components/ShareLinkModal.js';
 import { formatDate } from '../utils/dom.js';
 
 const STATUS_COLORS = {
@@ -29,6 +30,7 @@ export class AlbumDetailView {
     this.onDeleteTrack = null;
 
     this._album = null;
+    this.shareModal = new ShareLinkModal();
     this._buildLayout();
   }
 
@@ -50,7 +52,13 @@ export class AlbumDetailView {
         <div id="album-info-card" class="glass-card p-6">
           <div class="flex items-center justify-between mb-6">
             <h3 class="font-bold text-lg text-white">Dados do Álbum</h3>
-            <button id="btn-edit-album" class="btn-primary" style="padding: 0.5rem 1rem; font-size: 0.75rem;">Editar Álbum</button>
+            <div class="flex items-center gap-2">
+              <button id="btn-share-album" class="btn-ghost flex items-center gap-2" style="padding: 0.5rem 1rem; font-size: 0.75rem;">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+                Divulgação
+              </button>
+              <button id="btn-edit-album" class="btn-primary" style="padding: 0.5rem 1rem; font-size: 0.75rem;">Editar Álbum</button>
+            </div>
           </div>
           <div id="album-info-display" class="grid grid-cols-1 md:grid-cols-4 gap-6">
             <!-- Rendered via renderInfo() -->
@@ -174,6 +182,7 @@ export class AlbumDetailView {
   _attachEvents() {
     $('btn-back-albums').addEventListener('click', () => { if (this.onBack) this.onBack(); });
     $('btn-edit-album').addEventListener('click', () => { if (this.onEditAlbum) this.onEditAlbum(this._album); });
+    $('btn-share-album').addEventListener('click', () => this.shareModal.open());
     $('btn-add-track-context').addEventListener('click', () => { if (this.onAddTrack) this.onAddTrack(); });
   }
 
